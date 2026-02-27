@@ -4,10 +4,21 @@
 DailyLog
   - id
   - date (DateTime)
-  - totalCaloriesIntake (int)
-  - totalProtein (double)
-  - totalCarbs (double)
-  - totalFat (double)
-  - workoutCalories (int)
+  - dailyLogConfig (DailyLogConfig copy)
   - bodyWeight (double?)
+  - foodIds ([]string)
+  - workoutIds ([]string)
+  - calculation
+    - totalCaloriesIntake (int)
+    - totalProteinIntake (double)
+    - totalCarbsIntake (double)
+    - totalFatIntake (double)
+    - totalCaloriesBurned (int)
+ */
+
+/*
+DailyLogConfig
+  - id
+  - name
+  - baseCalories
  */

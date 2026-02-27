@@ -5,7 +5,7 @@
 /*
 Workout
 - id
-- workoutConfig
+- workoutConfig (WorkoutConfig copy)
 - date
 - durationMinutes
 - intensityLevel (enum: light, moderate, intense)
@@ -19,4 +19,16 @@ WorkoutConfig
 - workoutType (enum: cardio, weight lifting)
 - exercises ExerciseConfig[]
  */
+// TODO define presets
+
+/*
+ExerciseConfig
+- id
+- name
+- category (back, arms, chest, legs, shoulders)
+- weight
+- reps
+- sets
+ */
+
 // TODO define presets
