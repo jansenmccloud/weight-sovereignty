@@ -1,22 +1,13 @@
-// TODO
+import 'package:equatable/equatable.dart';
+import 'package:weight_sovereignty/src/domain/entity/food_config.dart';
 
-/*
-Food
-- id
-- foodConfig (FoodConfig copy)
-- date yyyy-mm-dd
- */
+class Food with EquatableMixin {
+  Food({this.id, this.foodConfig, this.date});
 
-/*
-FoodConfig
-- id
-- name
-- favorite (bool)
-- calories
-- protein
-- carbs
-- fat
-- amount
-- unit
- */
-// TODO define presets
+  final int? id;
+  final FoodConfig? foodConfig;
+  final DateTime? date;
+
+  @override
+  List<Object?> get props => [id, foodConfig, date];
+}

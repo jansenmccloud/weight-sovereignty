@@ -1,34 +1,32 @@
-// TODO
+import 'package:equatable/equatable.dart';
+import 'package:weight_sovereignty/src/domain/entity/workout_config.dart';
 
-// TODO separation into workoutLog and config
+enum IntensityLevel { light, moderate, intense }
 
-/*
-Workout
-- id
-- workoutConfig (WorkoutConfig copy)
-- date
-- durationMinutes
-- intensityLevel (enum: light, moderate, intense)
-- burnedCalories
- */
+class Workout with EquatableMixin {
+  Workout({
+    this.id,
+    this.workoutConfig,
+    this.date,
+    this.durationMin,
+    this.intensityLevel,
+    this.burnedCaloriesKcal,
+  });
 
-/*
-WorkoutConfig
-- id
-- name
-- workoutType (enum: cardio, weight lifting)
-- exercises ExerciseConfig[]
- */
-// TODO define presets
+  final int? id;
+  final WorkoutConfig? workoutConfig;
+  final DateTime? date;
+  final int? durationMin;
+  final IntensityLevel? intensityLevel;
+  final int? burnedCaloriesKcal;
 
-/*
-ExerciseConfig
-- id
-- name
-- category (back, arms, chest, legs, shoulders)
-- weight
-- reps
-- sets
- */
-
-// TODO define presets
+  @override
+  List<Object?> get props => [
+    id,
+    workoutConfig,
+    date,
+    durationMin,
+    intensityLevel,
+    burnedCaloriesKcal,
+  ];
+}
