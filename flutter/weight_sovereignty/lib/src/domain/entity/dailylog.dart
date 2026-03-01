@@ -5,8 +5,9 @@ import 'package:weight_sovereignty/src/domain/entity/dailylog_config.dart';
 class DailyLog with EquatableMixin {
   DailyLog({
     this.id,
-    this.date,
     this.dailyLogConfig,
+    this.date,
+
     this.bodyWeight,
     this.foodIds,
     this.workoutIds,
@@ -14,8 +15,9 @@ class DailyLog with EquatableMixin {
   });
 
   final int? id;
-  final DateTime? date;
   final DailyLogConfig? dailyLogConfig;
+  final DateTime? date;
+
   final double? bodyWeight;
   final List<int?>? foodIds;
   final List<int?>? workoutIds;
@@ -24,8 +26,9 @@ class DailyLog with EquatableMixin {
   @override
   List<Object?> get props => [
     id,
-    date,
     dailyLogConfig,
+    date,
+
     bodyWeight,
     foodIds,
     workoutIds,

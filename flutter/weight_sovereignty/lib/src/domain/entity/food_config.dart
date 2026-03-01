@@ -5,10 +5,10 @@ class FoodConfig with EquatableMixin {
     this.id,
     this.name,
     this.favorite,
-    this.caloriesKcal,
-    this.proteinG,
-    this.carbsG,
-    this.fatG,
+    this.intakeCaloriesKcal,
+    this.intakeProteinG,
+    this.intakeCarbsG,
+    this.intakeFatG,
     this.amount,
     this.unit,
   });
@@ -16,10 +16,10 @@ class FoodConfig with EquatableMixin {
   final int? id;
   final String? name;
   final bool? favorite;
-  final int? caloriesKcal;
-  final int? proteinG;
-  final int? carbsG;
-  final int? fatG;
+  final int? intakeCaloriesKcal;
+  final int? intakeProteinG;
+  final int? intakeCarbsG;
+  final int? intakeFatG;
   final int? amount;
   final String? unit;
 
@@ -28,10 +28,10 @@ class FoodConfig with EquatableMixin {
     id,
     name,
     favorite,
-    caloriesKcal,
-    proteinG,
-    carbsG,
-    fatG,
+    intakeCaloriesKcal,
+    intakeProteinG,
+    intakeCarbsG,
+    intakeFatG,
     amount,
     unit,
   ];

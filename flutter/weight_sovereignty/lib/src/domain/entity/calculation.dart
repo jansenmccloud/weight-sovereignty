@@ -2,25 +2,25 @@ import 'package:equatable/equatable.dart';
 
 class Calculation with EquatableMixin {
   Calculation({
-    this.totalCaloriesBurnedKcal,
-    this.totalCaloriesIntakeKcal,
-    this.totalProteinIntakeG,
-    this.totalCarbsIntakeG,
-    this.totalFatIntakeG,
+    this.totalBurnedCaloriesKcal,
+    this.totalIntakeCaloriesKcal,
+    this.totalIntakeProteinG,
+    this.totalIntakeCarbsG,
+    this.totalIntakeFatG,
   });
 
-  final int? totalCaloriesBurnedKcal;
-  final int? totalCaloriesIntakeKcal;
-  final double? totalProteinIntakeG;
-  final double? totalCarbsIntakeG;
-  final double? totalFatIntakeG;
+  final int? totalBurnedCaloriesKcal;
+  final int? totalIntakeCaloriesKcal;
+  final double? totalIntakeProteinG;
+  final double? totalIntakeCarbsG;
+  final double? totalIntakeFatG;
 
   @override
   List<Object?> get props => [
-    totalCaloriesBurnedKcal,
-    totalCaloriesIntakeKcal,
-    totalProteinIntakeG,
-    totalCarbsIntakeG,
-    totalFatIntakeG,
+    totalBurnedCaloriesKcal,
+    totalIntakeCaloriesKcal,
+    totalIntakeProteinG,
+    totalIntakeCarbsG,
+    totalIntakeFatG,
   ];
 }
