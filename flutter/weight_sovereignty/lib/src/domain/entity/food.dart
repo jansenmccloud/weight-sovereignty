@@ -1,13 +1,36 @@
-import 'package:equatable/equatable.dart';
-import 'package:weight_sovereignty/src/domain/entity/food_config.dart';
+import 'package:isar/isar.dart';
+import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 
-class Food with EquatableMixin {
-  Food({this.id, this.foodConfig, this.date});
+part 'food.g.dart';
 
-  final int? id;
-  final FoodConfig? foodConfig;
-  final DateTime? date;
+@collection
+class Food {
+  Id id = Isar.autoIncrement;
+  FoodBase? foodBase;
+  DateTime? date;
 
-  @override
-  List<Object?> get props => [id, foodConfig, date];
+  @ignore
+  set setBase(FoodConfig conf) {
+    foodBase = FoodBase()
+      ..name = conf.name
+      ..favorite = conf.favorite
+      ..intakeCaloriesKcal = conf.intakeCaloriesKcal
+      ..intakeProteinG = conf.intakeProteinG
+      ..intakeCarbsG = conf.intakeCarbsG
+      ..intakeFatG = conf.intakeFatG
+      ..amount = conf.amount
+      ..unit = conf.unit;
+  }
+}
+
+@embedded
+class FoodBase {
+  String? name;
+  bool? favorite;
+  int? intakeCaloriesKcal;
+  int? intakeProteinG;
+  int? intakeCarbsG;
+  int? intakeFatG;
+  int? amount;
+  String? unit;
 }

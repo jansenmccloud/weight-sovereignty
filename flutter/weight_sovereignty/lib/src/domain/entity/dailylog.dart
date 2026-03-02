@@ -1,37 +1,38 @@
-import 'package:equatable/equatable.dart';
-import 'package:weight_sovereignty/src/domain/entity/calculation.dart';
-import 'package:weight_sovereignty/src/domain/entity/dailylog_config.dart';
+import 'package:isar/isar.dart';
+import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 
-class DailyLog with EquatableMixin {
-  DailyLog({
-    this.id,
-    this.dailyLogConfig,
-    this.date,
+part 'dailylog.g.dart';
 
-    this.bodyWeight,
-    this.foodIds,
-    this.workoutIds,
-    this.calculation,
-  });
+@collection
+class DailyLog {
+  Id id = Isar.autoIncrement;
+  DailyLogBase? dailyLogBase;
+  DateTime? date;
 
-  final int? id;
-  final DailyLogConfig? dailyLogConfig;
-  final DateTime? date;
+  double? bodyWeight;
+  List<int?>? foodIds;
+  List<int?>? workoutIds;
+  Calculation? calculation;
 
-  final double? bodyWeight;
-  final List<int?>? foodIds;
-  final List<int?>? workoutIds;
-  final Calculation? calculation;
+  @ignore
+  set setBase(DailyLogConfig conf) {
+    dailyLogBase = DailyLogBase()
+      ..name = conf.name
+      ..bmrCaloriesKcal = conf.bmrCaloriesKcal;
+  }
+}
 
-  @override
-  List<Object?> get props => [
-    id,
-    dailyLogConfig,
-    date,
+@embedded
+class DailyLogBase {
+  String? name;
+  int? bmrCaloriesKcal;
+}
 
-    bodyWeight,
-    foodIds,
-    workoutIds,
-    calculation,
-  ];
+@embedded
+class Calculation {
+  int? totalBurnedCaloriesKcal;
+  int? totalIntakeCaloriesKcal;
+  double? totalIntakeProteinG;
+  double? totalIntakeCarbsG;
+  double? totalIntakeFatG;
 }
