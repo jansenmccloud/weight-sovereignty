@@ -1,0 +1,41 @@
+---
+description: Android-first targets, workout UX, and Material theme
+globs: flutter/weight_sovereignty/android/**,flutter/weight_sovereignty/lib/src/presentation/**
+alwaysApply: false
+---
+
+# Android-first & UX
+
+Primary ship target: Android (`com.mccloud.weight_sovereignty`). iOS/desktop are out of scope unless requested.
+
+## Android
+
+- Use Flutter APIs first (`wakelock_plus` for workout keep-awake when added) before custom Kotlin
+- Respect edge-to-edge and system insets on dashboard; workout session may hide app bar per docs
+- Min tap targets: **48dp** general, **56–64dp** for set rows and primary actions in workout mode
+- Test on a physical device or emulator with `flutter run`; release signing is debug until configured
+
+## Theme (replace counter-template defaults)
+
+Material 3, dark baseline `#121212`, neutral surfaces, white primary text, one muted accent (deep blue / desaturated green). Low elevation, flat buttons, large numeric typography for weight and reps. No gradients, gamified colors, or decorative chrome.
+
+Workout session: near-black background, high contrast, minimal animation — distinct from dashboard cards.
+
+## Flows (from docs)
+
+1. **Startup** — if no log for today, create `DailyLog` silently
+2. **Morning** — if weight missing, large numeric field + save; show Δ vs yesterday
+3. **Dashboard** — macros/burn visible immediately; `[+ Food]` → recent/favorites from `FoodConfig`
+4. **Workout** — full-screen session; dynamic sets (add/edit/long-press); no modal spam
+
+## Presentation structure
+
+```
+presentation/
+  app_root.dart          # MaterialApp + theme
+  theme/                 # ThemeData extensions (when added)
+  screens/               # dashboard, workout_session, food_edit
+  widgets/               # shared components
+```
+
+Remove template demo UI (`MyHomePage` counter) when implementing real screens — do not extend it.

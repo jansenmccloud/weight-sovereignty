@@ -1,0 +1,24 @@
+---
+description: Project purpose, principles, and doc references for weight-sovereignty
+alwaysApply: true
+---
+
+# Weight Sovereignty
+
+Hobby, offline-first Flutter app (Android primary). No accounts, cloud, gamification, or food APIs.
+
+**Docs (source of truth for domain + UX):**
+- `README.md` — principles, non-goals, non-negotiables
+- `docs/development.md` — data model, calculation engine, flows, UI tone
+
+**Code diverges from docs where entities already evolved** — prefer implemented Isar models in `lib/src/domain/entity/` and `config/`; update docs only when the user asks.
+
+**Product constraints:**
+- UI reads **DailyLog** aggregates; Food/Workout are detail layers (IDs on `DailyLog`)
+- Three core screens: Dashboard (default), Workout Session, Food add/edit — no tab jungle
+- Friction targets: weight <3s, food <5s, workout set log <5s; no confirmation dialogs for obvious actions
+- Auto-create today’s `DailyLog` when date changes — silent, no dialog
+- Calculations transparent (formulas + correction factor inspectable later)
+- Dark Material 3, industrial/calm — see `docs/development.md` § Implementation Strategy
+
+**Scope discipline:** no drive-by refactors; no features that add friction; CSV export is a future non-negotiable, not required in every change.

@@ -1,0 +1,48 @@
+---
+description: Layering, naming, and file placement for the Flutter app
+globs: flutter/weight_sovereignty/lib/**
+alwaysApply: false
+---
+
+# Flutter architecture
+
+App root: `flutter/weight_sovereignty/`. Package imports: `package:weight_sovereignty/...`.
+
+## Layers (top → bottom)
+
+| Layer | Path | Responsibility |
+|-------|------|----------------|
+| presentation | `lib/src/presentation/` | Widgets, screens, theme; minimal logic |
+| application | `lib/src/application/` | Use cases, orchestration, Riverpod providers |
+| data | `lib/src/data/` | Repository implementations, `local_storage.dart` |
+| domain | `lib/src/domain/` | Entities, configs, repo **interfaces** only |
+
+**Dependency rule:** presentation → application → data → domain. Domain never imports Flutter, Riverpod, or data.
+
+## Naming
+
+- `*_repo.dart` in `domain/repo/` — abstract contracts
+- `*_repository.dart` in `data/` — Isar-backed implementations
+- `*_service.dart` in `application/` — composes repos, triggers recalc, exposes providers
+- `entity/` — day-scoped **runtime** records (`DailyLog`, `Food`, `Workout`)
+- `config/` — **preset/template** Isar collections (`FoodConfig`, `ExerciseConfig`, …)
+
+## Recalculation
+
+Before persisting aggregates, recompute embedded `Calculation` on `DailyLog` from linked food/workout IDs (see TODOs in `domain/repo/*.dart`). Keep MET/burn logic in application or a dedicated `domain/calculation/` module — not in widgets.
+
+## Generated code
+
+After changing `@collection` / `@embedded` models:
+
+```bash
+cd flutter/weight_sovereignty && dart run build_runner build --delete-conflicting-outputs
+```
+
+Commit `*.g.dart` with the model change. Do not hand-edit generated files.
+
+## Testing
+
+- Unit-test services and calculation in `test/`
+- Widget tests only for non-trivial presentation behavior
+- Prefer faking repo interfaces over opening Isar in widget tests

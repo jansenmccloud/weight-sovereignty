@@ -11,10 +11,9 @@ enum ExerciseCategory {
   shoulders;
 
   static ExerciseCategory getCategoryFromString(String? s) {
-    for (ExerciseCategory c in ExerciseCategory.values) {
-      if (c.toString() == s) {
-        return c;
-      }
+    if (s == null) return ExerciseCategory.none;
+    for (final ExerciseCategory c in ExerciseCategory.values) {
+      if (c.name == s) return c;
     }
     return ExerciseCategory.none;
   }
@@ -25,10 +24,9 @@ enum ExerciseType {
   lifting;
 
   static ExerciseType getTypeFromString(String? s) {
-    for (ExerciseType t in ExerciseType.values) {
-      if (t.toString() == s) {
-        return t;
-      }
+    if (s == null) return ExerciseType.cardio;
+    for (final ExerciseType t in ExerciseType.values) {
+      if (t.name == s) return t;
     }
     return ExerciseType.cardio;
   }
@@ -40,10 +38,9 @@ enum IntensityLevel {
   intense;
 
   static IntensityLevel getIntensityLevelFromString(String? s) {
-    for (IntensityLevel i in IntensityLevel.values) {
-      if (i.toString() == s) {
-        return i;
-      }
+    if (s == null) return IntensityLevel.moderate;
+    for (final IntensityLevel i in IntensityLevel.values) {
+      if (i.name == s) return i;
     }
     return IntensityLevel.moderate;
   }

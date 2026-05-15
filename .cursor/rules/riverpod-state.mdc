@@ -1,0 +1,35 @@
+---
+description: Riverpod providers, services, and UI state boundaries
+globs: flutter/weight_sovereignty/lib/src/application/**,flutter/weight_sovereignty/lib/src/presentation/**
+alwaysApply: false
+---
+
+# Riverpod
+
+`ProviderScope` wraps the app in `main.dart`. `riverpod_lint` is enabled — follow analyzer hints.
+
+## Provider layout
+
+- `localStorageProvider` / `isarProvider` — async open, override in tests
+- `*RepositoryProvider` — binds interface → data implementation
+- `*ServiceProvider` — business API consumed by UI
+- Screen-specific: `Notifier` / `AsyncNotifier` for session state (e.g. active workout sets)
+
+## Rules
+
+- Widgets `ref.watch` for rebuild; `ref.read` in callbacks / one-shot actions
+- Do not pass `Isar` or repositories deep into widget trees — use providers
+- `AsyncValue` for load/save; surface errors with `SelectableText.rich` or snackbar, not silent failure
+- Keep `StatelessWidget` + providers default; `StatefulWidget` only for ephemeral UI (text controllers, animations)
+
+## UI ↔ domain
+
+Presentation calls service methods (`logWeight`, `addFoodFromPreset`, `completeSet`), never writes Isar directly.
+
+Invalidate or refresh providers after mutations that affect dashboard aggregates (`DailyLog` for today).
+
+## Avoid
+
+- `setState` for data that other screens need
+- Global singletons outside Riverpod
+- `ChangeNotifier` unless integrating a legacy API

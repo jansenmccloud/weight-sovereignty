@@ -8,6 +8,7 @@ part 'workout.g.dart';
 class Workout {
   Id id = Isar.autoIncrement;
   WorkoutBase? workoutBase;
+  @Index()
   DateTime? date;
   List<ExerciseBase?>? exercises;
 
@@ -60,9 +61,9 @@ class ExerciseBase {
   static ExerciseBase fromConfig(ExerciseConfig c) {
     return ExerciseBase()
       ..name = c.name
-      ..categoryName = c.categoryName
-      ..typeName = c.typeName
-      ..intensityLevelName = c.intensityLevelName
+      ..categoryName = c.category.name
+      ..typeName = c.type.name
+      ..intensityLevelName = c.intensityLevel.name
       ..weightKg = c.weightKg
       ..reps = c.reps
       ..sets = c.sets

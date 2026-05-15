@@ -7,6 +7,7 @@ part 'food.g.dart';
 class Food {
   Id id = Isar.autoIncrement;
   FoodBase? foodBase;
+  @Index()
   DateTime? date;
 
   @ignore

@@ -7,6 +7,7 @@ part 'dailylog.g.dart';
 class DailyLog {
   Id id = Isar.autoIncrement;
   DailyLogBase? dailyLogBase;
+  @Index()
   DateTime? date;
 
   double? bodyWeight;

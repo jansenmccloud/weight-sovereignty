@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/presentation/app_root.dart';
 
 void main() {
-  runApp(
-    ProviderScope(child: AppRoot())
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: AppRoot()));
 }

@@ -33,6 +33,9 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Isar native core for Windows unit tests (see test/fixtures/README.md)
+/test/fixtures/isar.dll
+
 # Symbolication related
 app.*.symbols
 

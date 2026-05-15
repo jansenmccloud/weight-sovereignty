@@ -1,60 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:weight_sovereignty/src/application/providers/isar_provider.dart';
+import 'package:weight_sovereignty/src/presentation/screens/home_shell_screen.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
-class AppRoot extends StatelessWidget {
+class AppRoot extends ConsumerWidget {
   const AppRoot({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Weight Sovereignty',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Weight Sovereignty'),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isarAsync = ref.watch(isarProvider);
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return isarAsync.when(
+      loading: () => MaterialApp(
+        theme: AppTheme.dark(),
+        home: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      error: (error, _) => MaterialApp(
+        theme: AppTheme.dark(),
+        home: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text('Failed to open database: $error'),
+            ),
+          ),
+        ),
+      ),
+      data: (_) => MaterialApp(
+        title: 'Weight Sovereignty',
+        theme: AppTheme.dark(),
+        home: const HomeShellScreen(),
       ),
     );
   }

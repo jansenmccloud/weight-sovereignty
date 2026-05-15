@@ -1,4 +1,8 @@
-// TODO define static presets for exercise_config
-// TODO define static presets for workout_config
+import 'package:weight_sovereignty/src/domain/entity/workout.dart';
+import 'package:weight_sovereignty/src/domain/repo/crud_repository.dart';
 
-// TODO recalc burned cal before save
+abstract class WorkoutRepository implements CrudRepository<Workout> {
+  Future<List<Workout>> listByCalendarDay(DateTime day);
+
+  Future<List<Workout>> listByIds(List<int> ids);
+}
