@@ -1,0 +1,36 @@
+---
+description: Isar collections, embeddings, and local storage conventions
+globs: flutter/weight_sovereignty/lib/src/domain/**/*.dart,flutter/weight_sovereignty/lib/src/data/**
+alwaysApply: false
+---
+
+# Isar persistence
+
+Single local DB via `Isar` in `data/source/local/local_storage.dart`. Open once at startup; inject into repositories (do not open Isar in widgets).
+
+## Schema split
+
+- **entity/** — logged data tied to `date`, linked from `DailyLog` via `foodIds` / `workoutIds`
+- **config/** — reusable presets (favorite foods, exercise templates, workout templates, daily BMR preset)
+
+Use `@embedded` for nested value objects (`DailyLogBase`, `FoodBase`, `ExerciseBase`, `Calculation`). Use `@collection` for top-level boxes.
+
+## Patterns already in use
+
+- Populate entities from config via `@ignore` setters (`setBase`, `setExercises`) — keep writes in repositories/services, not UI
+- Store enums for Isar as **string names** in indexed fields (`categoryName`, `typeName`, `intensityLevelName`); expose typed getters with `@ignore`
+- Persist enum strings as `enumValue.name` (e.g. `cardio`), never `toString()` (`ExerciseCategory.cardio`)
+
+## Queries
+
+- Index fields used for filters (`date`, `favorite`, unique `name` on configs)
+- Dashboard: load today’s `DailyLog` + optional detail fetch by IDs — avoid full-table scans on every frame
+- Normalize `date` to calendar day (local timezone) when creating or querying logs
+
+## Migrations
+
+Hobby project: prefer additive fields and embedded types. Breaking schema changes: bump approach documented in commit + run code gen; no cloud migration service.
+
+## Offline
+
+No network persistence. No `http` / Firebase unless explicitly requested. Export = local CSV (future).

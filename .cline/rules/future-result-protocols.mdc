@@ -1,0 +1,47 @@
+---
+description: Future result protocols should be created in .cline/results/ folder
+globs: .cline/results/**
+alwaysApply: true
+---
+
+# Future Result Protocols
+
+## Protocol for Result Storage
+
+All result protocols generated during analysis and development tasks should be created in the `.cline/results/` directory.
+
+## Purpose
+
+The `.cline/results/` folder serves as a dedicated location for:
+- Analysis summaries
+- Test documents
+- Generated documentation
+- Protocol reports
+- Any other generated content from Cline operations
+
+## File Naming Convention
+
+Use descriptive names that clearly indicate the content and purpose of each result file. For example:
+- `CLINE_RULES_SUMMARY.md` (for rule analysis)
+- `TEST_RESULT_PROTOCOL.md` (for test documentation)
+- `PROJECT_ANALYSIS_REPORT.md` (for comprehensive project analysis)
+
+## Storage Location
+
+All generated files should be stored under:
+```
+.cline/results/
+```
+
+This ensures a clean separation of:
+- Generated content (in `.cline/results/`)
+- Configuration rules (in `.cline/rules/`)
+- Skill documentation (in `.agents/skills/`)
+
+## Best Practices
+
+1. Keep result protocols in a consistent format
+2. Provide clear explanations of findings
+3. Include actionable recommendations
+4. Maintain proper file structure and organization
+5. Regularly review and update result protocols as needed
