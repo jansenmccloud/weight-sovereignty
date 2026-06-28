@@ -125,36 +125,43 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             decoration: const InputDecoration(labelText: 'Name'),
             textCapitalization: TextCapitalization.sentences,
           ),
+          const SizedBox(height: 8),
           SwitchListTile(
             title: const Text('Favorite'),
             value: _favorite,
             onChanged: (v) => setState(() => _favorite = v),
           ),
+          const SizedBox(height: 8),
           TextField(
             controller: _kcalController,
             decoration: const InputDecoration(labelText: 'Calories (kcal)'),
             keyboardType: TextInputType.number,
           ),
+          const SizedBox(height: 8),
           TextField(
             controller: _proteinController,
             decoration: const InputDecoration(labelText: 'Protein (g)'),
             keyboardType: TextInputType.number,
           ),
+          const SizedBox(height: 8),
           TextField(
             controller: _carbsController,
             decoration: const InputDecoration(labelText: 'Carbs (g)'),
             keyboardType: TextInputType.number,
           ),
+          const SizedBox(height: 8),
           TextField(
             controller: _fatController,
             decoration: const InputDecoration(labelText: 'Fat (g)'),
             keyboardType: TextInputType.number,
           ),
+          const SizedBox(height: 8),
           TextField(
             controller: _amountController,
             decoration: const InputDecoration(labelText: 'Amount'),
             keyboardType: TextInputType.number,
           ),
+          const SizedBox(height: 8),
           TextField(
             controller: _unitController,
             decoration: const InputDecoration(labelText: 'Unit'),
