@@ -61,10 +61,7 @@ class _WorkoutConfigEditScreenState
 
     final exercises = ref.read(exerciseConfigListProvider).valueOrNull ?? [];
     if (exercises.isEmpty) {
-      showConfigError(
-        context,
-        'Create at least one exercise preset first.',
-      );
+      showConfigError(context, 'Create at least one exercise preset first.');
       return;
     }
 
@@ -108,11 +105,11 @@ class _WorkoutConfigEditScreenState
             controller: _nameController,
             decoration: const InputDecoration(labelText: 'Name'),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text('Exercises', style: Theme.of(context).textTheme.titleMedium),
           exercisesAsync.when(
             loading: () => const Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(12),
               child: CircularProgressIndicator(),
             ),
             error: (e, _) => Text('Error loading exercises: $e'),
@@ -122,7 +119,7 @@ class _WorkoutConfigEditScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text('No exercise presets yet.'),
                     ),
                     TextButton(

@@ -35,8 +35,9 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing =
-          await ref.read(foodConfigListProvider.notifier).read(widget.configId!);
+      final existing = await ref
+          .read(foodConfigListProvider.notifier)
+          .read(widget.configId!);
       if (existing != null && mounted) {
         _apply(existing);
       }
@@ -125,48 +126,48 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             decoration: const InputDecoration(labelText: 'Name'),
             textCapitalization: TextCapitalization.sentences,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           SwitchListTile(
             title: const Text('Favorite'),
             value: _favorite,
             onChanged: (v) => setState(() => _favorite = v),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _kcalController,
             decoration: const InputDecoration(labelText: 'Calories (kcal)'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _proteinController,
             decoration: const InputDecoration(labelText: 'Protein (g)'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _carbsController,
             decoration: const InputDecoration(labelText: 'Carbs (g)'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _fatController,
             decoration: const InputDecoration(labelText: 'Fat (g)'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _amountController,
             decoration: const InputDecoration(labelText: 'Amount'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _unitController,
             decoration: const InputDecoration(labelText: 'Unit'),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             'Duplicate names replace the existing preset (Isar unique index).',
             style: Theme.of(context).textTheme.bodySmall,

@@ -93,13 +93,13 @@ class _DailyLogConfigEditScreenState
             controller: _nameController,
             decoration: const InputDecoration(labelText: 'Name'),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           TextField(
             controller: _bmrController,
             decoration: const InputDecoration(labelText: 'BMR (kcal)'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
         ],
       ),
     );
