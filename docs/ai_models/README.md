@@ -26,3 +26,8 @@ general ollama docs:
 after VS code Cline extension install:
 * connect with cline account
 * in cline extension settings => select ollama (if running downloaded model is already auto selected) 
+
+## Ollama alternative setups
+
+* ollama launch opencode
+* try gemma4 model
