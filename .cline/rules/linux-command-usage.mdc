@@ -1,0 +1,49 @@
+---
+description: Use Linux-based commands in terminal operations for consistency with Git Bash environment
+globs: ./**
+alwaysApply: true
+---
+
+# Linux Command Usage Protocol
+
+## Environment Context
+
+This project uses a Windows environment with Git Bash as the integrated terminal. To ensure consistent operation and avoid path separator issues, all terminal commands should use Linux-style syntax.
+
+## Key Practices
+
+### Path Separators
+- Use forward slashes (`/`) for all file paths
+- Avoid backslashes (`\`) which are Windows-specific
+- Examples:
+  - Correct: `ls -la .cline/rules/`
+  - Incorrect: `dir .cline\\rules\\`
+
+### Command Syntax
+- Use Linux-style commands consistently:
+  - `ls -la` (not `dir`)
+  - `find . -name "filename"` (not `where`)
+  - `grep "pattern" file.txt` (not `findstr`)
+
+### File Operations
+- All file system operations should use Linux conventions:
+  - `cat filename.txt`
+  - `cp source.txt dest.txt`
+  - `mv old.txt new.txt`
+  - `rm filename.txt`
+
+## Benefits
+
+1. **Consistency** - Commands work the same regardless of local terminal environment
+2. **Portability** - Code and commands can be shared without modification
+3. **Avoids Path Issues** - No confusion with Windows vs Unix path separators
+4. **Git Bash Optimization** - Takes full advantage of the integrated terminal capabilities
+
+## Exception Handling
+
+When Windows-specific tools are required:
+- Document why Windows tools are needed  
+- Use appropriate Windows syntax in those specific cases
+- Clearly mark these exceptions in your workflow
+
+This protocol ensures all terminal operations follow Linux conventions to maintain compatibility with the Git Bash environment and prevent cross-platform issues.
