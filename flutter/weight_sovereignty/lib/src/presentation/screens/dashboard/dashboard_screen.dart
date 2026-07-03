@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/settings/settings_hub_screen.dart';
 
 /// Main dashboard screen showing today's DailyLog summary.
 /// Shows weight, calorie overview, food list, and workout summary.
@@ -51,7 +52,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsHubScreen()),
+            ),
           ),
         ],
       ),
