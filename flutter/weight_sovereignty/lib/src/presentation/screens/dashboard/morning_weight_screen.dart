@@ -85,15 +85,15 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
       );
     }
 
-    if (todayLog.id == null) {
+    if (todayLog?.id == null) {
       todayLog = DailyLog()
         ..date = now
         ..dailyLogBase = DailyLogBase();
     }
 
-    final updatedLog = await ref.read(dailyLogRepositoryProvider).save(
-      todayLog..bodyWeight = weight,
-    );
+   // final updatedLog = await ref.read(dailyLogRepositoryProvider).save(
+   //   todayLog..bodyWeight = weight,
+   // );
 
     // Invalidate provider to refresh dashboard
     ref.invalidate(dailyLogListProvider);
@@ -134,7 +134,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
             TextField(
               controller: _controller,
               focusNode: FocusNode()..requestFocus(),
-              keyboardType: const TextInputType.numberWithOptions(decimal: '.'),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               style: text.displayLarge?.copyWith(fontSize: 48),
               decoration: const InputDecoration(
                 hintText: '0.0',

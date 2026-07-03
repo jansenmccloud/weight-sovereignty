@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
-import 'package:weight_sovereignty/src/domain/entity/food.dart';
-import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
 
@@ -28,9 +25,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void _navigateToWeightEntry() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (ctx) => const MorningWeightScreen(),
-      ),
+      MaterialPageRoute(builder: (ctx) => const MorningWeightScreen()),
     );
   }
 
@@ -86,7 +81,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // Calculate delta from BMR
           final intake = calc?.totalIntakeCaloriesKcal ?? 0;
           final burn = calc?.totalBurnedCaloriesKcal ?? 0;
-          final netSurplus = (bmr ?? 0) + burn - (intake ?? 0);
+          final netSurplus = (bmr ?? 0) + burn - (intake);
 
           return CustomScrollView(
             slivers: [
@@ -131,8 +126,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               SliverToBoxAdapter(
                 child: _CalorieOverviewCard(
                   bmr: bmr ?? 0,
-                  intake: intake ?? 0,
-                  burn: burn ?? 0,
+                  intake: intake,
+                  burn: burn,
                   netSurplus: netSurplus,
                 ),
               ),
@@ -289,8 +284,8 @@ class _CalorieOverviewCard extends StatelessWidget {
                     color: netSurplus > 0
                         ? Colors.redAccent
                         : netSurplus < 0
-                            ? Colors.blueAccent
-                            : Colors.white,
+                        ? Colors.blueAccent
+                        : Colors.white,
                   ),
                 ),
               ],
@@ -310,7 +305,7 @@ class _FoodSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final foodConfigAsync = ref.watch(foodConfigListProvider);
+    //final foodConfigAsync = ref.watch(foodConfigListProvider);
     final text = Theme.of(context).textTheme;
 
     return Card(
@@ -342,9 +337,9 @@ class _FoodSection extends ConsumerWidget {
                 style: text.bodyMedium?.copyWith(color: Colors.white38),
               )
             else
-              ...foodIds!
-                  .whereType<int>()
-                  .map((id) => _FoodItemTile(foodId: id, text: text)),
+              ...foodIds!.whereType<int>().map(
+                (id) => _FoodItemTile(foodId: id, text: text),
+              ),
 
             const SizedBox(height: 8),
 
