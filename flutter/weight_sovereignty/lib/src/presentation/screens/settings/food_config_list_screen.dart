@@ -44,7 +44,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
         child: const Icon(Icons.add),
       ),
       itemBuilder: (context, item) => ConfigListTile(
-        title: item.name ?? '—',
+        title: _foodTitle(item),
         subtitle: _foodSubtitle(item),
         onTap: () => _openEdit(context, item.id),
         onDelete: () => _delete(context, item),
@@ -52,13 +52,22 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
     );
   }
 
+  String _foodTitle(FoodConfig item) {
+    final parts = <String>[];
+    if (item.favorite == true) parts.add('★');
+    if (item.name != null) parts.add('${item.name}');
+    return parts.isEmpty ? '—' : parts.join(' ');
+  }
+
   String? _foodSubtitle(FoodConfig item) {
     final parts = <String>[];
-    if (item.favorite == true) parts.add('Favorite');
+    if (item.amount != null) parts.add('${item.amount}${item.unit}');
     if (item.intakeCaloriesKcal != null) {
       parts.add('${item.intakeCaloriesKcal} kcal');
     }
     if (item.intakeProteinG != null) parts.add('P ${item.intakeProteinG}g');
+    if (item.intakeCarbsG != null) parts.add('C ${item.intakeCarbsG}g');
+    if (item.intakeFatG != null) parts.add('F ${item.intakeFatG}g');
     return parts.isEmpty ? null : parts.join(' · ');
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/food_config/food_config_list_notifier.dart';
@@ -16,6 +17,7 @@ class FoodConfigEditScreen extends ConsumerStatefulWidget {
 }
 
 class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
+  final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
   final _nameController = TextEditingController();
   final _kcalController = TextEditingController();
   final _proteinController = TextEditingController();
@@ -137,30 +139,35 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             controller: _kcalController,
             decoration: const InputDecoration(labelText: 'Calories (kcal)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _proteinController,
             decoration: const InputDecoration(labelText: 'Protein (g)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _carbsController,
             decoration: const InputDecoration(labelText: 'Carbs (g)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _fatController,
             decoration: const InputDecoration(labelText: 'Fat (g)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _amountController,
             decoration: const InputDecoration(labelText: 'Amount'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
@@ -169,7 +176,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Duplicate names replace the existing preset (Isar unique index).',
+            'Duplicate names replace the existing preset.',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],

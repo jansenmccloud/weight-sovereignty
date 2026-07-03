@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/dailylog_config/dailylog_config_list_notifier.dart';
@@ -15,8 +16,8 @@ class DailyLogConfigEditScreen extends ConsumerStatefulWidget {
       _DailyLogConfigEditScreenState();
 }
 
-class _DailyLogConfigEditScreenState
-    extends ConsumerState<DailyLogConfigEditScreen> {
+class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScreen> {
+  final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
   final _nameController = TextEditingController();
   final _bmrController = TextEditingController();
   bool _loading = true;
@@ -98,6 +99,7 @@ class _DailyLogConfigEditScreenState
             controller: _bmrController,
             decoration: const InputDecoration(labelText: 'BMR (kcal)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/config/exercise_config_save.dart';
@@ -16,8 +17,8 @@ class ExerciseConfigEditScreen extends ConsumerStatefulWidget {
       _ExerciseConfigEditScreenState();
 }
 
-class _ExerciseConfigEditScreenState
-    extends ConsumerState<ExerciseConfigEditScreen> {
+class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScreen> {
+  final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
   final _nameController = TextEditingController();
   final _weightController = TextEditingController();
   final _repsController = TextEditingController();
@@ -158,18 +159,21 @@ class _ExerciseConfigEditScreenState
             controller: _weightController,
             decoration: const InputDecoration(labelText: 'Weight (kg)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _repsController,
             decoration: const InputDecoration(labelText: 'Reps'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _setsController,
             decoration: const InputDecoration(labelText: 'Sets'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
@@ -182,12 +186,14 @@ class _ExerciseConfigEditScreenState
             controller: _durationController,
             decoration: const InputDecoration(labelText: 'Duration (min)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _burnController,
             decoration: const InputDecoration(labelText: 'Burn (kcal)'),
             keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
         ],
