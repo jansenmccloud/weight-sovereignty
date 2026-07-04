@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
+import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
+import 'package:weight_sovereignty/src/domain/entity/food.dart';
+import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
-import 'package:weight_sovereignty/src/presentation/screens/settings/settings_hub_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_list_screen.dart';
 
 /// Main dashboard screen showing today's DailyLog summary.
@@ -22,7 +23,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    ref.read(dailyLogServiceProvider).getOrCreateForDay(DateTime.now());
   }
 
   void _navigateToWeightEntry() {
@@ -47,118 +47,110 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final todayLogAsync = ref.watch(dailyLogListProvider);
+    return todayLogAsync.when(
+      data: (logs) => _buildDashboard(logs),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, st) => Center(child: Text('Error: $e')),
+    );
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SettingsHubScreen(),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: todayLogAsync.when(
-        data: (logs) {
-          // Filter logs for selected date
-          final filteredLogs = logs.where((log) {
-            if (log.date == null) return false;
-            return log.date!.year == _selectedDate.year &&
-                log.date!.month == _selectedDate.month &&
-                log.date!.day == _selectedDate.day;
-          }).toList();
+  Widget _buildDashboard(List<DailyLog> logs) {
+    // Filter logs for selected date
+    final filteredLogs = logs.where((log) {
+      if (log.date == null) return false;
+      return log.date!.year == _selectedDate.year &&
+          log.date!.month == _selectedDate.month &&
+          log.date!.day == _selectedDate.day;
+    }).toList();
 
-          final todayLog = filteredLogs.isEmpty ? null : filteredLogs.first;
+    final todayLog = filteredLogs.isEmpty ? null : filteredLogs.first;
 
-          // Get weight from selected date
-          double? dayWeight;
-          int? bmr;
-          Calculation? calc;
+    // Get weight from selected date
+    double? dayWeight;
+    int? bmr;
+    Calculation? calc;
 
-          if (todayLog != null && todayLog.dailyLogBase != null) {
-            dayWeight = todayLog.bodyWeight;
-            bmr = todayLog.dailyLogBase!.bmrCaloriesKcal;
-            calc = todayLog.calculation;
-          }
+    if (todayLog != null && todayLog.dailyLogBase != null) {
+      dayWeight = todayLog.bodyWeight;
+      bmr = todayLog.dailyLogBase!.bmrCaloriesKcal;
+      calc = todayLog.calculation;
+    }
 
-          // Calculate delta from BMR
-          final intake = calc?.totalIntakeCaloriesKcal ?? 0;
-          final burn = calc?.totalBurnedCaloriesKcal ?? 0;
-          final netSurplus = (bmr ?? 0) + burn - (intake);
+    // Calculate net surplus/deficit
+    final intake = calc?.totalIntakeCaloriesKcal ?? 0;
+    final burn = calc?.totalBurnedCaloriesKcal ?? 0;
+    final netSurplus = (bmr ?? 0) + burn - (intake);
 
-          return CustomScrollView(
-            slivers: [
-              // Date navigation header
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left),
-                        onPressed: _previousDay,
-                      ),
-                      Expanded(
-                        child: Text(
-                          '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        onPressed: _nextDay,
-                      ),
-                    ],
+    return CustomScrollView(
+      slivers: [
+        // Date navigation header
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.chevron_left),
+                  onPressed: _previousDay,
+                ),
+                Expanded(
+                  child: Text(
+                    '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-
-              // Weight Card
-              SliverToBoxAdapter(
-                child: _WeightCard(
-                  weight: dayWeight,
-                  onPressEntry: _navigateToWeightEntry,
+                IconButton(
+                  icon: const Icon(Icons.chevron_right),
+                  onPressed: _nextDay,
                 ),
-              ),
+              ],
+            ),
+          ),
+        ),
 
-              const SizedBox(height: 8),
+        // Weight Card
+        SliverToBoxAdapter(
+          child: _WeightCard(
+            weight: dayWeight,
+            onPressEntry: _navigateToWeightEntry,
+          ),
+        ),
 
-              // Calories Overview Card
-              SliverToBoxAdapter(
-                child: _CalorieOverviewCard(
-                  bmr: bmr ?? 0,
-                  intake: intake,
-                  burn: burn,
-                  netSurplus: netSurplus,
-                ),
-              ),
+        const SizedBox(height: 8),
 
-              const SizedBox(height: 8),
+        // Calories Overview Card
+        SliverToBoxAdapter(
+          child: _CalorieOverviewCard(
+            bmr: bmr ?? 0,
+            intake: intake,
+            burn: burn,
+            netSurplus: netSurplus,
+          ),
+        ),
 
-              // Food List Section
-              SliverToBoxAdapter(
-                child: _FoodSection(foodIds: todayLog?.foodIds),
-              ),
+        const SizedBox(height: 8),
 
-              // Workout Summary Section
-              SliverToBoxAdapter(
-                child: _WorkoutSummary(workoutIds: todayLog?.workoutIds),
-              ),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-      ),
+        // Food List Section
+        SliverToBoxAdapter(
+          child: _FoodSection(
+            foodIds: todayLog?.foodIds,
+          ),
+        ),
+
+        // Workout Summary Section
+        SliverToBoxAdapter(
+          child: _WorkoutSummary(
+            workoutIds: todayLog?.workoutIds,
+          ),
+        ),
+      ],
     );
   }
 }
+
+// ─── Widgets ─────────────────────────────────────────────────────────────────
 
 /// Card displaying daily weight with entry option.
 class _WeightCard extends StatelessWidget {
@@ -291,8 +283,8 @@ class _CalorieOverviewCard extends StatelessWidget {
                     color: netSurplus > 0
                         ? Colors.redAccent
                         : netSurplus < 0
-                        ? Colors.blueAccent
-                        : Colors.white,
+                            ? Colors.blueAccent
+                            : Colors.white,
                   ),
                 ),
               ],
@@ -304,7 +296,7 @@ class _CalorieOverviewCard extends StatelessWidget {
   }
 }
 
-/// Section showing logged food items for today.
+/// Section showing logged food items for the selected date.
 class _FoodSection extends ConsumerWidget {
   final List<int?>? foodIds;
 
@@ -312,8 +304,8 @@ class _FoodSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final foodConfigAsync = ref.watch(foodConfigListProvider);
     final text = Theme.of(context).textTheme;
+    final foodIdsList = foodIds?.whereType<int>().toList() ?? [];
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -329,28 +321,65 @@ class _FoodSection extends ConsumerWidget {
                   'Food',
                   style: text.titleLarge?.copyWith(color: Colors.white70),
                 ),
-                Icon(
-                  Icons.add_circle_outline,
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
                   color: Theme.of(context).colorScheme.primary,
-                  size: 28,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const FoodConfigListScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
             const SizedBox(height: 12),
 
-            if (foodIds == null || foodIds!.isEmpty)
+            if (foodIdsList.isEmpty)
               Text(
                 'No food logged yet',
                 style: text.bodyMedium?.copyWith(color: Colors.white38),
               )
             else
-              ...foodIds!.whereType<int>().map(
-                (id) => _FoodItemTile(foodId: id, text: text),
+              FutureBuilder<List<Food>>(
+                future: ref
+                    .read(foodListProvider.notifier)
+                    .listByIds(foodIdsList),
+                builder: (ctx, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Text(
+                      'Error loading food: ${snapshot.error}',
+                      style: text.bodyMedium?.copyWith(color: Colors.redAccent),
+                    );
+                  }
+                  final foods = snapshot.data ?? <Food>[];
+                  if (foods.isEmpty) {
+                    return Text(
+                      'No food logged yet',
+                      style: text.bodyMedium?.copyWith(color: Colors.white38),
+                    );
+                  }
+                  return Column(
+                    children: [
+                      for (final food in foods)
+                        ListTile(
+                          title: Text(food.foodBase?.name ?? 'Unknown'),
+                          subtitle: Text(
+                            'Kcal: ${food.foodBase?.intakeCaloriesKcal ?? 0}, P: ${food.foodBase?.intakeProteinG ?? 0}g, C: ${food.foodBase?.intakeCarbsG ?? 0}g, F: ${food.foodBase?.intakeFatG ?? 0}g',
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                        ),
+                      const SizedBox(height: 8),
+                    ],
+                  );
+                },
               ),
 
-            const SizedBox(height: 8),
-
-            // Simple add food button → FoodConfigListScreen
+            // Add food button → FoodConfigListScreen (favorites/pick)
             FilledButton.tonalIcon(
               onPressed: () {
                 Navigator.of(context).push(
@@ -369,31 +398,26 @@ class _FoodSection extends ConsumerWidget {
   }
 }
 
-class _FoodItemTile extends StatelessWidget {
-  final int foodId;
-  final TextTheme text;
-
-  const _FoodItemTile({required this.foodId, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('Food $foodId'), // Would resolve to Food name in real impl
-      subtitle: Text('${foodId} kcal'),
-      trailing: const Icon(Icons.chevron_right),
-    );
+/// Helper to sum burned calories from a list of ExerciseBase.
+int _sumWorkoutBurn(List<ExerciseBase?>? exercises) {
+  int total = 0;
+  if (exercises == null) return total;
+  for (final ex in exercises) {
+    total += ex?.burnedCaloriesKcal ?? 0;
   }
+  return total;
 }
 
-/// Section showing logged workouts for today.
-class _WorkoutSummary extends StatelessWidget {
+/// Section showing logged workouts for the selected date.
+class _WorkoutSummary extends ConsumerWidget {
   final List<int?>? workoutIds;
 
   const _WorkoutSummary({required this.workoutIds});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
+    final workoutIdsList = workoutIds?.whereType<int>().toList() ?? [];
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -409,20 +433,69 @@ class _WorkoutSummary extends StatelessWidget {
                   'Workout',
                   style: text.titleLarge?.copyWith(color: Colors.white70),
                 ),
-                Icon(
-                  Icons.add_circle_outline,
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
                   color: Theme.of(context).colorScheme.primary,
-                  size: 28,
+                  onPressed: () {
+                    // TODO: open workout session / add existing workout
+                  },
                 ),
               ],
             ),
             const SizedBox(height: 12),
 
-            if (workoutIds == null || workoutIds!.isEmpty)
+            if (workoutIdsList.isEmpty)
               Text(
                 'No workouts logged yet',
                 style: text.bodyMedium?.copyWith(color: Colors.white38),
+              )
+            else
+              FutureBuilder<List<Workout>>(
+                future: ref
+                    .read(workoutListProvider.notifier)
+                    .listByIds(workoutIdsList),
+                builder: (ctx, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Text(
+                      'Error loading workouts: ${snapshot.error}',
+                      style: text.bodyMedium?.copyWith(color: Colors.redAccent),
+                    );
+                  }
+                  final workouts = snapshot.data ?? <Workout>[];
+                  if (workouts.isEmpty) {
+                    return Text(
+                      'No workouts logged yet',
+                      style: text.bodyMedium?.copyWith(color: Colors.white38),
+                    );
+                  }
+                  return Column(
+                    children: [
+                      for (final workout in workouts)
+                        ListTile(
+                          title: Text(
+                            workout.workoutBase?.name ?? 'Unknown Workout',
+                          ),
+                          subtitle: Text(
+                            'Burn: ${_sumWorkoutBurn(workout.exercises)} kcal',
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                        ),
+                      const SizedBox(height: 8),
+                    ],
+                  );
+                },
               ),
+
+            FilledButton.tonalIcon(
+              onPressed: () async {
+                // TODO: open workout session
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Start workout'),
+            ),
           ],
         ),
       ),
