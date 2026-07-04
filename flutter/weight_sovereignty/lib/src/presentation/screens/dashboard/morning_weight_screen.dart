@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
-import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 
 /// Screen for entering morning body weight.
 class MorningWeightScreen extends ConsumerStatefulWidget {
   const MorningWeightScreen({super.key});
 
   @override
-  ConsumerState<MorningWeightScreen> createState() => _MorningWeightScreenState();
+  ConsumerState<MorningWeightScreen> createState() =>
+      _MorningWeightScreenState();
 }
 
 class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
@@ -23,32 +23,16 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
   }
 
   Future<void> _loadCurrentDailyLog() async {
-    final logsAsync = ref.read(dailyLogListProvider);
-    final logs = logsAsync.value;
+    final now = DateTime.now();
+    final logListNotifier = ref.read(dailyLogListProvider.notifier);
+    final todayLog = await logListNotifier.getByCalendarDay(now);
 
-    if (logs != null) {
-      // Find today's log
-      final now = DateTime.now();
-      final todayLog = logs.firstWhere(
-        (log) => log.date?.year == now.year &&
-            log.date?.month == now.month &&
-            log.date?.day == now.day,
-        orElse: () => DailyLog(),
-      );
+    if (todayLog != null && todayLog.bodyWeight != null) {
+      _controller.text = todayLog.bodyWeight!.toString();
 
-      if (todayLog.bodyWeight != null) {
-        _controller.text = todayLog.bodyWeight!.toString();
-        // Find previous weight for delta
-        for (int i = 0; i < logs.length; i++) {
-          final prev = logs[i];
-          if (prev.date != null && prev.bodyWeight != null) {
-            final diff = prev.date!.difference(now);
-            if (diff.inDays > 0 && diff.inDays <= 365 * 10) {
-              _previousWeight = prev.bodyWeight;
-              break;
-            }
-          }
-        }
+      final yesterdayLog = await logListNotifier.getByCalendarDay(now.subtract(const Duration(days:1)));
+      if (yesterdayLog != null){
+        _previousWeight = yesterdayLog.bodyWeight ?? 0.0;
       }
     }
   }
@@ -72,28 +56,13 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
     }
 
     final now = DateTime.now();
-    final logsAsync = ref.read(dailyLogListProvider);
-    final logs = logsAsync.value;
+    final service = ref.read(dailyLogServiceProvider);
 
-    DailyLog? todayLog;
-    if (logs != null) {
-      todayLog = logs.firstWhere(
-        (log) => log.date?.year == now.year &&
-            log.date?.month == now.month &&
-            log.date?.day == now.day,
-        orElse: () => DailyLog(),
-      );
-    }
+    var todayLog = await service.getOrCreateForDay(now);
 
-    if (todayLog?.id == null) {
-      todayLog = DailyLog()
-        ..date = now
-        ..dailyLogBase = DailyLogBase();
-    }
 
-   // final updatedLog = await ref.read(dailyLogRepositoryProvider).save(
-   //   todayLog..bodyWeight = weight,
-   // );
+    // Save via service (handles weight + recalculation)
+    await service.saveBodyWeight(todayLog, weight);
 
     // Invalidate provider to refresh dashboard
     ref.invalidate(dailyLogListProvider);
@@ -115,9 +84,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Morning Weight'),
-      ),
+      appBar: AppBar(title: const Text('Morning Weight')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -134,7 +101,9 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
             TextField(
               controller: _controller,
               focusNode: FocusNode()..requestFocus(),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               style: text.displayLarge?.copyWith(fontSize: 48),
               decoration: const InputDecoration(
                 hintText: '0.0',
@@ -154,8 +123,8 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
                   color: _getWeight() > _previousWeight!
                       ? Colors.redAccent
                       : _getWeight() < _previousWeight!
-                          ? Colors.greenAccent
-                          : Colors.white,
+                      ? Colors.greenAccent
+                      : Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),

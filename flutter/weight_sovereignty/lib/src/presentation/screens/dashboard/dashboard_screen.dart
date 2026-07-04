@@ -4,6 +4,7 @@ import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/settings_hub_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_list_screen.dart';
 
 /// Main dashboard screen showing today's DailyLog summary.
 /// Shows weight, calorie overview, food list, and workout summary.
@@ -21,6 +22,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
+    ref.read(dailyLogServiceProvider).getOrCreateForDay(DateTime.now());
   }
 
   void _navigateToWeightEntry() {
@@ -53,7 +55,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const SettingsHubScreen()),
+              MaterialPageRoute<void>(
+                builder: (_) => const SettingsHubScreen(),
+              ),
             ),
           ),
         ],
@@ -346,12 +350,13 @@ class _FoodSection extends ConsumerWidget {
 
             const SizedBox(height: 8),
 
-            // Simple add food button
+            // Simple add food button → FoodConfigListScreen
             FilledButton.tonalIcon(
               onPressed: () {
-                // TODO: Navigate to FoodEntryScreen
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Food entry coming next')),
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const FoodConfigListScreen(),
+                  ),
                 );
               },
               icon: const Icon(Icons.add),

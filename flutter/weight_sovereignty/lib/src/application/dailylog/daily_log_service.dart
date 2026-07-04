@@ -2,10 +2,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
+import 'package:weight_sovereignty/src/domain/repo/dailylog_config_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/workout_repo.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
+
+/// Provider for DailyLogService.
+final dailyLogServiceProvider = Provider<DailyLogService>((ref) {
+  return DailyLogService(ref);
+});
 
 /// Service for DailyLog use cases.
 /// - Create a new DailyLog from a BMR preset (DailyLogConfig)
@@ -16,18 +22,39 @@ class DailyLogService {
 
   DailyLogService(this.ref);
 
-  DailyLogRepository get _dailyLogRepo =>
-      ref.read(dailyLogRepositoryProvider);
+  DailyLogConfigRepository get _dailyLogConfigRepo =>
+      ref.read(dailyLogConfigRepositoryProvider);
+
+  DailyLogRepository get _dailyLogRepo => ref.read(dailyLogRepositoryProvider);
   FoodRepository get _foodRepo => ref.read(foodRepositoryProvider);
   WorkoutRepository get _workoutRepo => ref.read(workoutRepositoryProvider);
+
+  /// Get today's DailyLog or silently create one with default BMR.
+  Future<DailyLog> getOrCreateForDay(DateTime day) async {
+    // Try to find existing log for the day
+    final todayLog = await _dailyLogRepo.getByCalendarDay(day);
+    if (todayLog != null) return todayLog;
+
+    final config = await _dailyLogConfigRepo.getAll();
+    var c = config.first;
+    c.bmrCaloriesKcal ??= 2000;
+
+    return createForDay(day, c);
+  }
 
   /// Create a new DailyLog for [day] using [bmrPreset] for BMR baseline.
   Future<DailyLog> createForDay(DateTime day, DailyLogConfig bmrPreset) async {
     final log = DailyLog()
       ..date = day
-      ..dailyLogBase = DailyLogBase()
-        ..name = bmrPreset.name
-        ..bmrCaloriesKcal = bmrPreset.bmrCaloriesKcal;
+      ..setBase = bmrPreset;
+
+    final yesterdayLog = await _dailyLogRepo.getByCalendarDay(
+      day.subtract(const Duration(days: 1)),
+    );
+    if (yesterdayLog != null) {
+      log.bodyWeight = yesterdayLog.bodyWeight;
+    }
+
     await _dailyLogRepo.save(log);
     return log;
   }
@@ -54,6 +81,9 @@ class DailyLogService {
 
     // Aggregate food macros
     for (int? foodId in foodIds.whereType<int>()) {
+      if (foodId == null) {
+        continue;
+      }
       final food = await _foodRepo.getById(foodId);
       if (food != null && food.foodBase != null) {
         totalIntake += food.foodBase!.intakeCaloriesKcal ?? 0;
@@ -65,6 +95,9 @@ class DailyLogService {
 
     // Aggregate workout burn
     for (int? workoutId in workoutIds.whereType<int>()) {
+      if (workoutId == null) {
+        continue;
+      }
       final workout = await _workoutRepo.getById(workoutId);
       if (workout != null && workout.exercises != null) {
         for (ExerciseBase? ex in workout.exercises!) {
@@ -92,8 +125,3 @@ class DailyLogService {
     return log;
   }
 }
-
-/// Provider for DailyLogService.
-final dailyLogServiceProvider = Provider<DailyLogService>((ref) {
-  return DailyLogService(ref);
-});
