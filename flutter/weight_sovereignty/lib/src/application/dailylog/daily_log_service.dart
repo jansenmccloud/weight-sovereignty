@@ -35,9 +35,14 @@ class DailyLogService {
     final todayLog = await _dailyLogRepo.getByCalendarDay(day);
     if (todayLog != null) return todayLog;
 
+    var c = DailyLogConfig()
+      ..name = 'Default'
+      ..bmrCaloriesKcal = 2000;
+
     final config = await _dailyLogConfigRepo.getAll();
-    var c = config.first;
-    c.bmrCaloriesKcal ??= 2000;
+    if (config.isNotEmpty && config.first.bmrCaloriesKcal != null) {
+      c = config.first;
+    }
 
     return createForDay(day, c);
   }
