@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
+import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dash_calorie_overview_card.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dash_food_section.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dash_weight_card.dart';
@@ -26,19 +27,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _loadCurrentDailyLog();
   }
 
-  Future<void> _loadCurrentDailyLog() async {
+  Future<List<DailyLog>> _loadCurrentDailyLog() async {
     final now = DateTime.now();
     await ref.read(dailyLogServiceProvider).getOrCreateForDay(now);
+    return await ref.refresh(dailyLogListProvider.future); // force refresh
   }
 
-  /*
   void _navigateToWeightEntry() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (ctx) => const MorningWeightScreen()),
     );
   }
-  */
 
   void _previousDay() {
     setState(() {
@@ -119,15 +119,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
 
         // Weight Card
-        //*
         SliverToBoxAdapter(
           child: WeightCard(
             weight: dayWeight,
-            onPressEntry: /*_navigateToWeightEntry*/(){},
+            onPressEntry: _navigateToWeightEntry,
           ),
         ),
-        //*/
-        const SizedBox(height: 8),
+        SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
         // Calories Overview Card
         SliverToBoxAdapter(
@@ -138,11 +136,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             netSurplus: netSurplus,
           ),
         ),
-
-        const SizedBox(height: 8),
+        SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
         // Food List Section
         SliverToBoxAdapter(child: FoodSection(foodIds: todayLog?.foodIds)),
+        SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
         // Workout Summary Section
         SliverToBoxAdapter(

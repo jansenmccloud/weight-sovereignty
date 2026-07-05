@@ -83,14 +83,6 @@ class WorkoutSummary extends ConsumerWidget {
                   );
                 },
               ),
-
-            FilledButton.tonalIcon(
-              onPressed: () async {
-                // TODO: open workout session
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Start workout'),
-            ),
           ],
         ),
       ),

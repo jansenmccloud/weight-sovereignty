@@ -33,6 +33,7 @@ class FoodSection extends ConsumerWidget {
                   icon: const Icon(Icons.add_circle_outline),
                   color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
+                    // TODO add food screen
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => const FoodConfigListScreen(),
@@ -86,19 +87,6 @@ class FoodSection extends ConsumerWidget {
                   );
                 },
               ),
-
-            // Add food button → FoodConfigListScreen (favorites/pick)
-            FilledButton.tonalIcon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const FoodConfigListScreen(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add food'),
-            ),
           ],
         ),
       ),
