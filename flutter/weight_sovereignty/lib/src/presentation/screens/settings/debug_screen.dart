@@ -47,8 +47,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
 
           Row(
             children: [
-              SizedBox(
-                width: 200,
+              Flexible(
                 child: DropdownButton<String>(
                   value: _selectedEntity,
                   dropdownColor: Colors.grey.shade800,
@@ -65,7 +64,19 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   },
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 8),
+              if (_selectedEntity == 'DailyLog') ...[
+                const SizedBox(
+                  width: 16,
+                  height: 36,
+                  child: VerticalDivider(color: Colors.grey, thickness: 1),
+                ),
+                TextButton.icon(
+                  onPressed: _loading ? null : _deleteAllDailyLogs,
+                  icon: const Icon(Icons.delete_sweep_outlined, color: Colors.redAccent, size: 18),
+                  label: const Text('Delete All DailyLogs', style: TextStyle(color: Colors.redAccent)),
+                ),
+              ],
               if (_loading)
                 const SizedBox(
                   width: 20,
@@ -145,6 +156,50 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _deleteAllDailyLogs() async {
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete all DailyLogs?'),
+        content: const Text('This will permanently remove all daily log entries. This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            child: const Text('Delete All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    final isarAsync = ref.read(isarProvider);
+    if (!isarAsync.hasValue) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Database not ready')),
+        );
+      }
+      return;
+    }
+
+    final isar = isarAsync.value!;
+    await isar.writeTxn(() => isar.collection<DailyLog>().clear());
+
+    if (!mounted) return;
+    setState(() { _entriesText = '(all DailyLogs deleted)'; });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All DailyLogs cleared')),
+    );
   }
 }
 
