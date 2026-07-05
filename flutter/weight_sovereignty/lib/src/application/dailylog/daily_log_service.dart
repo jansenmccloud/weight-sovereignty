@@ -36,7 +36,8 @@ class DailyLogService {
     return createForDay(day);
   }
 
-  /// Create a new DailyLog for [day] with BMR from first profile or default
+  /// Create a new DailyLog for [day] with BMR from first profile or default.
+  /// Uses upsert to ensure exactly one entry per calendar day.
   Future<DailyLog> createForDay(DateTime day) async {
     // take BMR from profile
     var bmrPreset = DailyLogConfig()
@@ -49,7 +50,6 @@ class DailyLogService {
     }
 
     final log = DailyLog()
-      ..date = day
       ..setBase = bmrPreset
       ..bodyWeight = 90.0;
 
@@ -60,13 +60,16 @@ class DailyLogService {
       log.bodyWeight = yesterdayLog.bodyWeight;
     }
 
-    await _dailyLogRepo.save(log);
-    return log;
+    return await _dailyLogRepo.upsertByCalendarDay(day, log);
   }
 
   /// Save body weight [weightKg] to an existing DailyLog.
+  /// Uses upsert by calendar day to prevent duplicates.
   Future<DailyLog> saveBodyWeight(DailyLog log, double weightKg) async {
     log.bodyWeight = weightKg;
+    if (log.date != null) {
+      return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
+    }
     await _dailyLogRepo.save(log);
     return log;
   }
@@ -120,12 +123,16 @@ class DailyLogService {
   }
 
   /// Full recalculate + persist pipeline.
+  /// Uses upsert by calendar day to prevent duplicates.
   Future<DailyLog> recalculateAndSave(DailyLog log) async {
     final calculation = await recalculateDailyLog(
       log.foodIds ?? [],
       log.workoutIds ?? [],
     );
     log.calculation = calculation;
+    if (log.date != null) {
+      return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
+    }
     await _dailyLogRepo.save(log);
     return log;
   }

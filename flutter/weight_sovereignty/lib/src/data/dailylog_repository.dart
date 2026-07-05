@@ -39,4 +39,16 @@ class IsarDailyLogRepository implements DailyLogRepository {
     await save(log);
     return (await getByCalendarDay(calendarDay))!;
   }
+
+  @override
+  Future<DailyLog> upsertByCalendarDay(DateTime day, DailyLog log) async {
+    final calendarDay = toCalendarDay(day);
+    log.date = calendarDay;
+    final existing = await getByCalendarDay(calendarDay);
+    if (existing != null) {
+      log.id = existing.id;
+    }
+    await _crud.put(log);
+    return (await getByCalendarDay(calendarDay))!;
+  }
 }
