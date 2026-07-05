@@ -29,34 +29,34 @@ class DailyLogService {
   FoodRepository get _foodRepo => ref.read(foodRepositoryProvider);
   WorkoutRepository get _workoutRepo => ref.read(workoutRepositoryProvider);
 
-  /// Get today's DailyLog or silently create one with default BMR.
+  /// Get today's DailyLog or silently create one with BMR from first profile or default
   Future<DailyLog> getOrCreateForDay(DateTime day) async {
-    // Try to find existing log for the day
     final todayLog = await _dailyLogRepo.getByCalendarDay(day);
     if (todayLog != null) return todayLog;
+    return createForDay(day);
+  }
 
-    var c = DailyLogConfig()
+  /// Create a new DailyLog for [day] with BMR from first profile or default
+  Future<DailyLog> createForDay(DateTime day) async {
+    // take BMR from profile
+    var bmrPreset = DailyLogConfig()
       ..name = 'Default'
       ..bmrCaloriesKcal = 2000;
 
     final config = await _dailyLogConfigRepo.getAll();
     if (config.isNotEmpty && config.first.bmrCaloriesKcal != null) {
-      c = config.first;
+      bmrPreset = config.first;
     }
 
-    return createForDay(day, c);
-  }
-
-  /// Create a new DailyLog for [day] using [bmrPreset] for BMR baseline.
-  Future<DailyLog> createForDay(DateTime day, DailyLogConfig bmrPreset) async {
     final log = DailyLog()
       ..date = day
-      ..setBase = bmrPreset;
+      ..setBase = bmrPreset
+      ..bodyWeight = 90.0;
 
-    final yesterdayLog = await _dailyLogRepo.getByCalendarDay(
-      day.subtract(const Duration(days: 1)),
-    );
-    if (yesterdayLog != null) {
+    // take bodyweight from day before if existing
+    final yesterday = day.subtract(const Duration(days: 1));
+    final yesterdayLog = await _dailyLogRepo.getByCalendarDay(yesterday);
+    if (yesterdayLog != null && yesterdayLog.bodyWeight != null) {
       log.bodyWeight = yesterdayLog.bodyWeight;
     }
 

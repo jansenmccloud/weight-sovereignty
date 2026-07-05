@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 
+// TODO delete screen after transferred to dashboard view
+
 /// Screen for entering morning body weight.
 class MorningWeightScreen extends ConsumerStatefulWidget {
   const MorningWeightScreen({super.key});
