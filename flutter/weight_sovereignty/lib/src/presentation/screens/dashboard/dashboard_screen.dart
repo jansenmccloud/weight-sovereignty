@@ -24,19 +24,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    _loadCurrentDailyLog();
+    _loadCurrentDailyLog(_selectedDate);
   }
 
-  Future<List<DailyLog>> _loadCurrentDailyLog() async {
-    final now = DateTime.now();
-    await ref.read(dailyLogServiceProvider).getOrCreateForDay(now);
+  Future<List<DailyLog>> _loadCurrentDailyLog(DateTime d) async {
+    await ref.read(dailyLogServiceProvider).getOrCreateForDay(d);
     return await ref.refresh(dailyLogListProvider.future); // force refresh
   }
 
-  void _navigateToWeightEntry() {
+  void _navigateToWeightEntry(DateTime selDate) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (ctx) => const MorningWeightScreen()),
+      MaterialPageRoute(
+        builder: (ctx) => MorningWeightScreen(selectedDate: selDate),
+      ),
     );
   }
 
@@ -122,7 +123,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         SliverToBoxAdapter(
           child: WeightCard(
             weight: dayWeight,
-            onPressEntry: _navigateToWeightEntry,
+            onPressEntry: () {
+              return _navigateToWeightEntry(_selectedDate);
+            },
           ),
         ),
         SliverToBoxAdapter(child: const SizedBox(height: 8)),

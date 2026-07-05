@@ -28,9 +28,12 @@ class WeightCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             if (weight != null)
-              Text(
-                '${weight!.toStringAsFixed(1)} kg',
-                style: text.displaySmall?.copyWith(fontSize: 32),
+              GestureDetector(
+                onTap: onPressEntry,
+                child: Text(
+                  '${weight!.toStringAsFixed(1)} kg',
+                  style: text.displaySmall?.copyWith(fontSize: 32),
+                ),
               )
             else
               GestureDetector(

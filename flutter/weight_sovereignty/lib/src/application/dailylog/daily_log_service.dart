@@ -31,9 +31,14 @@ class DailyLogService {
 
   /// Get today's DailyLog or silently create one with BMR from first profile or default
   Future<DailyLog> getOrCreateForDay(DateTime day) async {
-    final todayLog = await _dailyLogRepo.getByCalendarDay(day);
+    final todayLog = await getForDay(day);
     if (todayLog != null) return todayLog;
     return createForDay(day);
+  }
+
+   /// Get today's DailyLog 
+  Future<DailyLog?> getForDay(DateTime day) async {
+    return _dailyLogRepo.getByCalendarDay(day);
   }
 
   /// Create a new DailyLog for [day] with BMR from first profile or default.

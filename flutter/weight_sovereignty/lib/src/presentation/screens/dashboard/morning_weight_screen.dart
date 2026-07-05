@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
-
-// TODO delete screen after transferred to dashboard view
+import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 
 /// Screen for entering morning body weight.
 class MorningWeightScreen extends ConsumerStatefulWidget {
-  const MorningWeightScreen({super.key});
+  const MorningWeightScreen({super.key, this.selectedDate});
+
+  final DateTime? selectedDate;
 
   @override
   ConsumerState<MorningWeightScreen> createState() =>
@@ -21,22 +22,21 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _loadCurrentDailyLog();
+    _loadCurrentDailyLog(widget.selectedDate ?? DateTime.now());
   }
 
-  Future<void> _loadCurrentDailyLog() async {
-    final now = DateTime.now();
-    final logListNotifier = ref.read(dailyLogListProvider.notifier);
-    final todayLog = await logListNotifier.getByCalendarDay(now);
-
-    if (todayLog != null && todayLog.bodyWeight != null) {
+  Future<List<DailyLog>> _loadCurrentDailyLog(DateTime d) async {
+    final todayLog = await ref.read(dailyLogServiceProvider).getOrCreateForDay(d);
+    if (todayLog.bodyWeight != null) {
       _controller.text = todayLog.bodyWeight!.toString();
-
-      final yesterdayLog = await logListNotifier.getByCalendarDay(now.subtract(const Duration(days:1)));
-      if (yesterdayLog != null){
-        _previousWeight = yesterdayLog.bodyWeight ?? 0.0;
-      }
     }
+    final yesterdayLog = await ref.read(dailyLogServiceProvider).getForDay(
+      d.subtract(const Duration(days: 1)),
+    );
+    if (yesterdayLog != null){
+      _previousWeight = yesterdayLog.bodyWeight;
+    }
+    return await ref.refresh(dailyLogListProvider.future); // force refresh
   }
 
   @override
@@ -57,14 +57,13 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
       return;
     }
 
-    final now = DateTime.now();
+    final targetDate = widget.selectedDate ?? DateTime.now();
     final service = ref.read(dailyLogServiceProvider);
 
-    var todayLog = await service.getOrCreateForDay(now);
-
+    var targetLog = await service.getOrCreateForDay(targetDate);
 
     // Save via service (handles weight + recalculation)
-    await service.saveBodyWeight(todayLog, weight);
+    await service.saveBodyWeight(targetLog, weight);
 
     // Invalidate provider to refresh dashboard
     ref.invalidate(dailyLogListProvider);
@@ -73,7 +72,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Weight saved: ${weight.toStringAsFixed(1)} kg'),
+        content: Text('Weight saved: ${weight.toStringAsFixed(1)} kg for ${targetDate.toString().substring(0, 10)}'),
         duration: const Duration(seconds: 2),
       ),
     );
