@@ -16,7 +16,6 @@ class MorningWeightScreen extends ConsumerStatefulWidget {
 
 class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
   late TextEditingController _controller;
-  double? _previousWeight;
 
   @override
   void initState() {
@@ -29,12 +28,13 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
     final todayLog = await ref.read(dailyLogServiceProvider).getOrCreateForDay(d);
     if (todayLog.bodyWeight != null) {
       _controller.text = todayLog.bodyWeight!.toString();
-    }
-    final yesterdayLog = await ref.read(dailyLogServiceProvider).getForDay(
-      d.subtract(const Duration(days: 1)),
-    );
-    if (yesterdayLog != null){
-      _previousWeight = yesterdayLog.bodyWeight;
+    }else{
+      final yesterdayLog = await ref.read(dailyLogServiceProvider).getForDay(
+        d.subtract(const Duration(days: 1)),
+      );
+      if (yesterdayLog != null && yesterdayLog.bodyWeight != null){
+        _controller.text = yesterdayLog.bodyWeight!.toString();
+      }
     }
     return await ref.refresh(dailyLogListProvider.future); // force refresh
   }
@@ -116,22 +116,6 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
 
             const SizedBox(height: 16),
 
-            // Delta display
-            if (_previousWeight != null)
-              Text(
-                'Delta: ${(_getWeight() - _previousWeight!).toStringAsFixed(1)} kg',
-                style: text.titleLarge?.copyWith(
-                  color: _getWeight() > _previousWeight!
-                      ? Colors.redAccent
-                      : _getWeight() < _previousWeight!
-                      ? Colors.greenAccent
-                      : Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-            const Spacer(),
-
             // Save button (large tap target)
             FilledButton(
               onPressed: _saveWeight,
@@ -144,11 +128,5 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
         ),
       ),
     );
-  }
-
-  double _getWeight() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return 0;
-    return double.tryParse(text) ?? 0;
   }
 }
