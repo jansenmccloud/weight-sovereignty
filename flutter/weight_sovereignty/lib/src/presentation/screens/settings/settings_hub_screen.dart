@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/dailylog_config_list_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/settings/debug_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/exercise_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/workout_config_list_screen.dart';
@@ -36,6 +37,12 @@ class SettingsHubScreen extends StatelessWidget {
             title: const Text('Daily log profiles'),
             subtitle: const Text('BMR and baseline presets'),
             onTap: () => _open(context, const DailyLogConfigListScreen()),
+          ),
+          ListTile(
+            leading: const Icon(Icons.construction_outlined),
+            title: const Text('Debug menu'),
+            subtitle: const Text('Options for investigation'),
+            onTap: () => _open(context, const DebugScreen()),
           ),
         ],
       ),
