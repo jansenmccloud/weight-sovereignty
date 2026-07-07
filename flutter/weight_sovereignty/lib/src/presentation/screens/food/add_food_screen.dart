@@ -8,6 +8,20 @@ import 'package:weight_sovereignty/src/application/providers/repository_provider
 import 'package:weight_sovereignty/src/application/dailylog/daily_log_service.dart' show dailyLogServiceProvider;
 import 'package:weight_sovereignty/src/presentation/widgets/food_item_selector_widget.dart';
 
+
+// TODO broken:
+// - the deselect food actually doesn't remove the food from dailylog or delete the foodlog entry
+// - the add_food_screen should not contain the state of the daily log => already assigned food 
+// - => the food screen should only be there to add food on save
+// - => removing the food from daily log, hould be able in dashboard_screen where the food i also listed
+// - on food save => daily log is broken => weight and bmr and profile get deleted
+// - recalculation should be done outside of food add screen
+// - maybe we just want a crud food screen for selected date screen
+// - food screen shoud be as stupid as possible and should not have any writing concerns about the dailylog entries
+// - is the date already enought to decouple daily log from food entry? => maybe the food ids are not needed on dailylog side 
+// - we could simply ask for the food by date whenever we want to recalculate
+
+
 /// Screen to add eaten food to the current day's DailyLog.
 /// Shows a searchable list of FoodConfig presets. User adjusts amount before adding.
 class AddFoodScreen extends ConsumerStatefulWidget {
