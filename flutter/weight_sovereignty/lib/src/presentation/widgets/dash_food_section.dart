@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/food/food_list_notifier.dart';
+import 'package:weight_sovereignty/src/application/dailylog/dailylog_list_notifier.dart' show dailyLogListProvider;
+import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
-import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_list_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/food/add_food_screen.dart';
 
 /// Section showing logged food items for the selected date.
 class FoodSection extends ConsumerWidget {
@@ -32,13 +34,15 @@ class FoodSection extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
                   color: Theme.of(context).colorScheme.primary,
-                  onPressed: () {
-                    // TODO add food screen
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const FoodConfigListScreen(),
-                      ),
+                  onPressed: () async {
+                    final result = await Navigator.push<DailyLog?>(
+                      context,
+                      AddFoodScreen.route(targetDate: DateTime.now()),
                     );
+                    if (result != null) {
+                      // Trigger a refresh of the daily log provider to update the dashboard
+                      ref.invalidate(dailyLogListProvider);
+                    }
                   },
                 ),
               ],
