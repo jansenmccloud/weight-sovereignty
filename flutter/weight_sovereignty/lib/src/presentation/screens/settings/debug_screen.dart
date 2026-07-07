@@ -77,6 +77,18 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   label: const Text('Delete All DailyLogs', style: TextStyle(color: Colors.redAccent)),
                 ),
               ],
+              if (_selectedEntity == 'Food') ...[
+                const SizedBox(
+                  width: 16,
+                  height: 36,
+                  child: VerticalDivider(color: Colors.grey, thickness: 1),
+                ),
+                TextButton.icon(
+                  onPressed: _loading ? null : _deleteAllFoods,
+                  icon: const Icon(Icons.delete_sweep_outlined, color: Colors.redAccent, size: 18),
+                  label: const Text('Delete All Foods', style: TextStyle(color: Colors.redAccent)),
+                ),
+              ],
               if (_loading)
                 const SizedBox(
                   width: 20,
@@ -156,6 +168,50 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _deleteAllFoods() async {
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete all Food entries?'),
+        content: const Text('This will permanently remove all food entries. This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            child: const Text('Delete All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    final isarAsync = ref.read(isarProvider);
+    if (!isarAsync.hasValue) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Database not ready')),
+        );
+      }
+      return;
+    }
+
+    final isar = isarAsync.value!;
+    await isar.writeTxn(() => isar.collection<Food>().clear());
+
+    if (!mounted) return;
+    setState(() { _entriesText = '(all Food entries deleted)'; });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All Food entries cleared')),
+    );
   }
 
   Future<void> _deleteAllDailyLogs() async {
