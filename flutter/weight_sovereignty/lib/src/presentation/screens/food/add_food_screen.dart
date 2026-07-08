@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
-import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart'
     show foodConfigRepositoryProvider, foodRepositoryProvider;
-import 'package:weight_sovereignty/src/application/dailylog/daily_log_service.dart' show dailyLogServiceProvider;
 import 'package:weight_sovereignty/src/presentation/widgets/food_item_selector_widget.dart';
 
-
-// TODOs from manually testing:
-// - the deselect food actually doesn't remove the food from dailylog or delete the foodlog entry
-// - the add_food_screen should not contain the state of the daily log => already assigned food 
-// - => the food screen should only be there to add food on save
-// - => removing the food from daily log, should be able in dashboard_screen where the food i also listed
-// - on food save => daily log is broken => weight and bmr and profile get deleted
-// - recalculation should be done outside of food add screen
-// - maybe we just want a crud food screen for selected date screen
-// - food screen shoud be as stupid as possible and should not have any writing concerns about the dailylog entries
-// - is the date already enought to decouple daily log from food entry? => maybe the food ids are not needed on dailylog side 
-// - we could simply ask for the food by date whenever we want to recalculate
-// - to reduce complexity we can hard-code the unit of the food entries to 'g' for gramms => the unit field can be removed from food model and food config model
-// - the dashboard screen isn't refreshed when navigating back to it (e.g.from food add screen) => it should show the current daily log entry of the selected date
 
 
 /// Screen to add eaten food to the current day's DailyLog.
@@ -31,7 +15,7 @@ class AddFoodScreen extends ConsumerStatefulWidget {
 
   const AddFoodScreen({super.key, required this.targetDate});
 
-  static Route<DailyLog?> route({required DateTime targetDate}) {
+  static Route<void> route({required DateTime targetDate}) {
     return MaterialPageRoute(
       builder: (_) => AddFoodScreen(targetDate: targetDate),
       settings: const RouteSettings(name: 'add_food'),
@@ -48,7 +32,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
 
   /// All configured foods
   List<FoodConfig> _foods = [];
-  DailyLog? _dailyLog;
   bool _isLoading = true;
 
   /// Map of FoodConfig.id -> user-entered amount in grams (0 means not selected, >0 means selected).
@@ -70,10 +53,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       final foodsRepo = ref.read(foodConfigRepositoryProvider);
       final allFoods = await foodsRepo.getAll();
       
-      final dailyLogService = ref.read(dailyLogServiceProvider);
-      // getOrCreate handles the "no log today" case silently per requirements
-      final dailyLog = await dailyLogService.getOrCreateForDay(widget.targetDate);
-      
       if (!mounted) return;
 
       // Initialize amount overrides to FoodConfig.amount (default serving size) for new foods
@@ -84,7 +63,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       
       setState(() {
         _foods = allFoods;
-        _dailyLog = dailyLog;
         _isLoading = false;
       });
     } catch (e) {
@@ -126,7 +104,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading || _dailyLog == null) {
+    if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
@@ -257,20 +235,14 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     );
   }
 
-  /// Handle save: create Food entries for selected foods and link to DailyLog.
-  /// Idempotent: recalculates totals from all foodIds on DailyLog after save.
+  /// Handle save: create Food entries for selected foods. 
+  /// Completely decoupled from DailyLog — no writes to DailyLog, returns count of added foods.
   Future<void> _handleSave() async {
-    if (_dailyLog == null) return;
-
-    final dailyLog = _dailyLog!;
     final newEntries = <Food>[];
     
     for (final food in _foods) {
       final userAmount = _amountOverrides[food.id] ?? 0.0;
       if (userAmount <= 0) continue;
-
-      // Skip if already in log to avoid duplicates on re-save
-      if ((dailyLog.foodIds ?? []).contains(food.id)) continue;
 
       // Create Food entity with scaled macros and target date
       final foodEntity = _createFoodWithAmount(food, userAmount, widget.targetDate);
@@ -278,31 +250,19 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     }
 
     if (newEntries.isEmpty) {
-      Navigator.pop<DailyLog?>(context, dailyLog);
+      Navigator.pop(context);
       return;
     }
 
     try {
-      // Save new Food entries to Isar
+      // Save new Food entries to Isar (no DailyLog linking needed anymore)
       final foodRepo = ref.read(foodRepositoryProvider);
-      final newIds = <int?>[];
       for (final foodEntity in newEntries) {
-        final savedId = await foodRepo.save(foodEntity);
-        newIds.add(savedId);
+        await foodRepo.save(foodEntity);
       }
-
-      // Update DailyLog: merge existing IDs with new ones, then recalculate
-      final mergedIds = [...?dailyLog.foodIds, ...newIds];
-      final updatedLog = DailyLog()
-        ..date = dailyLog.date
-        ..foodIds = mergedIds
-        ..workoutIds = dailyLog.workoutIds;
-
-      // Trigger idempotent recalculation
-      final recalculatedLog = await ref.read(dailyLogServiceProvider).recalculateAndSave(updatedLog);
       
       if (mounted) {
-        Navigator.pop<DailyLog?>(context, recalculatedLog);
+        Navigator.pop(context);
       }
     } catch (e) {
       if (!mounted) return;
@@ -324,4 +284,5 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       ..foodBase!.intakeFatG = ((config.intakeFatG ?? 0).toDouble() * ratio).round()
       ..foodBase!.intakeCarbsG = ((config.intakeCarbsG ?? 0).toDouble() * ratio).round();
   }
+
 }

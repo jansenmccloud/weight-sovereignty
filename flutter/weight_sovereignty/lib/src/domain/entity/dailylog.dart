@@ -11,8 +11,6 @@ class DailyLog {
   DateTime? date;
 
   double? bodyWeight;
-  List<int?>? foodIds;
-  List<int?>? workoutIds;
   Calculation? calculation;
 
   @ignore

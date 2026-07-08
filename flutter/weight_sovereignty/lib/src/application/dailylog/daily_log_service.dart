@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
+import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_config_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
@@ -79,41 +80,38 @@ class DailyLogService {
     return log;
   }
 
-  /// Recalculate Calculation from linked food/workout IDs.
+  /// Recalculate Calculation from all foods and workouts for [day].
+  /// Queries entities directly by calendar date — no ID tracking needed.
   /// Returns the updated Calculation to be saved on DailyLog.
   /// Does NOT write to DB — caller decides when to persist.
-  Future<Calculation> recalculateDailyLog(
-    List<int?> foodIds,
-    List<int?> workoutIds,
-  ) async {
+  Future<Calculation> recalculateFromDate(DateTime day) async {
     int totalBurned = 0;
     int totalIntake = 0;
     double totalProtein = 0;
     double totalCarbs = 0;
     double totalFat = 0;
 
-    // Aggregate food macros
-    for (int? foodId in foodIds.whereType<int>()) {
-      if (foodId == null) {
-        continue;
-      }
-      final food = await _foodRepo.getById(foodId);
-      if (food != null && food.foodBase != null) {
-        totalIntake += food.foodBase!.intakeCaloriesKcal ?? 0;
-        totalProtein += food.foodBase!.intakeProteinG ?? 0;
-        totalCarbs += food.foodBase!.intakeCarbsG ?? 0;
-        totalFat += food.foodBase!.intakeFatG ?? 0;
+    // Aggregate food macros for the date
+    final foods = await _foodRepo.listByCalendarDay(day);
+    for (final food in foods) {
+      if (food.foodBase != null) {
+        final base = food.foodBase!;
+        // Scale macros by ratio of amount consumed vs. config amount
+        final amountG = base.amount ?? 100;
+        final scale = base.intakeCaloriesKcal != null && amountG > 0
+            ? (base.intakeCaloriesKcal!) / amountG
+            : 0;
+        totalIntake += ((base.intakeProteinG ?? 0) / amountG).ceil();
+        totalCarbs += ((base.intakeCarbsG ?? 0) / amountG).ceil();
+        totalFat += ((base.intakeFatG ?? 0) / amountG).ceil();
       }
     }
 
-    // Aggregate workout burn
-    for (int? workoutId in workoutIds.whereType<int>()) {
-      if (workoutId == null) {
-        continue;
-      }
-      final workout = await _workoutRepo.getById(workoutId);
-      if (workout != null && workout.exercises != null) {
-        for (ExerciseBase? ex in workout.exercises!) {
+    // Aggregate workout burn for the date
+    final workouts = await _workoutRepo.listByCalendarDay(day);
+    for (final workout in workouts) {
+      if (workout.exercises != null) {
+        for (final ex in workout.exercises!) {
           totalBurned += ex?.burnedCaloriesKcal ?? 0;
         }
       }
@@ -127,18 +125,37 @@ class DailyLogService {
       ..totalIntakeFatG = totalFat;
   }
 
-  /// Full recalculate + persist pipeline.
-  /// Uses upsert by calendar day to prevent duplicates.
-  Future<DailyLog> recalculateAndSave(DailyLog log) async {
-    final calculation = await recalculateDailyLog(
-      log.foodIds ?? [],
-      log.workoutIds ?? [],
-    );
-    log.calculation = calculation;
-    if (log.date != null) {
-      return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
+  /// Delete a food entry from a specific date.
+  Future<void> deleteFoodByDate(Food food, DateTime day) async {
+    // Delete the food entry directly by date match
+    final foods = await _foodRepo.listByCalendarDay(day);
+    for (final f in foods) {
+      if (f.id == food.id) {
+        await _foodRepo.deleteById(f.id!);
+        break;
+      }
     }
-    await _dailyLogRepo.save(log);
-    return log;
+  }
+
+  /// Query foods by name for auto-complete in add food screen.
+  Future<List<Food>> searchFoods(String query) async {
+    if (query.isEmpty) return [];
+    // Search across all config presets by name
+    final allFoods = await _foodRepo.getAll();
+    return allFoods.where((f) => 
+      (f.foodBase?.name ?? '').toLowerCase().contains(query.toLowerCase())
+    ).toList();
+  }
+
+  /// Full recalculate + persist pipeline.
+  /// Queries all foods/workouts for the log's date, recomputes totals, persists via upsert.
+  Future<DailyLog> recalculateAndSave(DailyLog log) async {
+    if (log.date == null) {
+      await _dailyLogRepo.save(log);
+      return log;
+    }
+    final calculation = await recalculateFromDate(log.date!);
+    log.calculation = calculation;
+    return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
   }
 }

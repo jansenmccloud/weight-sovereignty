@@ -48,7 +48,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
           if (items.isEmpty) {
             return Column(
               children: [
-                ?header,
+                if (header != null) header!,
                 const Expanded(
                   child: Center(child: Text('No entries yet')),
                 ),
@@ -57,7 +57,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
           }
           return Column(
             children: [
-              ?header,
+              if (header != null) header!,
               Expanded(
                 child: ListView.builder(
                   itemCount: items.length,

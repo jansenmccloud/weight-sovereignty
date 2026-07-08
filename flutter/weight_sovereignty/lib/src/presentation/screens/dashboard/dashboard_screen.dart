@@ -27,9 +27,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _loadCurrentDailyLog(_selectedDate);
   }
 
-  Future<List<DailyLog>> _loadCurrentDailyLog(DateTime d) async {
+  /// Loads (or creates) the DailyLog for [_selectedDate] and triggers a dashboard refresh.
+  Future<void> _loadCurrentDailyLog(DateTime d) async {
     await ref.read(dailyLogServiceProvider).getOrCreateForDay(d);
-    return await ref.refresh(dailyLogListProvider.future); // force refresh
+    // Refresh only the list provider (filters by selected date); keep the service fresh too.
+    await ref.refresh(dailyLogListProvider.future);
   }
 
   void _navigateToWeightEntry(DateTime selDate) {
@@ -41,20 +43,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  void _previousDay() {
+  void _previousDay() async {
     setState(() {
       _selectedDate = _selectedDate.subtract(const Duration(days: 1));
     });
+    await _loadCurrentDailyLog(_selectedDate);
   }
 
-  void _nextDay() {
+  void _nextDay() async {
     setState(() {
       _selectedDate = _selectedDate.add(const Duration(days: 1));
     });
+    await _loadCurrentDailyLog(_selectedDate);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Trigger load when _selectedDate changes (date navigation or navigate-back refresh).
     final todayLogAsync = ref.watch(dailyLogListProvider);
     return todayLogAsync.when(
       data: (logs) => _buildDashboard(logs),
@@ -63,6 +68,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
+  /// Builds the dashboard UI with filtered logs for [_selectedDate].
   Widget _buildDashboard(List<DailyLog> logs) {
     // Filter logs for selected date
     final filteredLogs = logs.where((log) {
@@ -71,6 +77,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           log.date!.month == _selectedDate.month &&
           log.date!.day == _selectedDate.day;
     }).toList();
+
+    // If no logs for the selected date, show an empty dashboard with a button to create one.
+    if (filteredLogs.isEmpty) {
+      return CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _loadCurrentDailyLog(_selectedDate);
+                },
+                child: const Text('Create entry for this date'),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     final todayLog = filteredLogs.isEmpty ? null : filteredLogs.first;
 
@@ -141,13 +166,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
-        // Food List Section
-        SliverToBoxAdapter(child: FoodSection(foodIds: todayLog?.foodIds)),
+        // Food List Section - pass targetDate instead of foodIds
+        SliverToBoxAdapter(child: FoodSection(targetDate: _selectedDate)),
         SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
-        // Workout Summary Section
+        // Workout Summary Section (placeholder for future implementation)
         SliverToBoxAdapter(
-          child: WorkoutSummary(workoutIds: todayLog?.workoutIds),
+          child: WorkoutSummary(),
         ),
       ],
     );
