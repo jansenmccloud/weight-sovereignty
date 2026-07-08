@@ -172,7 +172,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
         // Workout Summary Section (placeholder for future implementation)
         SliverToBoxAdapter(
-          child: WorkoutSummary(),
+          child: const WorkoutSummary(workoutIds: null),
         ),
       ],
     );

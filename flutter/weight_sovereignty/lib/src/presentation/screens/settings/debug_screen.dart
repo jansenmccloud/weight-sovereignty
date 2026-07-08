@@ -289,7 +289,7 @@ class _EntityFormatter {
         '${_kv('totalIntakeProteinG', e.calculation?.totalIntakeProteinG)}\n'
         '${_kv('totalIntakeCarbsG', e.calculation?.totalIntakeCarbsG)}\n'
         '${_kv('totalIntakeFatG', e.calculation?.totalIntakeFatG)}\n'
-        'foodIds=${e.foodIds} workoutIds=${e.workoutIds})';
+        ')';
   }
 
   String _formatFood(Food e) {
