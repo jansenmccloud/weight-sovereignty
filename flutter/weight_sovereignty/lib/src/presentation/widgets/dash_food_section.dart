@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weight_sovereignty/src/application/food/food_list_notifier.dart';
-import 'package:weight_sovereignty/src/application/dailylog/daily_log_service.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/presentation/screens/food/add_food_screen.dart';
@@ -31,19 +29,21 @@ class FoodSection extends ConsumerWidget {
                   'Food',
                   style: text.titleLarge?.copyWith(color: Colors.white70),
                 ),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      color: Theme.of(context).colorScheme.primary,
-                      onPressed: () async {
-                        await Navigator.push<void>(
-                          context,
-                          AddFoodScreen.route(targetDate: targetDate),
-                        );
-                        // Refresh food list and daily log after returning from add food
-                        ref.invalidate(foodListProvider);
-                        await ref.read(dailyLogServiceProvider).refreshToday();
-                      },
-                    ),
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline),
+                          color: Theme.of(context).colorScheme.primary,
+                          onPressed: () async {
+                            await Navigator.push<void>(
+                              context,
+                              AddFoodScreen.route(targetDate: targetDate),
+                            );
+                            // Refresh food list and daily log for the selected date after returning from add food
+                            ref.invalidate(foodListProvider);
+                            await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
+                            // Reload daily logs so dashboard shows updated macros/BMR
+                            await ref.read(dailyLogListProvider.notifier).refresh();
+                          },
+                        ),
               ],
             ),
             const SizedBox(height: 12),
@@ -104,9 +104,12 @@ class FoodSection extends ConsumerWidget {
                                   ),
                                 );
                                 if (confirmed == true) {
+                                  final service = ref.read(dailyLogServiceProvider);
                                   // Delete the food entry by date
-                                  await ref.read(dailyLogServiceProvider).deleteFoodByDate(food, targetDate);
-                                  // Refresh food list and daily log
+                                  await service.deleteFoodByDate(food, targetDate);
+                                  // Recalculate daily log and reload so dashboard shows updated macros/BMR
+                                  await service.refreshForDay(targetDate);
+                                  await ref.read(dailyLogListProvider.notifier).refresh();
                                   ref.invalidate(foodListProvider);
                                 }
                               },

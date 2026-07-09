@@ -91,19 +91,17 @@ class DailyLogService {
     double totalCarbs = 0;
     double totalFat = 0;
 
-    // Aggregate food macros for the date
+    // Aggregate food macros for the date.
+    // Food.intake* values are already scaled by _createFoodWithAmount in AddFoodScreen,
+    // so we sum them directly without any additional scaling.
     final foods = await _foodRepo.listByCalendarDay(day);
     for (final food in foods) {
       if (food.foodBase != null) {
         final base = food.foodBase!;
-        // Scale macros by ratio of amount consumed vs. config amount
-        final amountG = base.amount ?? 100;
-        final scale = base.intakeCaloriesKcal != null && amountG > 0
-            ? (base.intakeCaloriesKcal!) / amountG
-            : 0;
-        totalIntake += ((base.intakeProteinG ?? 0) / amountG).ceil();
-        totalCarbs += ((base.intakeCarbsG ?? 0) / amountG).ceil();
-        totalFat += ((base.intakeFatG ?? 0) / amountG).ceil();
+        totalIntake += (base.intakeCaloriesKcal ?? 0);
+        totalProtein += (base.intakeProteinG ?? 0).toDouble();
+        totalCarbs += (base.intakeCarbsG ?? 0).toDouble();
+        totalFat += (base.intakeFatG ?? 0).toDouble();
       }
     }
 
@@ -147,7 +145,7 @@ class DailyLogService {
     ).toList();
   }
 
-  /// Full recalculate + persist pipeline.
+   /// Full recalculate + persist pipeline.
   /// Queries all foods/workouts for the log's date, recomputes totals, persists via upsert.
   Future<DailyLog> recalculateAndSave(DailyLog log) async {
     if (log.date == null) {
@@ -157,5 +155,19 @@ class DailyLogService {
     final calculation = await recalculateFromDate(log.date!);
     log.calculation = calculation;
     return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
+  }
+
+  /// Get today's DailyLog, create if missing, and fully re-persist it (recalculate macros from all foods/workouts).
+  /// Use this to refresh the dashboard after a mutation (e.g. adding food, logging weight, completing workout set).
+  Future<DailyLog> refreshToday() async {
+    final today = DateTime.now();
+    DailyLog log = await getOrCreateForDay(today);
+    return recalculateAndSave(log);
+  }
+
+  /// Get a DailyLog by date, create if missing, and fully re-persist it (recalculate macros from all foods/workouts).
+  Future<DailyLog> refreshForDay(DateTime day) async {
+    DailyLog log = await getOrCreateForDay(day);
+    return recalculateAndSave(log);
   }
 }
