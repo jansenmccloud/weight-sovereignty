@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
-import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_config_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
@@ -17,7 +16,7 @@ final dailyLogServiceProvider = Provider<DailyLogService>((ref) {
 /// Service for DailyLog use cases.
 /// - Create a new DailyLog from a BMR preset (DailyLogConfig)
 /// - Save body weight
-/// - Recalculate Calculation from food/workout IDs
+/// - Recalculate Calculation from daily food/workout
 class DailyLogService {
   final Ref ref;
 
@@ -37,7 +36,7 @@ class DailyLogService {
     return createForDay(day);
   }
 
-   /// Get today's DailyLog 
+  /// Get today's DailyLog
   Future<DailyLog?> getForDay(DateTime day) async {
     return _dailyLogRepo.getByCalendarDay(day);
   }
@@ -73,15 +72,12 @@ class DailyLogService {
   /// Uses upsert by calendar day to prevent duplicates.
   Future<DailyLog> saveBodyWeight(DailyLog log, double weightKg) async {
     log.bodyWeight = weightKg;
-    if (log.date != null) {
-      return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
-    }
-    await _dailyLogRepo.save(log);
-    return log;
+    log.date ??= DateTime.now();
+    return await _dailyLogRepo.upsertByCalendarDay(log.date!, log);
   }
 
   /// Recalculate Calculation from all foods and workouts for [day].
-  /// Queries entities directly by calendar date — no ID tracking needed.
+  /// Queries entities directly by calendar date
   /// Returns the updated Calculation to be saved on DailyLog.
   /// Does NOT write to DB — caller decides when to persist.
   Future<Calculation> recalculateFromDate(DateTime day) async {
@@ -140,12 +136,16 @@ class DailyLogService {
     if (query.isEmpty) return [];
     // Search across all config presets by name
     final allFoods = await _foodRepo.getAll();
-    return allFoods.where((f) => 
-      (f.foodBase?.name ?? '').toLowerCase().contains(query.toLowerCase())
-    ).toList();
+    return allFoods
+        .where(
+          (f) => (f.foodBase?.name ?? '').toLowerCase().contains(
+            query.toLowerCase(),
+          ),
+        )
+        .toList();
   }
 
-   /// Full recalculate + persist pipeline.
+  /// Full recalculate + persist pipeline.
   /// Queries all foods/workouts for the log's date, recomputes totals, persists via upsert.
   Future<DailyLog> recalculateAndSave(DailyLog log) async {
     if (log.date == null) {

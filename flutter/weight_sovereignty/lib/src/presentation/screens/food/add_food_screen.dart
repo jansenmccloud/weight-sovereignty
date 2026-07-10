@@ -35,7 +35,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   bool _isLoading = true;
 
   /// Map of FoodConfig.id -> user-entered amount in grams (0 means not selected, >0 means selected).
-  final Map<int, double> _amountOverrides = {};
+  final Map<int, int> _amountOverrides = {};
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       // Initialize amount overrides to FoodConfig.amount (default serving size) for new foods
       final newFoods = allFoods.where((f) => !_amountOverrides.containsKey(f.id)).toList();
       for (final food in newFoods) {
-        _amountOverrides[food.id] = (food.amountG?.toDouble() ?? 100.0);
+        _amountOverrides[food.id] = (food.amountG ?? 100);
       }
       
       setState(() {
@@ -85,10 +85,10 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   }
 
   /// List of foods that are selected (amount > 0).
-  List<(FoodConfig, double)> get _selectedFoods {
-    final result = <(FoodConfig, double)>[];
+  List<(FoodConfig, int)> get _selectedFoods {
+    final result = <(FoodConfig, int)>[];
     for (final food in _foods) {
-      final amount = _amountOverrides[food.id] ?? 0.0;
+      final amount = _amountOverrides[food.id] ?? 0;
       if (amount > 0) {
         result.add((food, amount));
       }
@@ -159,7 +159,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final food = _filteredFoods[index];
-                  final amount = _amountOverrides[food.id] ?? (food.amountG?.toDouble() ?? 100.0);
+                  final amount = _amountOverrides[food.id] ?? (food.amountG ?? 100);
                    return FoodItemSelectorWidget(
                      foodConfig: food,
                      amount: amount,
@@ -170,7 +170,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
                      },
                      onDelete: () {
                        setState(() {
-                         _amountOverrides[food.id] = 0.0;
+                         _amountOverrides[food.id] = 0;
                        });
                      },
                    );
@@ -202,7 +202,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     // Calculate totals from selected foods using config.amount as base unit
     double totalCal = 0, totalProtein = 0, totalFat = 0, totalCarbs = 0;
     for (final (food, userAmount) in selected) {
-      final ratio = userAmount / (food.amountG?.toDouble() ?? 1.0);
+      final ratio = userAmount / (food.amountG ?? 1);
       final cal = ((food.intakeCaloriesKcal ?? 0).toDouble() * ratio).round();
       final protein = (food.intakeProteinG ?? 0) * ratio;
       final fat = (food.intakeFatG ?? 0) * ratio;
@@ -241,7 +241,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     final newEntries = <Food>[];
     
     for (final food in _foods) {
-      final userAmount = _amountOverrides[food.id] ?? 0.0;
+      final userAmount = _amountOverrides[food.id] ?? 0;
       if (userAmount <= 0) continue;
 
       // Create Food entity with scaled macros and target date
@@ -274,15 +274,16 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
 
   /// Create a Food entity from a FoodConfig preset with scaled macros and target date.
   /// The multiplier is computed as userAmount / config.amount (e.g., 200g / 100g = 2.0).
-  Food _createFoodWithAmount(FoodConfig config, double userAmount, DateTime targetDate) {
-    final ratio = userAmount / (config.amountG?.toDouble() ?? 1.0);
+  Food _createFoodWithAmount(FoodConfig config, int userAmount, DateTime targetDate) {
+    final ratio = userAmount / (config.amountG?.toDouble() ?? 100.0);
     return Food()
       ..date = targetDate
       ..setBase = config
       ..foodBase!.intakeCaloriesKcal = ((config.intakeCaloriesKcal ?? 0).toDouble() * ratio).round()
       ..foodBase!.intakeProteinG = ((config.intakeProteinG ?? 0).toDouble() * ratio).round()
       ..foodBase!.intakeFatG = ((config.intakeFatG ?? 0).toDouble() * ratio).round()
-      ..foodBase!.intakeCarbsG = ((config.intakeCarbsG ?? 0).toDouble() * ratio).round();
+      ..foodBase!.intakeCarbsG = ((config.intakeCarbsG ?? 0).toDouble() * ratio).round()
+      ..foodBase!.amountG = userAmount;
   }
 
 }

@@ -5,8 +5,8 @@ import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 /// When [amount] is 0, the food is considered deselected.
 class FoodItemSelectorWidget extends StatelessWidget {
   final FoodConfig foodConfig;
-  final double amount;
-  final ValueChanged<double> onAmountChanged;
+  final int amount;
+  final ValueChanged<int> onAmountChanged;
   final VoidCallback? onDelete;
 
   const FoodItemSelectorWidget({
@@ -61,7 +61,7 @@ class FoodItemSelectorWidget extends StatelessWidget {
               ? () {
                   // Tap body toggles to minimum if currently at 0
                   if (amount <= 0) {
-                    onAmountChanged(foodConfig.amountG?.toDouble() ?? 100.0);
+                    onAmountChanged(foodConfig.amountG ?? 100);
                   }
                 }
               : null,
@@ -143,12 +143,14 @@ class FoodItemSelectorWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Slider(
-                          value: amount,
+                          value: amount.toDouble(),
                           min: 0.0,
-                          max: (foodConfig.amountG?.toDouble() ?? 100.0) * 3,
+                          max: (foodConfig.amountG ?? 100) * 5,
                           divisions: 30,
                           label: '${amount.toStringAsFixed(0)}g',
-                          onChanged: onAmountChanged,
+                          onChanged: (double val) {
+                            onAmountChanged(val.round()); 
+                          },
                         ),
                       ],
                     ),
