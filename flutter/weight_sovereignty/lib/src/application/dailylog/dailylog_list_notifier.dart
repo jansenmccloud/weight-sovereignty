@@ -21,7 +21,4 @@ class DailyLogListNotifier extends AsyncNotifier<List<DailyLog>>
 
   Future<DailyLog?> getByCalendarDay(DateTime day) =>
       _dailyLogRepo.getByCalendarDay(day);
-
-  Future<DailyLog> getOrCreateForDay(DateTime day) =>
-      _dailyLogRepo.getOrCreateForDay(day);
 }

@@ -556,9 +556,9 @@ const FoodBaseSchema = Schema(
   name: r'FoodBase',
   id: -2052179654199074301,
   properties: {
-    r'amount': PropertySchema(
+    r'amountG': PropertySchema(
       id: 0,
-      name: r'amount',
+      name: r'amountG',
       type: IsarType.long,
     ),
     r'favorite': PropertySchema(
@@ -590,11 +590,6 @@ const FoodBaseSchema = Schema(
       id: 6,
       name: r'name',
       type: IsarType.string,
-    ),
-    r'unit': PropertySchema(
-      id: 7,
-      name: r'unit',
-      type: IsarType.string,
     )
   },
   estimateSize: _foodBaseEstimateSize,
@@ -615,12 +610,6 @@ int _foodBaseEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  {
-    final value = object.unit;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   return bytesCount;
 }
 
@@ -630,14 +619,13 @@ void _foodBaseSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.amount);
+  writer.writeLong(offsets[0], object.amountG);
   writer.writeBool(offsets[1], object.favorite);
   writer.writeLong(offsets[2], object.intakeCaloriesKcal);
   writer.writeLong(offsets[3], object.intakeCarbsG);
   writer.writeLong(offsets[4], object.intakeFatG);
   writer.writeLong(offsets[5], object.intakeProteinG);
   writer.writeString(offsets[6], object.name);
-  writer.writeString(offsets[7], object.unit);
 }
 
 FoodBase _foodBaseDeserialize(
@@ -647,14 +635,13 @@ FoodBase _foodBaseDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = FoodBase();
-  object.amount = reader.readLongOrNull(offsets[0]);
+  object.amountG = reader.readLongOrNull(offsets[0]);
   object.favorite = reader.readBoolOrNull(offsets[1]);
   object.intakeCaloriesKcal = reader.readLongOrNull(offsets[2]);
   object.intakeCarbsG = reader.readLongOrNull(offsets[3]);
   object.intakeFatG = reader.readLongOrNull(offsets[4]);
   object.intakeProteinG = reader.readLongOrNull(offsets[5]);
   object.name = reader.readStringOrNull(offsets[6]);
-  object.unit = reader.readStringOrNull(offsets[7]);
   return object;
 }
 
@@ -679,8 +666,6 @@ P _foodBaseDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 6:
       return (reader.readStringOrNull(offset)) as P;
-    case 7:
-      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -688,59 +673,59 @@ P _foodBaseDeserializeProp<P>(
 
 extension FoodBaseQueryFilter
     on QueryBuilder<FoodBase, FoodBase, QFilterCondition> {
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountIsNull() {
+  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'amount',
+        property: r'amountG',
       ));
     });
   }
 
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountIsNotNull() {
+  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'amount',
+        property: r'amountG',
       ));
     });
   }
 
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountEqualTo(
+  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGEqualTo(
       int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'amount',
+        property: r'amountG',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGreaterThan(
+  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'amount',
+        property: r'amountG',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountLessThan(
+  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'amount',
+        property: r'amountG',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountBetween(
+  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> amountGBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -748,7 +733,7 @@ extension FoodBaseQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'amount',
+        property: r'amountG',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1212,152 +1197,6 @@ extension FoodBaseQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unit',
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unit',
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unit',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unit',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unit',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FoodBase, FoodBase, QAfterFilterCondition> unitIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unit',
         value: '',
       ));
     });

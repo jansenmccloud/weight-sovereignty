@@ -61,7 +61,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
 
   String? _foodSubtitle(FoodConfig item) {
     final parts = <String>[];
-    if (item.amount != null) parts.add('${item.amount}${item.unit}');
+    if (item.amountG != null) parts.add('${item.amountG}g');
     if (item.intakeCaloriesKcal != null) {
       parts.add('${item.intakeCaloriesKcal} kcal');
     }

@@ -25,24 +25,23 @@ class FoodItemSelectorWidget extends StatelessWidget {
     final cal =
         ((foodConfig.intakeCaloriesKcal ?? 0).toDouble() *
                 amount /
-                (foodConfig.amount?.toDouble() ?? 100.0))
+                (foodConfig.amountG?.toDouble() ?? 100.0))
             .round();
     final protein =
         (foodConfig.intakeProteinG ?? 0) *
         amount /
-        (foodConfig.amount?.toDouble() ?? 100.0);
+        (foodConfig.amountG?.toDouble() ?? 100.0);
     final fat =
         (foodConfig.intakeFatG ?? 0) *
         amount /
-        (foodConfig.amount?.toDouble() ?? 100.0);
+        (foodConfig.amountG?.toDouble() ?? 100.0);
     final carbs =
         (foodConfig.intakeCarbsG ?? 0) *
         amount /
-        (foodConfig.amount?.toDouble() ?? 100.0);
+        (foodConfig.amountG?.toDouble() ?? 100.0);
 
     // Visual state: dimmed when deselected
     final isDeselected = amount <= 0;
-    final opacity = isDeselected ? 0.4 : 1.0;
     final backgroundColor = isDeselected
         ? Colors.transparent
         : theme.colorScheme.surfaceContainerHighest.withAlpha(
@@ -62,7 +61,7 @@ class FoodItemSelectorWidget extends StatelessWidget {
               ? () {
                   // Tap body toggles to minimum if currently at 0
                   if (amount <= 0) {
-                    onAmountChanged(foodConfig.amount?.toDouble() ?? 100.0);
+                    onAmountChanged(foodConfig.amountG?.toDouble() ?? 100.0);
                   }
                 }
               : null,
@@ -146,7 +145,7 @@ class FoodItemSelectorWidget extends StatelessWidget {
                         Slider(
                           value: amount,
                           min: 0.0,
-                          max: (foodConfig.amount?.toDouble() ?? 100.0) * 3,
+                          max: (foodConfig.amountG?.toDouble() ?? 100.0) * 3,
                           divisions: 30,
                           label: '${amount.toStringAsFixed(0)}g',
                           onChanged: onAmountChanged,

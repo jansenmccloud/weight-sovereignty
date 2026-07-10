@@ -13,6 +13,5 @@ class FoodConfig {
   int? intakeProteinG;
   int? intakeCarbsG;
   int? intakeFatG;
-  int? amount;
-  String? unit;
+  int? amountG;
 }

@@ -24,7 +24,6 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
   final _carbsController = TextEditingController();
   final _fatController = TextEditingController();
   final _amountController = TextEditingController();
-  final _unitController = TextEditingController();
   bool _favorite = false;
   bool _loading = true;
   bool _saving = false;
@@ -54,8 +53,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
     _proteinController.text = c.intakeProteinG?.toString() ?? '';
     _carbsController.text = c.intakeCarbsG?.toString() ?? '';
     _fatController.text = c.intakeFatG?.toString() ?? '';
-    _amountController.text = c.amount?.toString() ?? '';
-    _unitController.text = c.unit ?? '';
+    _amountController.text = c.amountG?.toString() ?? '';
   }
 
   @override
@@ -66,7 +64,6 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
     _carbsController.dispose();
     _fatController.dispose();
     _amountController.dispose();
-    _unitController.dispose();
     super.dispose();
   }
 
@@ -78,10 +75,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
       ..intakeProteinG = parseOptionalInt(_proteinController.text)
       ..intakeCarbsG = parseOptionalInt(_carbsController.text)
       ..intakeFatG = parseOptionalInt(_fatController.text)
-      ..amount = parseOptionalInt(_amountController.text)
-      ..unit = _unitController.text.trim().isEmpty
-          ? null
-          : _unitController.text.trim();
+      ..amountG = parseOptionalInt(_amountController.text);
     if (widget.configId != null) config.id = widget.configId!;
     return config;
   }
@@ -165,14 +159,9 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
           const SizedBox(height: 12),
           TextField(
             controller: _amountController,
-            decoration: const InputDecoration(labelText: 'Amount'),
+            decoration: const InputDecoration(labelText: 'Amount (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _unitController,
-            decoration: const InputDecoration(labelText: 'Unit'),
           ),
           const SizedBox(height: 12),
           Text(

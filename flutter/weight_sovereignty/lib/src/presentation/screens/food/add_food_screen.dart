@@ -58,7 +58,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       // Initialize amount overrides to FoodConfig.amount (default serving size) for new foods
       final newFoods = allFoods.where((f) => !_amountOverrides.containsKey(f.id)).toList();
       for (final food in newFoods) {
-        _amountOverrides[food.id] = (food.amount?.toDouble() ?? 100.0);
+        _amountOverrides[food.id] = (food.amountG?.toDouble() ?? 100.0);
       }
       
       setState(() {
@@ -159,7 +159,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final food = _filteredFoods[index];
-                  final amount = _amountOverrides[food.id] ?? (food.amount?.toDouble() ?? 100.0);
+                  final amount = _amountOverrides[food.id] ?? (food.amountG?.toDouble() ?? 100.0);
                    return FoodItemSelectorWidget(
                      foodConfig: food,
                      amount: amount,
@@ -202,7 +202,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     // Calculate totals from selected foods using config.amount as base unit
     double totalCal = 0, totalProtein = 0, totalFat = 0, totalCarbs = 0;
     for (final (food, userAmount) in selected) {
-      final ratio = userAmount / (food.amount?.toDouble() ?? 1.0);
+      final ratio = userAmount / (food.amountG?.toDouble() ?? 1.0);
       final cal = ((food.intakeCaloriesKcal ?? 0).toDouble() * ratio).round();
       final protein = (food.intakeProteinG ?? 0) * ratio;
       final fat = (food.intakeFatG ?? 0) * ratio;
@@ -275,7 +275,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   /// Create a Food entity from a FoodConfig preset with scaled macros and target date.
   /// The multiplier is computed as userAmount / config.amount (e.g., 200g / 100g = 2.0).
   Food _createFoodWithAmount(FoodConfig config, double userAmount, DateTime targetDate) {
-    final ratio = userAmount / (config.amount?.toDouble() ?? 1.0);
+    final ratio = userAmount / (config.amountG?.toDouble() ?? 1.0);
     return Food()
       ..date = targetDate
       ..setBase = config

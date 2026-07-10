@@ -301,8 +301,7 @@ class _EntityFormatter {
         '${_kv('proteinG', base?.intakeProteinG)}\n'
         '${_kv('carbsG', base?.intakeCarbsG)}\n'
         '${_kv('fatG', base?.intakeFatG)}\n'
-        '${_kv('amount', base?.amount)}\n'
-        '${_kv('unit', base?.unit)})';
+        '${_kv('amountG', base?.amountG)}\n';
   }
 
   String _formatWorkout(Workout e) {
@@ -327,7 +326,7 @@ class _EntityFormatter {
   }
 
   String _formatFoodConfig(FoodConfig e) {
-    return 'FoodConfig(id=${e.id}, name=${e.name}, favorite=${e.favorite}, calories=${e.intakeCaloriesKcal}, protein=${e.intakeProteinG}, carbs=${e.intakeCarbsG}, fat=${e.intakeFatG}, amount=${e.amount}, unit=${e.unit})';
+    return 'FoodConfig(id=${e.id}, name=${e.name}, favorite=${e.favorite}, calories=${e.intakeCaloriesKcal}, protein=${e.intakeProteinG}, carbs=${e.intakeCarbsG}, fat=${e.intakeFatG}, amountG=${e.amountG})';
   }
 
   String _formatWorkoutConfig(WorkoutConfig e) {

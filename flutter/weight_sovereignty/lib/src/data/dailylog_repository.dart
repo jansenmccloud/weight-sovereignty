@@ -30,17 +30,6 @@ class IsarDailyLogRepository implements DailyLogRepository {
   }
 
   @override
-  Future<DailyLog> getOrCreateForDay(DateTime day) async {
-    final calendarDay = toCalendarDay(day);
-    final existing = await getByCalendarDay(calendarDay);
-    if (existing != null) return existing;
-
-    final log = DailyLog()..date = calendarDay;
-    await save(log);
-    return (await getByCalendarDay(calendarDay))!;
-  }
-
-  @override
   Future<DailyLog> upsertByCalendarDay(DateTime day, DailyLog log) async {
     final calendarDay = toCalendarDay(day);
     log.date = calendarDay;
