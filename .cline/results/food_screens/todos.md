@@ -11,3 +11,16 @@
  - ✅ we could simply ask for the food by date whenever we want to recalculate
  - ✅ to reduce complexity we can hard-code the unit of the food entries to 'g' for grams => the unit field can be removed from food model and food config model
  - ✅ the dashboard screen isn't refreshed when navigating back to it (e.g. from food add screen) => it should show the current daily log entry of the selected date
+
+ ## TODOs next iteration
+  - remove separator line in add food screen
+  - in dash food section make list expandable
+  - make search field in add food sceen less dominant
+  - in add food screen the favorites should be marked and on top
+  - in calorie dash section: add planned deficite to dailyLogConfig and show in calorie view in net calc
+  - change red color to yellow
+  - change blue color accent to purple
+  - decrease font size of weight number and center align it, with dot dash round border 
+  - continue with workout add screen
+  - workout dash section should not only have delete but als edit action button
+  - workout edit mode is the same like the workout mode
