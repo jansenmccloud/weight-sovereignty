@@ -4,6 +4,7 @@ import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart'
     show foodConfigRepositoryProvider, foodRepositoryProvider;
+import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/food_item_selector_widget.dart';
 
 
@@ -36,6 +37,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
 
   /// Map of FoodConfig.id -> user-entered amount in grams (0 means not selected, >0 means selected).
   final Map<int, int> _amountOverrides = {};
+  final Map<int, int> _selectedFoodIds = {};
 
   @override
   void initState() {
@@ -82,18 +84,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       final name = food.name?.toLowerCase() ?? '';
       return name.contains(query);
     }).toList();
-  }
-
-  /// List of foods that are selected (amount > 0).
-  List<(FoodConfig, int)> get _selectedFoods {
-    final result = <(FoodConfig, int)>[];
-    for (final food in _foods) {
-      final amount = _amountOverrides[food.id] ?? 0;
-      if (amount > 0) {
-        result.add((food, amount));
-      }
-    }
-    return result;
   }
 
   @override
@@ -153,8 +143,8 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
               child: ListView.separated(
                 itemCount: _filteredFoods.length,
                 separatorBuilder: (context, index) => Divider(
-                  height: 1,
-                  thickness: 1,
+                  height: 0,
+                  thickness: 0,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha((255 * 0.1).round()),
                 ),
                 itemBuilder: (context, index) {
@@ -168,68 +158,20 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
                          _amountOverrides[food.id] = value;
                        });
                      },
-                     onDelete: () {
+                     onSelect: () {
                        setState(() {
-                         _amountOverrides[food.id] = 0;
+                         _selectedFoodIds[food.id] = 1;
+                       });
+                     },
+                     onDeselect: () {
+                       setState(() {
+                         _selectedFoodIds[food.id] = 0;
                        });
                      },
                    );
                 },
               ),
             ),
-        ],
-      ),
-      // Summary bar showing selected foods and totals
-      bottomNavigationBar: _buildBottomBar(context),
-    );
-  }
-
-  Widget _buildBottomBar(BuildContext context) {
-    final selected = _selectedFoods;
-    if (selected.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: Text(
-          'Select food to add',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
-    }
-
-    // Calculate totals from selected foods using config.amount as base unit
-    double totalCal = 0, totalProtein = 0, totalFat = 0, totalCarbs = 0;
-    for (final (food, userAmount) in selected) {
-      final ratio = userAmount / (food.amountG ?? 1);
-      final cal = ((food.intakeCaloriesKcal ?? 0).toDouble() * ratio).round();
-      final protein = (food.intakeProteinG ?? 0) * ratio;
-      final fat = (food.intakeFatG ?? 0) * ratio;
-      final carbs = (food.intakeCarbsG ?? 0) * ratio;
-      totalCal += cal;
-      totalProtein += protein;
-      totalFat += fat;
-      totalCarbs += carbs;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '${selected.length} item${selected.length > 1 ? 's' : ''} selected',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '+${totalCal.round()} kcal · P:${totalProtein.round()}g F:${totalFat.round()}g C:${totalCarbs.round()}g',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
         ],
       ),
     );
@@ -241,6 +183,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     final newEntries = <Food>[];
     
     for (final food in _foods) {
+      if (!_selectedFoodIds.containsKey(food.id) || _selectedFoodIds[food.id] == 0) continue;
       final userAmount = _amountOverrides[food.id] ?? 0;
       if (userAmount <= 0) continue;
 
@@ -277,7 +220,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   Food _createFoodWithAmount(FoodConfig config, int userAmount, DateTime targetDate) {
     final ratio = userAmount / (config.amountG?.toDouble() ?? 100.0);
     return Food()
-      ..date = targetDate
+      ..date = toCalendarDay(targetDate)
       ..setBase = config
       ..foodBase!.intakeCaloriesKcal = ((config.intakeCaloriesKcal ?? 0).toDouble() * ratio).round()
       ..foodBase!.intakeProteinG = ((config.intakeProteinG ?? 0).toDouble() * ratio).round()

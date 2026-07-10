@@ -2,51 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 
 /// Widget for selecting a food and adjusting its amount.
-/// When [amount] is 0, the food is considered deselected.
-class FoodItemSelectorWidget extends StatelessWidget {
+class FoodItemSelectorWidget extends StatefulWidget {
   final FoodConfig foodConfig;
   final int amount;
   final ValueChanged<int> onAmountChanged;
-  final VoidCallback? onDelete;
+  final VoidCallback onSelect;
+  final VoidCallback onDeselect;
 
   const FoodItemSelectorWidget({
     super.key,
     required this.foodConfig,
     required this.amount,
     required this.onAmountChanged,
-    this.onDelete,
+    required this.onSelect,
+    required this.onDeselect,
   });
 
   @override
+  State<FoodItemSelectorWidget> createState() => _FoodItemSelectorWidgetState();
+}
+
+class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
+  bool isChecked = false;
+
+  @override
   Widget build(BuildContext context) {
+    final FoodConfig foodConfig = widget.foodConfig;
+    final int amount = widget.amount;
+    final ValueChanged<int> onAmountChanged = widget.onAmountChanged;
+    final VoidCallback onSelect = widget.onSelect;
+    final VoidCallback onDeselect = widget.onDeselect;
     final theme = Theme.of(context);
 
     // FoodConfig stores macros directly (no foodBase getter)
     final cal =
         ((foodConfig.intakeCaloriesKcal ?? 0).toDouble() *
                 amount /
-                (foodConfig.amountG?.toDouble() ?? 100.0))
+                (foodConfig.amountG ?? 100))
             .round();
     final protein =
-        (foodConfig.intakeProteinG ?? 0) *
-        amount /
-        (foodConfig.amountG?.toDouble() ?? 100.0);
+        (foodConfig.intakeProteinG ?? 0) * amount / (foodConfig.amountG ?? 100);
     final fat =
-        (foodConfig.intakeFatG ?? 0) *
-        amount /
-        (foodConfig.amountG?.toDouble() ?? 100.0);
+        (foodConfig.intakeFatG ?? 0) * amount / (foodConfig.amountG ?? 100);
     final carbs =
-        (foodConfig.intakeCarbsG ?? 0) *
-        amount /
-        (foodConfig.amountG?.toDouble() ?? 100.0);
+        (foodConfig.intakeCarbsG ?? 0) * amount / (foodConfig.amountG ?? 100);
 
-    // Visual state: dimmed when deselected
-    final isDeselected = amount <= 0;
-    final backgroundColor = isDeselected
-        ? Colors.transparent
-        : theme.colorScheme.surfaceContainerHighest.withAlpha(
-            (255 * 0.3).round(),
-          );
+    final backgroundColor = theme.colorScheme.surfaceContainerHighest.withAlpha(
+      (255 * 0.3).round(),
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -57,14 +60,11 @@ class FoodItemSelectorWidget extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: !isDeselected
-              ? () {
-                  // Tap body toggles to minimum if currently at 0
-                  if (amount <= 0) {
-                    onAmountChanged(foodConfig.amountG ?? 100);
-                  }
-                }
-              : null,
+          onTap: () {
+            if (amount <= 0) {
+              onAmountChanged(foodConfig.amountG ?? 100);
+            }
+          },
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -73,28 +73,6 @@ class FoodItemSelectorWidget extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Food icon
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: isDeselected
-                        ? theme.colorScheme.onSurface.withAlpha(
-                            (255 * 0.1).round(),
-                          )
-                        : theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.restaurant_menu,
-                    color: isDeselected
-                        ? theme.colorScheme.onSurface.withAlpha(
-                            (255 * 0.3).round(),
-                          )
-                        : theme.colorScheme.onPrimaryContainer,
-                    size: 28,
-                  ),
-                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -104,76 +82,63 @@ class FoodItemSelectorWidget extends StatelessWidget {
                         foodConfig.name ?? 'Unnamed Food',
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: theme.colorScheme.onSurface,
-                          decoration: isDeselected
-                              ? TextDecoration.lineThrough
-                              : null,
                         ),
                       ),
                       const SizedBox(height: 2),
-                      if (isDeselected)
-                        Text(
-                          'Tapped to deselect — set amount > 0 to add',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        )
-                      else
-                        Text(
-                          '${cal.toStringAsFixed(0)} kcal · P:${protein.toStringAsFixed(1)}g F:${fat.toStringAsFixed(1)}g C:${carbs.toStringAsFixed(1)}g',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withAlpha(
-                              (255 * 0.7).round(),
-                            ),
+                      Text(
+                        '${cal.toStringAsFixed(0)} kcal\nP: ${protein.toStringAsFixed(0)}g\nF: ${fat.toStringAsFixed(0)}g\nC: ${carbs.toStringAsFixed(0)}g',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withAlpha(
+                            (255 * 0.7).round(),
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),
                 // Amount controls (only when selected)
-                if (!isDeselected)
-                  SizedBox(
-                    width: 100,
-                    child: Column(
-                      children: [
-                        Text(
-                          '${amount.toStringAsFixed(0)}g',
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: theme.colorScheme.primary,
-                          ),
+                SizedBox(
+                  width: 200,
+                  child: Column(
+                    children: [
+                      Text(
+                        '${amount.toStringAsFixed(0)}g',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                         ),
-                        const SizedBox(height: 2),
-                        Slider(
-                          value: amount.toDouble(),
-                          min: 0.0,
-                          max: (foodConfig.amountG ?? 100) * 5,
-                          divisions: 30,
-                          label: '${amount.toStringAsFixed(0)}g',
-                          onChanged: (double val) {
-                            onAmountChanged(val.round()); 
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                // Delete button
-                if (onDelete != null)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: isDeselected
-                            ? theme.colorScheme.onSurface.withAlpha(
-                                (255 * 0.2).round(),
-                              )
-                            : theme.colorScheme.error,
-                        size: 24,
                       ),
-                      onPressed: onDelete,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
+                      const SizedBox(height: 2),
+                      Slider(
+                        value: amount.toDouble(),
+                        min: 0.0,
+                        max: (foodConfig.amountG ?? 100) * 5,
+                        divisions: 100,
+                        label: '${amount.toStringAsFixed(0)}g',
+                        onChanged: (double val) {
+                          onAmountChanged(val.round());
+                        },
+                      ),
+                    ],
                   ),
+                ),
+                // Checkbox
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Checkbox(
+                    checkColor: Colors.white,
+                    value: isChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isChecked = value!;
+                      });
+                      if (value!) {
+                        onSelect();
+                      } else {
+                        onDeselect();
+                      }
+                    },
+                  ),
+                ),
               ],
             ),
           ),

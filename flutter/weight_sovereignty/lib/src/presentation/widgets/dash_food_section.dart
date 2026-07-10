@@ -29,24 +29,24 @@ class FoodSection extends ConsumerWidget {
                   'Food',
                   style: text.titleLarge?.copyWith(color: Colors.white70),
                 ),
-                        IconButton(
-                          icon: const Icon(Icons.add_circle_outline),
-                          color: Theme.of(context).colorScheme.primary,
-                          onPressed: () async {
-                            await Navigator.push<void>(
-                              context,
-                              AddFoodScreen.route(targetDate: targetDate),
-                            );
-                            // Refresh food list and daily log for the selected date after returning from add food
-                            ref.invalidate(foodListProvider);
-                            await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
-                            // Reload daily logs so dashboard shows updated macros/BMR
-                            await ref.read(dailyLogListProvider.notifier).refresh();
-                          },
-                        ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () async {
+                    await Navigator.push<void>(
+                      context,
+                      AddFoodScreen.route(targetDate: targetDate),
+                    );
+                    // Refresh food list and daily log for the selected date after returning from add food
+                    ref.invalidate(foodListProvider);
+                    await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
+                    // Reload daily logs so dashboard shows updated macros/BMR
+                    await ref.read(dailyLogListProvider.notifier).refresh();
+                  },
+                ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
             FutureBuilder<List<Food>>(
               future: ref
@@ -114,11 +114,10 @@ class FoodSection extends ConsumerWidget {
                                 }
                               },
                             ),
-                            const Icon(Icons.chevron_right),
                           ],
                         ),
                       ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                   ],
                 );
               },

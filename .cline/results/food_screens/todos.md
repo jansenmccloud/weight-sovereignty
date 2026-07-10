@@ -1,10 +1,10 @@
 ## TODOs from manually testing:
- - the deselect food actually doesn't remove the food from dailylog or delete the foodlog entry
+ - ✅ the deselect food actually doesn't remove the food from dailylog or delete the foodlog entry
  - ✅ the add_food_screen should not contain the state of the daily log => already assigned food 
- - => the food screen should only be there to add food on save
- - => removing the food from daily log, should be able in dashboard_screen where the food i also listed
+ - ✅ => the food screen should only be there to add food on save
+ - ✅ => removing the food from daily log, should be able in dashboard_screen where the food i also listed
  - ✅ on food save => daily log is broken => weight and bmr and profile get deleted
- - recalculation should be done outside of food add screen
+ - ✅ recalculation should be done outside of food add screen
  - ✅ maybe we just want a crud food screen for selected date screen
  - ✅ food screen shoud be as stupid as possible and should not have any writing concerns about the dailylog entries
  - ✅ is the date already enought to decouple daily log from food entry? => maybe the food ids are not needed on dailylog side 
