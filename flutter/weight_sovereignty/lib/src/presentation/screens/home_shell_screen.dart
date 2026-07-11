@@ -8,11 +8,13 @@ class HomeShellScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Weight Sovereignty'),
-      actions: [
-          IconButton( icon: const Icon(Icons.settings_outlined),
-          tooltip: 'Presets & settings',
-          onPressed: () {
+      appBar: AppBar(
+        title: const Text('Weight Sovereignty', style:TextStyle(color: Colors.deepPurple)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Presets & settings',
+            onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (_) => const SettingsHubScreen(),
@@ -20,7 +22,7 @@ class HomeShellScreen extends StatelessWidget {
               );
             },
           ),
-      ],
+        ],
       ),
       body: const DashboardScreen(),
     );

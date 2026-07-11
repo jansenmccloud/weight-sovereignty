@@ -75,10 +75,10 @@ class CalorieOverviewCard extends StatelessWidget {
                   style: text.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: netSurplus > 0
-                        ? Colors.redAccent
+                        ? Colors.yellowAccent
                         : netSurplus < 0
-                        ? Colors.blueAccent
-                        : Colors.white,
+                        ? Colors.redAccent
+                        : Colors.green,
                   ),
                 ),
               ],

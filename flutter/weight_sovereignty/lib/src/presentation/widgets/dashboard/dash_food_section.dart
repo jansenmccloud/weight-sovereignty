@@ -31,7 +31,7 @@ class FoodSection extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.deepPurple,
                   onPressed: () async {
                     await Navigator.push<void>(
                       context,
@@ -73,7 +73,7 @@ class FoodSection extends ConsumerWidget {
                   children: [
                     for (final food in foods)
                       ListTile(
-                        title: Text(food.foodBase?.name ?? 'Unknown'),
+                        title: Text('${food.foodBase?.name ?? 'Unknown'} · ${food.foodBase?.amountG ?? 100}g'),
                         subtitle: Text(
                           'Kcal: ${food.foodBase?.intakeCaloriesKcal ?? 0}, P: ${food.foodBase?.intakeProteinG ?? 0}g, C: ${food.foodBase?.intakeCarbsG ?? 0}g, F: ${food.foodBase?.intakeFatG ?? 0}g',
                         ),
@@ -83,7 +83,8 @@ class FoodSection extends ConsumerWidget {
                             // Delete button for this food entry
                             IconButton(
                               icon: const Icon(Icons.delete_outline),
-                              color: Colors.redAccent,
+                              color: Colors.yellowAccent,
+                              iconSize: 20.0,
                               onPressed: () async {
                                 final confirmed = await showDialog<bool>(
                                   context: context,

@@ -104,7 +104,10 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
         actions: [
           TextButton(
             onPressed: _handleSave,
-            child: const Text('Save'),
+            child: const Text(
+              'Save',
+              style: TextStyle(color: Colors.deepPurple),
+              ),
           ),
         ],
       ),

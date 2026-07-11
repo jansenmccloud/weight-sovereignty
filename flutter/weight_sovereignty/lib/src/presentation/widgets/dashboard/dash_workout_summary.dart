@@ -30,7 +30,7 @@ class WorkoutSummary extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.deepPurple,
                   onPressed: () {
                     // TODO: open workout session / add existing workout
                   },

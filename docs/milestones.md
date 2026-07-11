@@ -27,14 +27,11 @@
  - ✅ the dashboard screen isn't refreshed when navigating back to it (e.g. from food add screen) => it should show the current daily log entry of the selected date
 
  ## TODOs UI improvements
-
- - make search field in add food sceen less dominant
- - change red color to yellow
- - change blue color accent to purple
- - change color: under goal= white, over goal= yellow
- - show amount in dash food item
- - title purple
- - decrease font size of weight number and center align it, with dot dash round border 
+ - ✅ change red color to yellow
+ - ✅ change blue color accent to purple
+ - ✅ change color: under goal= white, over goal= yellow
+ - ✅ show amount in dash food item
+ - ✅ title purple
 
 ## TODOs Features
  - in calorie dash section: add planned deficite to dailyLogConfig and show in calorie view in net calc
@@ -48,7 +45,10 @@
 
 ## TODOs
  - refactor: move calc logic to service layer
+ - refactor: move colors to primary profile to zentralize
  - remove separator line in add food screen
+ - make search field in add food sceen less dominant
+ - decrease font size of weight number and center align it, with dot dash round border 
  - in add food screen the favorites should be marked and on top
  - weight week avg, 30-day avg
  - show number of day logs 

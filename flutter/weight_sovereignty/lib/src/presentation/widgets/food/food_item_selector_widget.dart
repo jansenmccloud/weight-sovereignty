@@ -34,6 +34,10 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
     final VoidCallback onDeselect = widget.onDeselect;
     final theme = Theme.of(context);
 
+    Color getColor(Set<WidgetState> states) {
+      return Colors.deepPurple;
+    }
+
     // FoodConfig stores macros directly (no foodBase getter)
     final cal =
         ((foodConfig.intakeCaloriesKcal ?? 0).toDouble() *
@@ -104,11 +108,13 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
                       Text(
                         '${amount.toStringAsFixed(0)}g',
                         style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: Colors.deepPurple,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Slider(
+                        thumbColor: Colors.deepPurple,
+                        activeColor: Colors.deepPurple,
                         value: amount.toDouble(),
                         min: 0.0,
                         max: (foodConfig.amountG ?? 100) * 5,
@@ -125,7 +131,9 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Checkbox(
-                    checkColor: Colors.white,
+                    checkColor: Colors.yellowAccent,
+                    fillColor: WidgetStateProperty.resolveWith(getColor),
+                    focusColor: Colors.yellowAccent,
                     value: isChecked,
                     onChanged: (bool? value) {
                       setState(() {
