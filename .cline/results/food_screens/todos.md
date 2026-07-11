@@ -24,3 +24,22 @@
   - continue with workout add screen
   - workout dash section should not only have delete but als edit action button
   - workout edit mode is the same like the workout mode
+
+
+
+move todos to docs
+
+TODO
+goal to profile: defizit, protein, fat, carbs
+show macros details on screen
+change color: under goal= white, over goal= yellow
+select profile instead of take first
+show amount in dash food item
+use carousel on dashboard separate food, workout and dash details
+title purple
+refactor: move calc logic to service layer
+ms3:
+weight week avg, 30-day avg
+show number of day logs 
+ms4:
+import export
