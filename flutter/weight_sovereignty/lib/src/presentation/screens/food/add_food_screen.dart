@@ -5,7 +5,7 @@ import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart'
     show foodConfigRepositoryProvider, foodRepositoryProvider;
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/food_item_selector_widget.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/food/food_item_selector_widget.dart';
 
 
 

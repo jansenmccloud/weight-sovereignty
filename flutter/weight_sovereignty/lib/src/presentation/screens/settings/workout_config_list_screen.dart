@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/workout_config/workout_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/workout_config_edit_screen.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/async_list_scaffold.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_list_tile.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/async_list_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_list_tile.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/confirm_delete_dialog.dart';
 
 class WorkoutConfigListScreen extends ConsumerWidget {
   const WorkoutConfigListScreen({super.key});

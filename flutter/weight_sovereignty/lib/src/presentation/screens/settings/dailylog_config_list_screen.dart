@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/dailylog_config/dailylog_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/dailylog_config_edit_screen.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/async_list_scaffold.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_list_tile.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/async_list_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_list_tile.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/confirm_delete_dialog.dart';
 
 class DailyLogConfigListScreen extends ConsumerWidget {
   const DailyLogConfigListScreen({super.key});

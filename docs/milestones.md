@@ -27,7 +27,7 @@
  - ✅ the dashboard screen isn't refreshed when navigating back to it (e.g. from food add screen) => it should show the current daily log entry of the selected date
 
  ## TODOs UI improvements
- - remove separator line in add food screen
+
  - make search field in add food sceen less dominant
  - change red color to yellow
  - change blue color accent to purple
@@ -48,6 +48,7 @@
 
 ## TODOs
  - refactor: move calc logic to service layer
+ - remove separator line in add food screen
  - in add food screen the favorites should be marked and on top
  - weight week avg, 30-day avg
  - show number of day logs 

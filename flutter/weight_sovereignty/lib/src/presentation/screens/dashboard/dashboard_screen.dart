@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/dash_calorie_overview_card.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/dash_food_section.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/dash_weight_card.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/dash_workout_summary.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_calorie_overview_card.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_food_section.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_weight_card.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_workout_summary.dart';
 
 /// Main dashboard screen showing today's DailyLog summary.
 /// Shows weight, calorie overview, food list, and workout summary.

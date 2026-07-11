@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/dailylog_config/dailylog_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_form_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class DailyLogConfigEditScreen extends ConsumerStatefulWidget {
   const DailyLogConfigEditScreen({super.key, this.configId});

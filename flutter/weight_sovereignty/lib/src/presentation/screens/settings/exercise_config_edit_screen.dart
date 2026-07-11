@@ -5,7 +5,7 @@ import 'package:weight_sovereignty/src/application/config/config_validation.dart
 import 'package:weight_sovereignty/src/application/config/exercise_config_save.dart';
 import 'package:weight_sovereignty/src/application/exercise_config/exercise_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_form_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class ExerciseConfigEditScreen extends ConsumerStatefulWidget {
   const ExerciseConfigEditScreen({super.key, this.configId});
