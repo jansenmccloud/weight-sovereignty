@@ -34,7 +34,7 @@
  - ✅ title purple
 
 ## TODOs Features
- - in calorie dash section: add planned deficite to dailyLogConfig and show in calorie view in net calc
+ - ✅ in calorie dash section: add planned deficite to dailyLogConfig and show in calorie view in net calc
  - goal to profile: defizit, protein, fat, carbs
  - show macros details on screen
  - continue with workout add screen

@@ -8,4 +8,5 @@ class DailyLogConfig {
   @Index(unique: true, caseSensitive: false, replace: true)
   String? name;
   int? bmrCaloriesKcal;
+  int? plannedDeficitKcal;
 }

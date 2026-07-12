@@ -5,6 +5,7 @@ class CalorieOverviewCard extends StatelessWidget {
   final int bmr;
   final int intake;
   final int burn;
+  final int deficit;
   final int netSurplus;
 
   const CalorieOverviewCard({
@@ -12,6 +13,7 @@ class CalorieOverviewCard extends StatelessWidget {
     required this.bmr,
     required this.intake,
     required this.burn,
+    required this.deficit,
     required this.netSurplus,
   });
 
@@ -46,18 +48,34 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Intake', style: text.bodyMedium),
+                Text( 'Intake', style: text.bodyMedium),
                 Text('$intake kcal', style: text.bodyMedium),
               ],
             ),
-            const SizedBox(height: 4),
+            const Divider(height: 24),
 
             // Burned
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Burned', style: text.bodyMedium),
-                Text('$burn kcal', style: text.bodyMedium),
+                Text(
+                  'Burned', 
+                  style: text.bodyMedium?.copyWith(color: Colors.redAccent),
+                  ),
+                Text('$burn kcal', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
+              ],
+            ),
+            const SizedBox(height: 4),
+
+            // Deficit
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Deficit', 
+                  style: text.bodyMedium?.copyWith(color: Colors.redAccent),
+                  ),
+                Text('$deficit kcal', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
               ],
             ),
             const Divider(height: 24),
@@ -68,7 +86,7 @@ class CalorieOverviewCard extends StatelessWidget {
               children: [
                 Text(
                   'Net',
-                  style: text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold,color: Colors.yellowAccent),
                 ),
                 Text(
                   '$netSurplus kcal',

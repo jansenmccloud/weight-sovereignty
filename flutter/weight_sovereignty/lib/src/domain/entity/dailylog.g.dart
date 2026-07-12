@@ -765,6 +765,11 @@ const DailyLogBaseSchema = Schema(
       id: 1,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'plannedDeficitKcal': PropertySchema(
+      id: 2,
+      name: r'plannedDeficitKcal',
+      type: IsarType.long,
     )
   },
   estimateSize: _dailyLogBaseEstimateSize,
@@ -796,6 +801,7 @@ void _dailyLogBaseSerialize(
 ) {
   writer.writeLong(offsets[0], object.bmrCaloriesKcal);
   writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.plannedDeficitKcal);
 }
 
 DailyLogBase _dailyLogBaseDeserialize(
@@ -807,6 +813,7 @@ DailyLogBase _dailyLogBaseDeserialize(
   final object = DailyLogBase();
   object.bmrCaloriesKcal = reader.readLongOrNull(offsets[0]);
   object.name = reader.readStringOrNull(offsets[1]);
+  object.plannedDeficitKcal = reader.readLongOrNull(offsets[2]);
   return object;
 }
 
@@ -821,6 +828,8 @@ P _dailyLogBaseDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1049,6 +1058,80 @@ extension DailyLogBaseQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedDeficitKcal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }

@@ -26,6 +26,11 @@ const DailyLogConfigSchema = CollectionSchema(
       id: 1,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'plannedDeficitKcal': PropertySchema(
+      id: 2,
+      name: r'plannedDeficitKcal',
+      type: IsarType.long,
     )
   },
   estimateSize: _dailyLogConfigEstimateSize,
@@ -79,6 +84,7 @@ void _dailyLogConfigSerialize(
 ) {
   writer.writeLong(offsets[0], object.bmrCaloriesKcal);
   writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.plannedDeficitKcal);
 }
 
 DailyLogConfig _dailyLogConfigDeserialize(
@@ -91,6 +97,7 @@ DailyLogConfig _dailyLogConfigDeserialize(
   object.bmrCaloriesKcal = reader.readLongOrNull(offsets[0]);
   object.id = id;
   object.name = reader.readStringOrNull(offsets[1]);
+  object.plannedDeficitKcal = reader.readLongOrNull(offsets[2]);
   return object;
 }
 
@@ -105,6 +112,8 @@ P _dailyLogConfigDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -609,6 +618,80 @@ extension DailyLogConfigQueryFilter
       ));
     });
   }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedDeficitKcal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension DailyLogConfigQueryObject
@@ -642,6 +725,20 @@ extension DailyLogConfigQuerySortBy
   QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedDeficitKcal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedDeficitKcalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.desc);
     });
   }
 }
@@ -685,6 +782,20 @@ extension DailyLogConfigQuerySortThenBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedDeficitKcal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedDeficitKcalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.desc);
+    });
+  }
 }
 
 extension DailyLogConfigQueryWhereDistinct
@@ -700,6 +811,13 @@ extension DailyLogConfigQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QDistinct>
+      distinctByPlannedDeficitKcal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannedDeficitKcal');
     });
   }
 }
@@ -722,6 +840,13 @@ extension DailyLogConfigQueryProperty
   QueryBuilder<DailyLogConfig, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, int?, QQueryOperations>
+      plannedDeficitKcalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannedDeficitKcal');
     });
   }
 }

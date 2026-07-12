@@ -47,7 +47,8 @@ class DailyLogService {
     // take BMR from profile
     var bmrPreset = DailyLogConfig()
       ..name = 'Default'
-      ..bmrCaloriesKcal = 2000;
+      ..bmrCaloriesKcal = 2000
+      ..plannedDeficitKcal = 0;
 
     final config = await _dailyLogConfigRepo.getAll();
     if (config.isNotEmpty && config.first.bmrCaloriesKcal != null) {

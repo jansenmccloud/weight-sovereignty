@@ -102,18 +102,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // Get weight from selected date
     double? dayWeight;
     int? bmr;
+    int? deficit; 
     Calculation? calc;
 
     if (todayLog != null && todayLog.dailyLogBase != null) {
       dayWeight = todayLog.bodyWeight;
       bmr = todayLog.dailyLogBase!.bmrCaloriesKcal;
+      deficit = todayLog.dailyLogBase!.plannedDeficitKcal;
       calc = todayLog.calculation;
     }
 
     // Calculate net surplus/deficit
     final intake = calc?.totalIntakeCaloriesKcal ?? 0;
     final burn = calc?.totalBurnedCaloriesKcal ?? 0;
-    final netSurplus = (bmr ?? 0) + burn - (intake);
+    final netSurplus = (bmr ?? 0) - (deficit ?? 0) + burn - (intake);
 
     return CustomScrollView(
       slivers: [
@@ -161,6 +163,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             bmr: bmr ?? 0,
             intake: intake,
             burn: burn,
+            deficit: deficit ?? 0,
             netSurplus: netSurplus,
           ),
         ),

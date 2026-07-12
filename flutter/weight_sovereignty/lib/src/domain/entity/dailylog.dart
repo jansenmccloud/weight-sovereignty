@@ -17,7 +17,8 @@ class DailyLog {
   set setBase(DailyLogConfig conf) {
     dailyLogBase = DailyLogBase()
       ..name = conf.name
-      ..bmrCaloriesKcal = conf.bmrCaloriesKcal;
+      ..bmrCaloriesKcal = conf.bmrCaloriesKcal
+      ..plannedDeficitKcal = conf.plannedDeficitKcal;
   }
 }
 
@@ -25,6 +26,7 @@ class DailyLog {
 class DailyLogBase {
   String? name;
   int? bmrCaloriesKcal;
+  int? plannedDeficitKcal;
 }
 
 @embedded
