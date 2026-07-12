@@ -18,7 +18,11 @@ class DailyLog {
     dailyLogBase = DailyLogBase()
       ..name = conf.name
       ..bmrCaloriesKcal = conf.bmrCaloriesKcal
-      ..plannedDeficitKcal = conf.plannedDeficitKcal;
+      ..plannedDeficitKcal = conf.plannedDeficitKcal
+      ..plannedProteinG = conf.plannedProteinG
+      ..plannedFatG = conf.plannedFatG
+      ..plannedCarbsG = conf.plannedCarbsG
+      ;
   }
 }
 
@@ -27,6 +31,9 @@ class DailyLogBase {
   String? name;
   int? bmrCaloriesKcal;
   int? plannedDeficitKcal;
+  int? plannedProteinG;
+  int? plannedFatG;
+  int? plannedCarbsG;
 }
 
 @embedded

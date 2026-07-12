@@ -5,6 +5,7 @@ import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_calorie_overview_card.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_food_section.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_macros_overview_card.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_weight_card.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_workout_summary.dart';
 
@@ -102,13 +103,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // Get weight from selected date
     double? dayWeight;
     int? bmr;
-    int? deficit; 
+    int? deficit;
+    int? plannedProtein;
+    int? plannedFat;
+    int? plannedCarbs;
     Calculation? calc;
 
     if (todayLog != null && todayLog.dailyLogBase != null) {
       dayWeight = todayLog.bodyWeight;
       bmr = todayLog.dailyLogBase!.bmrCaloriesKcal;
       deficit = todayLog.dailyLogBase!.plannedDeficitKcal;
+      plannedProtein = todayLog.dailyLogBase!.plannedProteinG;
+      plannedFat = todayLog.dailyLogBase!.plannedFatG;
+      plannedCarbs = todayLog.dailyLogBase!.plannedCarbsG;
       calc = todayLog.calculation;
     }
 
@@ -116,6 +123,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final intake = calc?.totalIntakeCaloriesKcal ?? 0;
     final burn = calc?.totalBurnedCaloriesKcal ?? 0;
     final netSurplus = (bmr ?? 0) - (deficit ?? 0) + burn - (intake);
+    final intakeProtein = calc?.totalIntakeProteinG ?? 0;
+    final intakeFat = calc?.totalIntakeFatG ?? 0;
+    final intakeCarbs = calc?.totalIntakeCarbsG ?? 0;
 
     return CustomScrollView(
       slivers: [
@@ -169,14 +179,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
+        // Macros Overview Card
+        SliverToBoxAdapter(
+          child: MacrosOverviewCard(
+            plannedProtein: plannedProtein ?? 0,
+            plannedFat: plannedFat ?? 0,
+            plannedCarbs: plannedCarbs ?? 0,
+            intakeProtein: intakeProtein.round(),
+            intakeFat: intakeFat.round(),
+            intakeCarbs: intakeCarbs.round(),
+          ),
+        ),
+        SliverToBoxAdapter(child: const SizedBox(height: 8)),
+
         // Food List Section - pass targetDate instead of foodIds
         SliverToBoxAdapter(child: FoodSection(targetDate: _selectedDate)),
         SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
         // Workout Summary Section (placeholder for future implementation)
-        SliverToBoxAdapter(
-          child: const WorkoutSummary(workoutIds: null),
-        ),
+        SliverToBoxAdapter(child: const WorkoutSummary(workoutIds: null)),
       ],
     );
   }

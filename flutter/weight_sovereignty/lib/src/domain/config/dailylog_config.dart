@@ -9,4 +9,7 @@ class DailyLogConfig {
   String? name;
   int? bmrCaloriesKcal;
   int? plannedDeficitKcal;
+  int? plannedProteinG;
+  int? plannedFatG;
+  int? plannedCarbsG;
 }

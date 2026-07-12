@@ -35,8 +35,8 @@
 
 ## TODOs Features
  - ✅ in calorie dash section: add planned deficite to dailyLogConfig and show in calorie view in net calc
- - goal to profile: defizit, protein, fat, carbs
- - show macros details on screen
+ - ✅ goal to profile: defizit, protein, fat, carbs
+ - ✅ show macros details on screen
  - continue with workout add screen
  - workout dash section should not only have delete but als edit action button
  - workout edit mode is the same like the workout mode
@@ -48,7 +48,8 @@
  - refactor: move colors to primary profile to zentralize
  - remove separator line in add food screen
  - make search field in add food sceen less dominant
- - decrease font size of weight number and center align it, with dot dash round border 
+ - decrease font size of weight number and center align it, with dot dash round border
+ - clean uo macro dashboard (tabbed inner row element to keep equal intents)
  - in add food screen the favorites should be marked and on top
  - weight week avg, 30-day avg
  - show number of day logs 

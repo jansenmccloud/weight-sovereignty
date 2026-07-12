@@ -21,6 +21,9 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
   final _nameController = TextEditingController();
   final _bmrController = TextEditingController();
   final _deficitController = TextEditingController();
+  final _proteinController = TextEditingController();
+  final _fatController = TextEditingController();
+  final _carbsController = TextEditingController();
   bool _loading = true;
   bool _saving = false;
 
@@ -39,6 +42,9 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
         _nameController.text = existing.name ?? '';
         _bmrController.text = existing.bmrCaloriesKcal?.toString() ?? '';
         _deficitController.text = existing.plannedDeficitKcal?.toString() ?? '';
+        _proteinController.text = existing.plannedProteinG?.toString() ?? '';
+        _fatController.text = existing.plannedFatG?.toString() ?? '';
+        _carbsController.text = existing.plannedCarbsG?.toString() ?? '';
       }
     }
     if (mounted) setState(() => _loading = false);
@@ -49,6 +55,9 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
     _nameController.dispose();
     _bmrController.dispose();
     _deficitController.dispose();
+    _proteinController.dispose();
+    _fatController.dispose();
+    _carbsController.dispose();
     super.dispose();
   }
 
@@ -64,7 +73,11 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
       final config = DailyLogConfig()
         ..name = _nameController.text.trim()
         ..bmrCaloriesKcal = parseOptionalInt(_bmrController.text)
-        ..plannedDeficitKcal = parseOptionalInt(_deficitController.text);
+        ..plannedDeficitKcal = parseOptionalInt(_deficitController.text)
+        ..plannedProteinG = parseOptionalInt(_proteinController.text)
+        ..plannedFatG = parseOptionalInt(_fatController.text)
+        ..plannedCarbsG = parseOptionalInt(_carbsController.text)
+        ;
       if (widget.configId != null) config.id = widget.configId!;
 
       final notifier = ref.read(dailyLogConfigListProvider.notifier);
@@ -109,6 +122,27 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           TextField(
             controller: _deficitController,
             decoration: const InputDecoration(labelText: 'Planned Deficit (kcal)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _proteinController,
+            decoration: const InputDecoration(labelText: 'Planned Protein (g)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _fatController,
+            decoration: const InputDecoration(labelText: 'Planned Fat (g)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _carbsController,
+            decoration: const InputDecoration(labelText: 'Planned Carbs (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),
