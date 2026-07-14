@@ -156,48 +156,61 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
         ),
 
-        // Weight Card
         SliverToBoxAdapter(
-          child: WeightCard(
-            weight: dayWeight,
-            onPressEntry: () {
-              return _navigateToWeightEntry(_selectedDate);
-            },
+          child: PageView(
+            scrollDirection: Axis.horizontal,
+
+            children: [
+              // Page 0 - Monitor
+              Column(
+                children: [
+                  // Weight Card
+                  WeightCard(
+                    weight: dayWeight,
+                    onPressEntry: () {
+                      return _navigateToWeightEntry(_selectedDate);
+                    },
+                  ),
+                  SizedBox(height: 8),
+
+                  // Calories Overview Card
+                  CalorieOverviewCard(
+                    bmr: bmr ?? 0,
+                    intake: intake,
+                    burn: burn,
+                    deficit: deficit ?? 0,
+                    netSurplus: netSurplus,
+                  ),
+                  SizedBox(height: 8),
+
+                  // Macros Overview Card
+                  MacrosOverviewCard(
+                    plannedProtein: plannedProtein ?? 0,
+                    plannedFat: plannedFat ?? 0,
+                    plannedCarbs: plannedCarbs ?? 0,
+                    intakeProtein: intakeProtein.round(),
+                    intakeFat: intakeFat.round(),
+                    intakeCarbs: intakeCarbs.round(),
+                  ),
+                ],
+              ),
+
+              // Page 1 - Food List Section - pass targetDate instead of foodIds
+              Column(
+                children: [
+                  FoodSection(targetDate: _selectedDate),
+                ],
+              ),
+
+              // Page 2 - Workout Summary Section (placeholder for future implementation)
+              Column(
+                children: [
+                  WorkoutSummary(workoutIds: null),
+                ],
+              ),
+            ],
           ),
         ),
-        SliverToBoxAdapter(child: const SizedBox(height: 8)),
-
-        // Calories Overview Card
-        SliverToBoxAdapter(
-          child: CalorieOverviewCard(
-            bmr: bmr ?? 0,
-            intake: intake,
-            burn: burn,
-            deficit: deficit ?? 0,
-            netSurplus: netSurplus,
-          ),
-        ),
-        SliverToBoxAdapter(child: const SizedBox(height: 8)),
-
-        // Macros Overview Card
-        SliverToBoxAdapter(
-          child: MacrosOverviewCard(
-            plannedProtein: plannedProtein ?? 0,
-            plannedFat: plannedFat ?? 0,
-            plannedCarbs: plannedCarbs ?? 0,
-            intakeProtein: intakeProtein.round(),
-            intakeFat: intakeFat.round(),
-            intakeCarbs: intakeCarbs.round(),
-          ),
-        ),
-        SliverToBoxAdapter(child: const SizedBox(height: 8)),
-
-        // Food List Section - pass targetDate instead of foodIds
-        SliverToBoxAdapter(child: FoodSection(targetDate: _selectedDate)),
-        SliverToBoxAdapter(child: const SizedBox(height: 8)),
-
-        // Workout Summary Section (placeholder for future implementation)
-        SliverToBoxAdapter(child: const WorkoutSummary(workoutIds: null)),
       ],
     );
   }

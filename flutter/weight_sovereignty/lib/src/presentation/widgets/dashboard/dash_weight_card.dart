@@ -20,41 +20,22 @@ class WeightCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Weight',
-              style: text.titleMedium?.copyWith(color: Colors.white70),
-            ),
+            Text('Weight', style: text.titleMedium?.copyWith(color: Colors.white70)),
             const SizedBox(height: 8),
-            if (weight != null)
               GestureDetector(
                 onTap: onPressEntry,
-                child: Text(
-                  '${weight!.toStringAsFixed(1)} kg',
-                  style: text.displaySmall?.copyWith(fontSize: 32),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('<<'),
+                    Text('${weight!.toStringAsFixed(1)} kg', style: text.bodyMedium?.copyWith(fontSize: 32)),
+                    Text('>>'),
+                  ],
                 ),
               )
-            else
-              GestureDetector(
-                onTap: onPressEntry,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Tap to enter weight',
-                    style: text.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),

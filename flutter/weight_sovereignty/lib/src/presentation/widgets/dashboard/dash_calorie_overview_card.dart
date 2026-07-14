@@ -58,11 +58,8 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Burned', 
-                  style: text.bodyMedium?.copyWith(color: Colors.redAccent),
-                  ),
-                Text('- $burn kcal', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
+                Text('Burned', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                Text('- $burn kcal', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
               ],
             ),
             const SizedBox(height: 4),
@@ -71,11 +68,8 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Deficit', 
-                  style: text.bodyMedium?.copyWith(color: Colors.redAccent),
-                  ),
-                Text('- $deficit kcal', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
+                Text('Deficit', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                Text('- $deficit kcal', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
               ],
             ),
             const Divider(height: 24),
@@ -84,10 +78,7 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Net',
-                  style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold,color: Colors.yellowAccent),
-                ),
+                Text('Net', style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold,color: Colors.yellowAccent)),
                 Text(
                   '$netSurplus kcal',
                   style: text.titleSmall?.copyWith(

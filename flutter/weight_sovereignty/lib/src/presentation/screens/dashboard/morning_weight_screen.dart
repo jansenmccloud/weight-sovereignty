@@ -85,7 +85,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Morning Weight')),
+      appBar: AppBar(title: const Text('Body Weight')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -94,7 +94,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
             // Large numeric input
             Text(
               'Enter your weight',
-              style: text.headlineMedium?.copyWith(color: Colors.white70),
+              style: text.headlineSmall?.copyWith(color: Colors.white70),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -105,7 +105,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              style: text.displayLarge?.copyWith(fontSize: 48),
+              style: text.displayMedium?.copyWith(fontSize: 48),
               decoration: const InputDecoration(
                 hintText: '0.0',
                 hintStyle: TextStyle(color: Colors.white24),

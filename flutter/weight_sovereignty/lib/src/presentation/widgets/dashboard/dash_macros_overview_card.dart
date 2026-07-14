@@ -36,95 +36,35 @@ class MacrosOverviewCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Protein
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Protein', style: text.bodyMedium),
-                Text('${plannedProtein}g', style: text.bodyMedium),
+                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Protein', style: text.bodyMedium),
+                    Text('Fat    ', style: text.bodyMedium),
+                    Text('Carbs  ', style: text.bodyMedium),
+                ]),
+                Column(crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('${plannedProtein}g', style: text.bodyMedium),
+                    Text('${plannedFat}g', style: text.bodyMedium),
+                    Text('${plannedCarbs}g', style: text.bodyMedium),
+                ]),
+                Column(crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('- ${intakeProtein}g', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                    Text('- ${intakeFat}g', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                    Text('- ${intakeCarbs}g', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                ]),
+                Column(crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('${plannedProtein-intakeProtein}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
+                    Text('${plannedFat-intakeFat}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
+                    Text('${plannedCarbs-intakeCarbs}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
+                ]),
               ],
             ),
-            const SizedBox(height: 4),
-
-            // Protein intake
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(' ', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
-                Text('- ${intakeProtein}g', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
-              ],
-            ),
-            const SizedBox(height: 4),
-
-            // Protein net
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(' ', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-                Text('${plannedProtein-intakeProtein}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-              ],
-            ),
-            const Divider(height: 24),
-
-            // Fat
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Fat', style: text.bodyMedium),
-                Text('${plannedFat}g', style: text.bodyMedium),
-              ],
-            ),
-            const SizedBox(height: 4),
-
-            // Fat intake
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(' ', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
-                Text('- ${intakeFat}g', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
-              ],
-            ),
-            const SizedBox(height: 4),
-
-            // Fat net
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(' ', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-                Text('${plannedFat-intakeFat}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-              ],
-            ),
-            const Divider(height: 24),
-
-            // Carbs
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Carbs', style: text.bodyMedium),
-                Text('${plannedCarbs}g', style: text.bodyMedium),
-              ],
-            ),
-            const SizedBox(height: 4),
-
-            // Carbs intake
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(' ', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
-                Text('- ${intakeCarbs}g', style: text.bodyMedium?.copyWith(color: Colors.redAccent)),
-              ],
-            ),
-            const SizedBox(height: 4),
-
-            // Carbs net
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(' ', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-                Text('${plannedCarbs-intakeCarbs}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-              ],
-            ),
-            const SizedBox(height: 4),
           ],
         ),
       ),
