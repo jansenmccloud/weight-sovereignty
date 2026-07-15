@@ -205,7 +205,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               // Page 2 - Workout Summary Section (placeholder for future implementation)
               Column(
                 children: [
-                  WorkoutSummary(workoutIds: null),
+                  WorkoutSummary(targetDate: _selectedDate),
                 ],
               ),
             ],

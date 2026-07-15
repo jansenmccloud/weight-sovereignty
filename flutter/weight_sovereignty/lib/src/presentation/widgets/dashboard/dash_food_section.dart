@@ -40,7 +40,6 @@ class FoodSection extends ConsumerWidget {
                     // Refresh food list and daily log for the selected date after returning from add food
                     ref.invalidate(foodListProvider);
                     await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
-                    // Reload daily logs so dashboard shows updated macros/BMR
                     await ref.read(dailyLogListProvider.notifier).refresh();
                   },
                 ),

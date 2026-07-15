@@ -17,6 +17,7 @@ class FoodListNotifier extends AsyncNotifier<List<Food>>
   Future<List<Food>> listByIds(List<int> ids) =>
       ref.read(foodRepositoryProvider).listByIds(ids);
 
+  // TODO alias not needed?
   /// Query foods for a specific date (alias for listByCalendarDay).
   Future<List<Food>> listByDate(DateTime day) =>
       listByCalendarDay(day);

@@ -47,6 +47,7 @@
 ## TODOs
  - refactor: move calc logic to service layer
  - refactor: move colors to primary profile to zentralize
+ - handle inline TODOs
  - remove separator line in add food screen
  - make search field in add food sceen less dominant
  - ✅ decrease font size of weight number and center align it, with dot dash round border
