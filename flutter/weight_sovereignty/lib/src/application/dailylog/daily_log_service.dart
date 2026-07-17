@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
+import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_config_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
 import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
@@ -122,28 +123,24 @@ class DailyLogService {
 
   /// Delete a food entry from a specific date.
   Future<void> deleteFoodByDate(Food food, DateTime day) async {
-    // Delete the food entry directly by date match
     final foods = await _foodRepo.listByCalendarDay(day);
     for (final f in foods) {
       if (f.id == food.id) {
-        await _foodRepo.deleteById(f.id!);
+        await _foodRepo.deleteById(f.id);
         break;
       }
     }
   }
 
-  /// Query foods by name for auto-complete in add food screen.
-  Future<List<Food>> searchFoods(String query) async {
-    if (query.isEmpty) return [];
-    // Search across all config presets by name
-    final allFoods = await _foodRepo.getAll();
-    return allFoods
-        .where(
-          (f) => (f.foodBase?.name ?? '').toLowerCase().contains(
-            query.toLowerCase(),
-          ),
-        )
-        .toList();
+  /// Delete a workout entry from a specific date.
+  Future<void> deleteWorkoutByDate(Workout workout, DateTime day) async {
+    final workouts = await _workoutRepo.listByCalendarDay(day);
+    for (final w in workouts) {
+      if (w.id == workout.id) {
+        await _workoutRepo.deleteById(w.id);
+        break;
+      }
+    }
   }
 
   /// Full recalculate + persist pipeline.

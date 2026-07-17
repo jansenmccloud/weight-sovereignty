@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Screen for entering morning body weight.
 class MorningWeightScreen extends ConsumerStatefulWidget {
@@ -94,7 +95,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
             // Large numeric input
             Text(
               'Enter your weight',
-              style: text.headlineSmall?.copyWith(color: Colors.white70),
+              style: text.headlineSmall?.copyWith(color: AppTheme.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -108,7 +109,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
               style: text.displayMedium?.copyWith(fontSize: 48),
               decoration: const InputDecoration(
                 hintText: '0.0',
-                hintStyle: TextStyle(color: Colors.white24),
+                hintStyle: TextStyle(color: AppTheme.white),
                 border: OutlineInputBorder(),
               ),
               onSubmitted: (_) => _saveWeight(),

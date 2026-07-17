@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/dailylog_config/dailylog_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class DailyLogConfigEditScreen extends ConsumerStatefulWidget {
@@ -109,11 +110,13 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
         children: [
           TextField(
             controller: _nameController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Name'),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _bmrController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'BMR (kcal)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -121,6 +124,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _deficitController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Planned Deficit (kcal)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -128,6 +132,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _proteinController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Planned Protein (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -135,6 +140,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _fatController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Planned Fat (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -142,6 +148,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _carbsController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Planned Carbs (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],

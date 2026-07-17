@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Card displaying macros overview.
 class MacrosOverviewCard extends StatelessWidget {
@@ -32,7 +33,7 @@ class MacrosOverviewCard extends StatelessWidget {
           children: [
             Text(
               'Macros',
-              style: text.titleMedium?.copyWith(color: Colors.white70),
+              style: text.titleMedium?.copyWith(color: AppTheme.white),
             ),
             const SizedBox(height: 12),
 
@@ -41,27 +42,27 @@ class MacrosOverviewCard extends StatelessWidget {
               children: [
                 Column(crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Protein', style: text.bodyMedium),
-                    Text('Fat    ', style: text.bodyMedium),
-                    Text('Carbs  ', style: text.bodyMedium),
+                    Text('Protein', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                    Text('Fat    ', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                    Text('Carbs  ', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                 ]),
                 Column(crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${plannedProtein}g', style: text.bodyMedium),
-                    Text('${plannedFat}g', style: text.bodyMedium),
-                    Text('${plannedCarbs}g', style: text.bodyMedium),
+                    Text('${plannedProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                    Text('${plannedFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                    Text('${plannedCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                 ]),
                 Column(crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('- ${intakeProtein}g', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
-                    Text('- ${intakeFat}g', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
-                    Text('- ${intakeCarbs}g', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                    Text('- ${intakeProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
+                    Text('- ${intakeFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
+                    Text('- ${intakeCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
                 ]),
                 Column(crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${plannedProtein-intakeProtein}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-                    Text('${plannedFat-intakeFat}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
-                    Text('${plannedCarbs-intakeCarbs}g', style: text.bodyMedium?.copyWith(color: Colors.yellowAccent)),
+                    Text('${plannedProtein-intakeProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
+                    Text('${plannedFat-intakeFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
+                    Text('${plannedCarbs-intakeCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
                 ]),
               ],
             ),

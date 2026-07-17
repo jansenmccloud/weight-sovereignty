@@ -9,6 +9,7 @@ import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 class DebugScreen extends ConsumerStatefulWidget {
   const DebugScreen({super.key});
@@ -36,85 +37,95 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
   Widget build(BuildContext context) {
     final isarAsync = ref.watch(isarProvider);
 
-    return Container(
-      color: Colors.grey.shade900,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Debug: Database Entries', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-
-          Row(
-            children: [
-              Flexible(
-                child: DropdownButton<String>(
-                  value: _selectedEntity,
-                  dropdownColor: Colors.grey.shade800,
-                  hint: const Text('Select entity', style: TextStyle(color: Colors.grey)),
-                  items: _entityTypes.map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e, style: const TextStyle(color: Colors.white)),
-                  )).toList(),
-                  onChanged: (value) {
-                    if (value != null && isarAsync.hasValue) {
-                      _loadEntries(isarAsync.value!, value);
-                    }
-                    setState(() => _selectedEntity = value);
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              if (_selectedEntity == 'DailyLog') ...[
-                const SizedBox(
-                  width: 16,
-                  height: 36,
-                  child: VerticalDivider(color: Colors.grey, thickness: 1),
-                ),
-                TextButton.icon(
-                  onPressed: _loading ? null : _deleteAllDailyLogs,
-                  icon: const Icon(Icons.delete_sweep_outlined, color: Colors.redAccent, size: 18),
-                  label: const Text('Delete All DailyLogs', style: TextStyle(color: Colors.redAccent)),
-                ),
-              ],
-              if (_selectedEntity == 'Food') ...[
-                const SizedBox(
-                  width: 16,
-                  height: 36,
-                  child: VerticalDivider(color: Colors.grey, thickness: 1),
-                ),
-                TextButton.icon(
-                  onPressed: _loading ? null : _deleteAllFoods,
-                  icon: const Icon(Icons.delete_sweep_outlined, color: Colors.redAccent, size: 18),
-                  label: const Text('Delete All Foods', style: TextStyle(color: Colors.redAccent)),
-                ),
-              ],
-              if (_loading)
-                const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade800,
-                border: Border.all(color: Colors.grey.shade700),
-              ),
-              child: _entriesText.isEmpty
-                ? const Center(child: Text('...', style: TextStyle(color: Colors.grey)))
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(8),
-                    child: SelectableText(_entriesText, style: const TextStyle(color: Colors.white, fontFamily: 'monospace', fontSize: 12)),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Debug')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Flexible(
+                  child: DropdownButton<String>(
+                    value: _selectedEntity,
+                    dropdownColor: AppTheme.surface,
+                    items: _entityTypes.map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e, style: const TextStyle(color: AppTheme.white)),
+                    )).toList(),
+                    onChanged: (value) {
+                      if (value != null && isarAsync.hasValue) {
+                        _loadEntries(isarAsync.value!, value);
+                      }
+                      setState(() => _selectedEntity = value);
+                    },
                   ),
+                ),
+                const SizedBox(width: 8),
+                if (_selectedEntity == 'DailyLog') ...[
+                  const SizedBox(
+                    width: 16,
+                    height: 36,
+                    child: VerticalDivider(color: AppTheme.grey, thickness: 1),
+                  ),
+                  TextButton.icon(
+                    onPressed: _loading ? null : _deleteAllDailyLogs,
+                    icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
+                    label: const Text('Delete All DailyLogs', style: TextStyle(color: AppTheme.red)),
+                  ),
+                ],
+                if (_selectedEntity == 'Food') ...[
+                  const SizedBox(
+                    width: 16,
+                    height: 36,
+                    child: VerticalDivider(color: AppTheme.grey, thickness: 1),
+                  ),
+                  TextButton.icon(
+                    onPressed: _loading ? null : _deleteAllFoods,
+                    icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
+                    label: const Text('Delete All Foods', style: TextStyle(color: AppTheme.red)),
+                  ),
+                ],
+                if (_selectedEntity == 'Workout') ...[
+                  const SizedBox(
+                    width: 16,
+                    height: 36,
+                    child: VerticalDivider(color: AppTheme.grey, thickness: 1),
+                  ),
+                  TextButton.icon(
+                    onPressed: _loading ? null : _deleteAllWorkouts,
+                    icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
+                    label: const Text('Delete All Workouts', style: TextStyle(color: AppTheme.red)),
+                  ),
+                ],
+                if (_loading)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.white),
+                  ),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppTheme.grey,
+                  border: Border.all(color: AppTheme.surface),
+                ),
+                child: _entriesText.isEmpty
+                  ? const Center(child: Text('...', style: TextStyle(color: AppTheme.grey)))
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(8),
+                      child: SelectableText(_entriesText, style: const TextStyle(color: AppTheme.white, fontFamily: 'monospace', fontSize: 12)),
+                    ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -154,9 +165,9 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
       final formatter = _EntityFormatter();
       String formatted;
       try {
-        formatted = entries.map((e) => formatter.format(e)).join('\n\n---\n\n');
+        formatted = entries.map((e) => formatter.format(e)).join('\n\n');
       } catch (_) {
-        formatted = entries.map((e) => e.toString()).join('\n\n---\n\n');
+        formatted = entries.map((e) => e.toString()).join('\n\n');
       }
       setState(() {
         _entriesText = formatted.isEmpty ? '(no entries)' : formatted;
@@ -168,6 +179,50 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _deleteAllWorkouts() async {
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete all Workout entries?'),
+        content: const Text('This will permanently remove all workout entries. This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.red),
+            child: const Text('Delete All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    final isarAsync = ref.read(isarProvider);
+    if (!isarAsync.hasValue) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Database not ready')),
+        );
+      }
+      return;
+    }
+
+    final isar = isarAsync.value!;
+    await isar.writeTxn(() => isar.collection<Workout>().clear());
+
+    if (!mounted) return;
+    setState(() { _entriesText = '(all Workout entries deleted)'; });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All Workout entries cleared')),
+    );
   }
 
   Future<void> _deleteAllFoods() async {
@@ -185,7 +240,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.red),
             child: const Text('Delete All'),
           ),
         ],
@@ -229,7 +284,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.red),
             child: const Text('Delete All'),
           ),
         ],
@@ -280,28 +335,28 @@ class _EntityFormatter {
 
   String _formatDailyLog(DailyLog e) {
     return 'DailyLog(id=${e.id}\n'
-        '${_kv('date', e.date?.toLocal())}\n'
-        '${_kv('bodyWeight', e.bodyWeight != null ? '${e.bodyWeight} kg' : '(null)')}\n'
-        '${_kv('bmrCaloriesKcal', e.dailyLogBase?.bmrCaloriesKcal)}\n'
-        '${_kv('name', e.dailyLogBase?.name)}\n'
-        '${_kv('totalBurnedCaloriesKcal', e.calculation?.totalBurnedCaloriesKcal)}\n'
-        '${_kv('totalIntakeCaloriesKcal', e.calculation?.totalIntakeCaloriesKcal)}\n'
-        '${_kv('totalIntakeProteinG', e.calculation?.totalIntakeProteinG)}\n'
-        '${_kv('totalIntakeCarbsG', e.calculation?.totalIntakeCarbsG)}\n'
-        '${_kv('totalIntakeFatG', e.calculation?.totalIntakeFatG)}\n'
+        '${_kv('date', e.date?.toLocal())}'
+        '${_kv('bodyWeight', e.bodyWeight != null ? '${e.bodyWeight} kg' : '(null)')}'
+        '${_kv('bmrCaloriesKcal', e.dailyLogBase?.bmrCaloriesKcal)}'
+        '${_kv('name', e.dailyLogBase?.name)}'
+        '${_kv('totalBurnedCaloriesKcal', e.calculation?.totalBurnedCaloriesKcal)}'
+        '${_kv('totalIntakeCaloriesKcal', e.calculation?.totalIntakeCaloriesKcal)}'
+        '${_kv('totalIntakeProteinG', e.calculation?.totalIntakeProteinG)}'
+        '${_kv('totalIntakeCarbsG', e.calculation?.totalIntakeCarbsG)}'
+        '${_kv('totalIntakeFatG', e.calculation?.totalIntakeFatG)}'
         ')';
   }
 
   String _formatFood(Food e) {
     final base = e.foodBase;
     return 'Food(id=${e.id}, date=${e.date?.toLocal()}\n'
-        '${_kv('name', base?.name)}\n'
-        '${_kv('favorite', base?.favorite)}\n'
-        '${_kv('caloriesKcal', base?.intakeCaloriesKcal)}\n'
-        '${_kv('proteinG', base?.intakeProteinG)}\n'
-        '${_kv('carbsG', base?.intakeCarbsG)}\n'
-        '${_kv('fatG', base?.intakeFatG)}\n'
-        '${_kv('amountG', base?.amountG)}\n';
+        '${_kv('name', base?.name)}'
+        '${_kv('favorite', base?.favorite)}'
+        '${_kv('caloriesKcal', base?.intakeCaloriesKcal)}'
+        '${_kv('proteinG', base?.intakeProteinG)}'
+        '${_kv('carbsG', base?.intakeCarbsG)}'
+        '${_kv('fatG', base?.intakeFatG)}'
+        '${_kv('amountG', base?.amountG)}';
   }
 
   String _formatWorkout(Workout e) {
@@ -317,8 +372,8 @@ class _EntityFormatter {
       return '  - $name ($category) reps=$reps sets=$sets kg=$kg cal=$cal';
     }).join('\n');
     return 'Workout(id=${e.id}, date=${e.date?.toLocal()}\n'
-        '${_kv('name', base?.name)}\n'
-        'exercises:\n$exerciseLines)';
+        '${_kv('name', base?.name)}'
+        '  exercises:\n$exerciseLines)';
   }
 
   String _formatDailyLogConfig(DailyLogConfig e) {

@@ -1,107 +1,93 @@
 import 'package:flutter/material.dart';
-import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
+import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
-/// A selectable card widget for picking an ExerciseConfig preset on AddWorkoutScreen.
-class WorkoutItemSelectorWidget extends StatelessWidget { // TODO why stateless?
-  final ExerciseConfig exerciseConfig;
-  final int selectedCount;
-  // TODO see food callbacks
-  final VoidCallback onTap;
+/// Widget for selecting workout
+class WorkoutItemSelectorWidget extends StatefulWidget {
+  final WorkoutConfig workoutConfig;
+  final VoidCallback onSelect;
+  final VoidCallback onDeselect;
 
   const WorkoutItemSelectorWidget({
     super.key,
-    required this.exerciseConfig,
-    required this.selectedCount,
-    required this.onTap,
+    required this.workoutConfig, 
+    required this.onSelect, 
+    required this.onDeselect,
   });
 
-  bool get isSelected => selectedCount > 0;
+  @override
+  State<WorkoutItemSelectorWidget> createState() => _WorkoutItemSelectorWidgetState();
+}
 
-  /// Build a short detail string like "3x12 · 80kg" or "5km · 30min".
-  String _detailText() {
-    final parts = <String>[];
-    if (exerciseConfig.reps != null && exerciseConfig.sets != null) {
-      parts.add('${exerciseConfig.sets}x${exerciseConfig.reps}');
-    }
-    if (exerciseConfig.weightKg != null) {
-      parts.add('${exerciseConfig.weightKg}kg');
-    }
-    if (exerciseConfig.distanceKm != null && exerciseConfig.distanceKm! > 0) {
-      parts.add('${exerciseConfig.distanceKm}km');
-    }
-    if (exerciseConfig.durationMin != null && exerciseConfig.durationMin! > 0) {
-      parts.add('${exerciseConfig.durationMin}min');
-    }
-    return parts.join(' · ');
-  }
+class _WorkoutItemSelectorWidgetState extends State<WorkoutItemSelectorWidget> {
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
+    final WorkoutConfig workoutConfig = widget.workoutConfig;
+    final VoidCallback onSelect = widget.onSelect;
+    final VoidCallback onDeselect = widget.onDeselect;
     final theme = Theme.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primary.withAlpha((255 * 0.15).round())
-              : theme.colorScheme.surfaceContainerHighest,
+
+    Color getColor(Set<WidgetState> states) {
+      return AppTheme.purple;
+    }
+
+    final backgroundColor = theme.colorScheme.surfaceContainerHighest.withAlpha((255 * 0.3).round());
+
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Material(
+        color: AppTheme.transparent,
+        child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : Colors.transparent,
-            width: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
+            child: Row(
+              children: [
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        workoutConfig.name ?? 'Unnamed Workout',
+                        style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white),
+                      ),
+                    ],
+                  ),
+                ),
+                // Checkbox
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Checkbox(
+                    side: BorderSide(color: AppTheme.grey),
+                    checkColor: AppTheme.yellow,
+                    fillColor: WidgetStateProperty.resolveWith(getColor),
+                    focusColor: AppTheme.yellow,
+                    value: isChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isChecked = value!;
+                      });
+                      if (value!) {
+                        onSelect();
+                      } else {
+                        onDeselect();
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            // Selection checkbox
-            Checkbox(
-              value: isSelected,
-              onChanged: (_) => onTap(),
-            ),
-            const SizedBox(width: 12),
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    exerciseConfig.name ?? 'Unknown Exercise',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: isSelected
-                          ? theme.colorScheme.primary
-                          : theme.textTheme.bodyLarge?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _detailText(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: (theme.textTheme.bodySmall?.color ?? Colors.black).withAlpha((255 * 0.7).round()),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Burned calories badge
-            if (exerciseConfig.burnedCaloriesKcal != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.secondary.withAlpha((255 * 0.15).round()),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${exerciseConfig.burnedCaloriesKcal} kcal',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.secondary,
-                  ),
-                ),
-              ),
-          ],
         ),
       ),
     );

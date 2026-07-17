@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppTheme {
+  // custom colors
+  static const Color transparent = Colors.transparent;
+  static const Color grey = Colors.white12;
+  static const Color white = Colors.white70;
+  static const Color purple = Colors.deepPurple;
+  static const Color yellow = Colors.yellowAccent;
+  static const Color red = Colors.redAccent;
+  static const Color green = Colors.greenAccent;
+
   static const Color background = Color(0xFF121212);
   static const Color surface = Color(0xFF1E1E1E);
-  static const Color accent = Color(0xFF5C7A99);
+  static const Color accent = purple;
 
   static ThemeData dark() {
     final base = ColorScheme.fromSeed(
@@ -21,7 +30,7 @@ abstract final class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: surface,
-        foregroundColor: Colors.white,
+        foregroundColor: white,
         elevation: 0,
       ),
       cardTheme: CardThemeData(

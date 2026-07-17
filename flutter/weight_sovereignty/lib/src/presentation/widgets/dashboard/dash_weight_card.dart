@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Card displaying daily weight with entry option.
 class WeightCard extends StatelessWidget {
@@ -22,7 +23,7 @@ class WeightCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Weight', style: text.titleMedium?.copyWith(color: Colors.white70)),
+            Text('Weight', style: text.titleMedium?.copyWith(color: AppTheme.white)),
             const SizedBox(height: 8),
               GestureDetector(
                 onTap: onPressEntry,
@@ -30,9 +31,9 @@ class WeightCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('<<'),
-                    Text('${weight!.toStringAsFixed(1)} kg', style: text.bodyMedium?.copyWith(fontSize: 32)),
-                    Text('>>'),
+                    Text(' '),
+                    Text('${weight!.toStringAsFixed(1)} kg', style: text.bodyMedium?.copyWith(fontSize: 30, color: AppTheme.white)),
+                    Text(' '),
                   ],
                 ),
               )

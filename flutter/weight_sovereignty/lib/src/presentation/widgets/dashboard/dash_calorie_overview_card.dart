@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Card displaying calorie overview (BMR, intake, burn, net surplus/deficit).
 class CalorieOverviewCard extends StatelessWidget {
@@ -30,7 +31,7 @@ class CalorieOverviewCard extends StatelessWidget {
           children: [
             Text(
               'Calories',
-              style: text.titleMedium?.copyWith(color: Colors.white70),
+              style: text.titleMedium?.copyWith(color: AppTheme.white),
             ),
             const SizedBox(height: 12),
 
@@ -38,8 +39,8 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('BMR Baseline', style: text.bodyMedium),
-                Text('$bmr kcal', style: text.bodyMedium),
+                Text('BMR Baseline', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                Text('$bmr kcal', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
               ],
             ),
             const SizedBox(height: 4),
@@ -48,8 +49,8 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text( 'Intake', style: text.bodyMedium),
-                Text('$intake kcal', style: text.bodyMedium),
+                Text( 'Intake', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                Text('$intake kcal', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
               ],
             ),
             const Divider(height: 24),
@@ -58,8 +59,8 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Burned', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
-                Text('- $burn kcal', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                Text('Burned', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
+                Text('- $burn kcal', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
               ],
             ),
             const SizedBox(height: 4),
@@ -68,8 +69,8 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Deficit', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
-                Text('- $deficit kcal', style: text.bodyMedium?.copyWith(color: Colors.deepPurple)),
+                Text('Deficit', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
+                Text('- $deficit kcal', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
               ],
             ),
             const Divider(height: 24),
@@ -78,16 +79,16 @@ class CalorieOverviewCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Net', style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold,color: Colors.yellowAccent)),
+                Text('Net', style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold,color: AppTheme.yellow)),
                 Text(
                   '$netSurplus kcal',
                   style: text.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: netSurplus > 0
-                        ? Colors.yellowAccent
+                        ? AppTheme.yellow
                         : netSurplus < 0
-                        ? Colors.redAccent
-                        : Colors.green,
+                        ? AppTheme.red
+                        : AppTheme.green,
                   ),
                 ),
               ],

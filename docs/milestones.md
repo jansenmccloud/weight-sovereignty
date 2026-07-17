@@ -9,7 +9,7 @@
 # Milestone 2 - core screens
  - ✅ daily log/ dashboard widgets + services
  - ✅ food log widgets + services
- - workout log widgets + services
+ - ✅ workout log widgets + services
  - basic balance calculation
 
 ## TODOs from manually testing:
@@ -38,18 +38,18 @@
  - ✅ goal to profile: defizit, protein, fat, carbs
  - ✅ show macros details on screen
  - ✅ use carousel view
- - continue with workout add screen
- - workout dash section should not only have delete but als edit action button
+ - ✅ continue with workout add screen
+ - ✅ workout dash section should not only have delete but als edit action button
  - workout edit mode is the same like the workout mode
 
 # Milestone 3 - UI and Feature Enrichments
 
 ## TODOs
  - refactor: move calc logic to service layer
- - refactor: move colors to primary profile to zentralize
- - handle inline TODOs
- - remove separator line in add food screen
- - make search field in add food sceen less dominant
+ - ✅ refactor: move colors to primary profile to centralize
+ - ✅ handle inline TODOs
+ - ✅ remove separator line in add food screen
+ - ✅ make search field in add food sceen less dominant
  - ✅ decrease font size of weight number and center align it, with dot dash round border
  - ✅ clean up macro dashboard (tabbed inner row element to keep equal intents)
  - in add food screen the favorites should be marked and on top

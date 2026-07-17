@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/settings_hub_screen.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 class HomeShellScreen extends StatelessWidget {
   const HomeShellScreen({super.key});
@@ -9,10 +10,10 @@ class HomeShellScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Weight Sovereignty', style:TextStyle(color: Colors.deepPurple)),
+        title: const Text('Weight Sovereignty', style:TextStyle(color: AppTheme.purple)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: const Icon(Icons.settings_outlined, color:  AppTheme.white,),
             tooltip: 'Presets & settings',
             onPressed: () {
               Navigator.of(context).push(

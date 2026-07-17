@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/presentation/screens/dashboard/morning_weight_screen.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_calorie_overview_card.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_food_section.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/dashboard/dash_macros_overview_card.dart';
@@ -137,18 +138,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(Icons.chevron_left, color: AppTheme.white),
                   onPressed: _previousDay,
                 ),
                 Expanded(
                   child: Text(
                     '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.white),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right, color: AppTheme.white,),
                   onPressed: _nextDay,
                 ),
               ],

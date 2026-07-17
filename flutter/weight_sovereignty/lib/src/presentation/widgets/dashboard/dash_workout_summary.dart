@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/presentation/screens/workout/add_workout_screen.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Section showing logged workouts for the selected date.
 class WorkoutSummary extends ConsumerWidget {
@@ -26,11 +27,11 @@ class WorkoutSummary extends ConsumerWidget {
               children: [
                 Text(
                   'Workout',
-                  style: text.titleLarge?.copyWith(color: Colors.white70),
+                  style: text.titleLarge?.copyWith(color: AppTheme.white),
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
-                  color: Colors.deepPurple,
+                  color: AppTheme.yellow,
                   onPressed: () async {
                     await Navigator.push<void>(
                       context,
@@ -38,7 +39,9 @@ class WorkoutSummary extends ConsumerWidget {
                     );
                     // Refresh workout list and daily log for the selected date after returning from add workout
                     ref.invalidate(workoutListProvider);
-                    await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
+                    await ref
+                        .read(dailyLogServiceProvider)
+                        .refreshForDay(targetDate);
                     await ref.read(dailyLogListProvider.notifier).refresh();
                   },
                 ),
@@ -57,28 +60,88 @@ class WorkoutSummary extends ConsumerWidget {
                 if (snapshot.hasError) {
                   return Text(
                     'Error loading workouts: ${snapshot.error}',
-                    style: text.bodyMedium?.copyWith(color: Colors.redAccent),
+                    style: text.bodyMedium?.copyWith(color: AppTheme.red),
                   );
                 }
                 final workouts = snapshot.data ?? <Workout>[];
                 if (workouts.isEmpty) {
                   return Text(
                     'No workouts logged yet',
-                    style: text.bodyMedium?.copyWith(color: Colors.white38),
+                    style: text.bodyMedium?.copyWith(color: AppTheme.grey),
                   );
                 }
                 return Column(
                   children: [
                     for (final workout in workouts)
                       ListTile(
+                        contentPadding: EdgeInsets.all(0),
                         title: Text(
                           workout.workoutBase?.name ?? 'Unknown Workout',
+                          style: TextStyle(color: AppTheme.white),
                         ),
                         subtitle: Text(
                           'Burn: ${_sumWorkoutBurn(workout.exercises)} kcal',
+                          style: TextStyle(color: AppTheme.grey),
                         ),
-                        // TODO add missing operation buttons delete and edit
-                        trailing: const Icon(Icons.chevron_right),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Edit button
+                            IconButton(
+                              icon: const Icon(Icons.fitness_center_sharp),
+                              color: AppTheme.yellow,
+                              iconSize: 22.0,
+                              onPressed: () {}, // TODO open edit screen
+                            ),
+                            const SizedBox(height: 60),
+                            // Delete button for this workout entry
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline),
+                              color: AppTheme.purple,
+                              iconSize: 18.0,
+                              onPressed: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Delete workout entry?'),
+                                    content: Text(
+                                      'Remove "${workout.workoutBase?.name}" from ${targetDate.day}/${targetDate.month}/${targetDate.year}?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: AppTheme.red,
+                                        ),
+                                        child: const Text('Delete'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirmed == true) {
+                                  final service = ref.read(
+                                    dailyLogServiceProvider,
+                                  );
+                                  await service.deleteWorkoutByDate(
+                                    workout,
+                                    targetDate,
+                                  );
+                                  await service.refreshForDay(targetDate);
+                                  await ref
+                                      .read(dailyLogListProvider.notifier)
+                                      .refresh();
+                                  ref.invalidate(foodListProvider);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     const SizedBox(height: 8),
                   ],

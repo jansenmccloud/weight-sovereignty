@@ -3,8 +3,10 @@ import 'package:weight_sovereignty/src/application/crud/crud_list_notifier_mixin
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/domain/repo/crud_repository.dart';
-final foodListProvider =
-    AsyncNotifierProvider<FoodListNotifier, List<Food>>(FoodListNotifier.new);
+
+final foodListProvider = AsyncNotifierProvider<FoodListNotifier, List<Food>>(
+  FoodListNotifier.new,
+);
 
 class FoodListNotifier extends AsyncNotifier<List<Food>>
     with CrudListNotifierMixin<Food> {
@@ -16,9 +18,4 @@ class FoodListNotifier extends AsyncNotifier<List<Food>>
 
   Future<List<Food>> listByIds(List<int> ids) =>
       ref.read(foodRepositoryProvider).listByIds(ids);
-
-  // TODO alias not needed?
-  /// Query foods for a specific date (alias for listByCalendarDay).
-  Future<List<Food>> listByDate(DateTime day) =>
-      listByCalendarDay(day);
 }

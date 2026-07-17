@@ -5,6 +5,7 @@ import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart'
     show foodConfigRepositoryProvider, foodRepositoryProvider;
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/food/food_item_selector_widget.dart';
 
 
@@ -30,12 +31,8 @@ class AddFoodScreen extends ConsumerStatefulWidget {
 class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-
-  /// All configured foods
   List<FoodConfig> _foods = [];
   bool _isLoading = true;
-
-  /// Map of FoodConfig.id -> user-entered amount in grams (0 means not selected, >0 means selected).
   final Map<int, int> _amountOverrides = {};
   final Map<int, int> _selectedFoodIds = {};
 
@@ -106,7 +103,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
             onPressed: _handleSave,
             child: const Text(
               'Save',
-              style: TextStyle(color: Colors.deepPurple),
+              style: TextStyle(color: AppTheme.purple),
               ),
           ),
         ],
@@ -118,14 +115,19 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchController,
+              style: TextStyle(color: AppTheme.grey),
               decoration: InputDecoration(
                 hintText: 'Search foods...',
+                hintStyle: TextStyle(color: AppTheme.grey),
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
+                prefixIconColor: AppTheme.grey,
+                enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppTheme.grey),
                 ),
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                fillColor: AppTheme.surface,
+                iconColor: AppTheme.grey,
               ),
             ),
           ),
@@ -143,13 +145,8 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
             )
           else
             Expanded(
-              child: ListView.separated(
+              child: ListView.builder(
                 itemCount: _filteredFoods.length,
-                separatorBuilder: (context, index) => Divider(
-                  height: 0,
-                  thickness: 0,
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha((255 * 0.1).round()),
-                ),
                 itemBuilder: (context, index) {
                   final food = _filteredFoods[index];
                   final amount = _amountOverrides[food.id] ?? (food.amountG ?? 100);
@@ -180,8 +177,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     );
   }
 
-  /// Handle save: create Food entries for selected foods. 
-  /// Completely decoupled from DailyLog — no writes to DailyLog, returns count of added foods.
   Future<void> _handleSave() async {
     final newEntries = <Food>[];
     
@@ -190,7 +185,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       final userAmount = _amountOverrides[food.id] ?? 0;
       if (userAmount <= 0) continue;
 
-      // Create Food entity with scaled macros and target date
       final foodEntity = _createFoodWithAmount(food, userAmount, widget.targetDate);
       newEntries.add(foodEntity);
     }
@@ -201,7 +195,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     }
 
     try {
-      // Save new Food entries to Isar (no DailyLog linking needed anymore)
       final foodRepo = ref.read(foodRepositoryProvider);
       for (final foodEntity in newEntries) {
         await foodRepo.save(foodEntity);
@@ -218,8 +211,6 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     }
   }
 
-  /// Create a Food entity from a FoodConfig preset with scaled macros and target date.
-  /// The multiplier is computed as userAmount / config.amount (e.g., 200g / 100g = 2.0).
   Food _createFoodWithAmount(FoodConfig config, int userAmount, DateTime targetDate) {
     final ratio = userAmount / (config.amountG?.toDouble() ?? 100.0);
     return Food()

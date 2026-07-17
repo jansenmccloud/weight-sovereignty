@@ -5,6 +5,7 @@ import 'package:weight_sovereignty/src/application/config/config_validation.dart
 import 'package:weight_sovereignty/src/application/config/exercise_config_save.dart';
 import 'package:weight_sovereignty/src/application/exercise_config/exercise_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class ExerciseConfigEditScreen extends ConsumerStatefulWidget {
@@ -131,6 +132,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
         children: [
           TextField(
             controller: _nameController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Name'),
           ),
           const SizedBox(height: 12),
@@ -157,6 +159,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
           ),
           TextField(
             controller: _weightController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Weight (kg)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -164,6 +167,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _repsController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Reps'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -171,6 +175,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _setsController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Sets'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -178,12 +183,14 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _distanceController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Distance (km)'),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _durationController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Duration (min)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -191,6 +198,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
           const SizedBox(height: 12),
           TextField(
             controller: _burnController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Burn (kcal)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
@@ -212,6 +220,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<T>(
         initialValue: value,
+        style: TextStyle(color: AppTheme.white),
         decoration: InputDecoration(labelText: label),
         items: items
             .map((e) => DropdownMenuItem(value: e, child: Text(labelOf(e))))

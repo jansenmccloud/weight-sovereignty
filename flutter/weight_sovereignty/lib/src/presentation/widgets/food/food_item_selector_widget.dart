@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Widget for selecting a food and adjusting its amount.
 class FoodItemSelectorWidget extends StatefulWidget {
@@ -35,7 +36,7 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
     final theme = Theme.of(context);
 
     Color getColor(Set<WidgetState> states) {
-      return Colors.deepPurple;
+      return AppTheme.purple;
     }
 
     // FoodConfig stores macros directly (no foodBase getter)
@@ -62,7 +63,7 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Material(
-        color: Colors.transparent,
+        color: AppTheme.transparent,
         child: InkWell(
           onTap: () {
             if (amount <= 0) {
@@ -84,18 +85,12 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
                     children: [
                       Text(
                         foodConfig.name ?? 'Unnamed Food',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                        ),
+                        style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${cal.toStringAsFixed(0)} kcal\nP: ${protein.toStringAsFixed(0)}g\nF: ${fat.toStringAsFixed(0)}g\nC: ${carbs.toStringAsFixed(0)}g',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withAlpha(
-                            (255 * 0.7).round(),
-                          ),
-                        ),
+                        style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey),
                       ),
                     ],
                   ),
@@ -108,13 +103,13 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
                       Text(
                         '${amount.toStringAsFixed(0)}g',
                         style: theme.textTheme.labelLarge?.copyWith(
-                          color: Colors.deepPurple,
+                          color: AppTheme.purple,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Slider(
-                        thumbColor: Colors.deepPurple,
-                        activeColor: Colors.deepPurple,
+                        thumbColor: AppTheme.purple,
+                        activeColor: AppTheme.purple,
                         value: amount.toDouble(),
                         min: 0.0,
                         max: (foodConfig.amountG ?? 100) * 5,
@@ -131,9 +126,10 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Checkbox(
-                    checkColor: Colors.yellowAccent,
+                    side: BorderSide(color: AppTheme.grey),
+                    checkColor: AppTheme.yellow,
                     fillColor: WidgetStateProperty.resolveWith(getColor),
-                    focusColor: Colors.yellowAccent,
+                    focusColor: AppTheme.yellow,
                     value: isChecked,
                     onChanged: (bool? value) {
                       setState(() {
