@@ -11,8 +11,7 @@ class MorningWeightScreen extends ConsumerStatefulWidget {
   final DateTime? selectedDate;
 
   @override
-  ConsumerState<MorningWeightScreen> createState() =>
-      _MorningWeightScreenState();
+  ConsumerState<MorningWeightScreen> createState() => _MorningWeightScreenState();
 }
 
 class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
@@ -29,11 +28,9 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
     final todayLog = await ref.read(dailyLogServiceProvider).getOrCreateForDay(d);
     if (todayLog.bodyWeight != null) {
       _controller.text = todayLog.bodyWeight!.toString();
-    }else{
-      final yesterdayLog = await ref.read(dailyLogServiceProvider).getForDay(
-        d.subtract(const Duration(days: 1)),
-      );
-      if (yesterdayLog != null && yesterdayLog.bodyWeight != null){
+    } else {
+      final yesterdayLog = await ref.read(dailyLogServiceProvider).getForDay(d.subtract(const Duration(days: 1)));
+      if (yesterdayLog != null && yesterdayLog.bodyWeight != null) {
         _controller.text = yesterdayLog.bodyWeight!.toString();
       }
     }
@@ -52,9 +49,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
 
     final weight = double.tryParse(text);
     if (weight == null || weight <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid weight')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid weight')));
       return;
     }
 
@@ -70,13 +65,6 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
     ref.invalidate(dailyLogListProvider);
 
     if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Weight saved: ${weight.toStringAsFixed(1)} kg for ${targetDate.toString().substring(0, 10)}'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
 
     Navigator.pop(context);
   }
@@ -103,9 +91,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
             TextField(
               controller: _controller,
               focusNode: FocusNode()..requestFocus(),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               style: text.displayMedium?.copyWith(fontSize: 48),
               decoration: const InputDecoration(
                 hintText: '0.0',
@@ -120,9 +106,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
             // Save button (large tap target)
             FilledButton(
               onPressed: _saveWeight,
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(56),
-              ),
+              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56)),
               child: const Text('Save Weight'),
             ),
           ],

@@ -23,15 +23,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
   String _entriesText = '';
   bool _loading = false;
 
-  final List<String> _entityTypes = const [
-    'DailyLog',
-    'Food',
-    'Workout',
-    'DailyLogConfig',
-    'FoodConfig',
-    'WorkoutConfig',
-    'ExerciseConfig',
-  ];
+  final List<String> _entityTypes = const ['DailyLog', 'Food', 'Workout', 'DailyLogConfig', 'FoodConfig', 'WorkoutConfig', 'ExerciseConfig'];
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +42,14 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   child: DropdownButton<String>(
                     value: _selectedEntity,
                     dropdownColor: AppTheme.surface,
-                    items: _entityTypes.map((e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e, style: const TextStyle(color: AppTheme.white)),
-                    )).toList(),
+                    items: _entityTypes
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e, style: const TextStyle(color: AppTheme.white)),
+                          ),
+                        )
+                        .toList(),
                     onChanged: (value) {
                       if (value != null && isarAsync.hasValue) {
                         _loadEntries(isarAsync.value!, value);
@@ -64,11 +60,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                 ),
                 const SizedBox(width: 8),
                 if (_selectedEntity == 'DailyLog') ...[
-                  const SizedBox(
-                    width: 16,
-                    height: 36,
-                    child: VerticalDivider(color: AppTheme.grey, thickness: 1),
-                  ),
+                  const SizedBox(width: 16, height: 36, child: VerticalDivider(color: AppTheme.grey, thickness: 1)),
                   TextButton.icon(
                     onPressed: _loading ? null : _deleteAllDailyLogs,
                     icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
@@ -76,11 +68,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   ),
                 ],
                 if (_selectedEntity == 'Food') ...[
-                  const SizedBox(
-                    width: 16,
-                    height: 36,
-                    child: VerticalDivider(color: AppTheme.grey, thickness: 1),
-                  ),
+                  const SizedBox(width: 16, height: 36, child: VerticalDivider(color: AppTheme.grey, thickness: 1)),
                   TextButton.icon(
                     onPressed: _loading ? null : _deleteAllFoods,
                     icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
@@ -88,23 +76,14 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   ),
                 ],
                 if (_selectedEntity == 'Workout') ...[
-                  const SizedBox(
-                    width: 16,
-                    height: 36,
-                    child: VerticalDivider(color: AppTheme.grey, thickness: 1),
-                  ),
+                  const SizedBox(width: 16, height: 36, child: VerticalDivider(color: AppTheme.grey, thickness: 1)),
                   TextButton.icon(
                     onPressed: _loading ? null : _deleteAllWorkouts,
                     icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
                     label: const Text('Delete All Workouts', style: TextStyle(color: AppTheme.red)),
                   ),
                 ],
-                if (_loading)
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.white),
-                  ),
+                if (_loading) const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.white)),
               ],
             ),
             const SizedBox(height: 16),
@@ -117,11 +96,16 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   border: Border.all(color: AppTheme.surface),
                 ),
                 child: _entriesText.isEmpty
-                  ? const Center(child: Text('...', style: TextStyle(color: AppTheme.grey)))
-                  : SingleChildScrollView(
-                      padding: const EdgeInsets.all(8),
-                      child: SelectableText(_entriesText, style: const TextStyle(color: AppTheme.white, fontFamily: 'monospace', fontSize: 12)),
-                    ),
+                    ? const Center(
+                        child: Text('...', style: TextStyle(color: AppTheme.grey)),
+                      )
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(8),
+                        child: SelectableText(
+                          _entriesText,
+                          style: const TextStyle(color: AppTheme.white, fontFamily: 'monospace', fontSize: 12),
+                        ),
+                      ),
               ),
             ),
           ],
@@ -131,7 +115,10 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
   }
 
   Future<void> _loadEntries(Isar isar, String entityName) async {
-    setState(() { _loading = true; _entriesText = ''; });
+    setState(() {
+      _loading = true;
+      _entriesText = '';
+    });
 
     try {
       late final List<dynamic> entries;
@@ -190,10 +177,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
         title: const Text('Delete all Workout entries?'),
         content: const Text('This will permanently remove all workout entries. This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: AppTheme.red),
@@ -208,9 +192,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     final isarAsync = ref.read(isarProvider);
     if (!isarAsync.hasValue) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Database not ready')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
       }
       return;
     }
@@ -219,10 +201,10 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     await isar.writeTxn(() => isar.collection<Workout>().clear());
 
     if (!mounted) return;
-    setState(() { _entriesText = '(all Workout entries deleted)'; });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('All Workout entries cleared')),
-    );
+    setState(() {
+      _entriesText = '(all Workout entries deleted)';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All Workout entries cleared')));
   }
 
   Future<void> _deleteAllFoods() async {
@@ -234,10 +216,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
         title: const Text('Delete all Food entries?'),
         content: const Text('This will permanently remove all food entries. This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: AppTheme.red),
@@ -252,9 +231,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     final isarAsync = ref.read(isarProvider);
     if (!isarAsync.hasValue) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Database not ready')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
       }
       return;
     }
@@ -263,10 +240,10 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     await isar.writeTxn(() => isar.collection<Food>().clear());
 
     if (!mounted) return;
-    setState(() { _entriesText = '(all Food entries deleted)'; });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('All Food entries cleared')),
-    );
+    setState(() {
+      _entriesText = '(all Food entries deleted)';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All Food entries cleared')));
   }
 
   Future<void> _deleteAllDailyLogs() async {
@@ -278,10 +255,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
         title: const Text('Delete all DailyLogs?'),
         content: const Text('This will permanently remove all daily log entries. This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: AppTheme.red),
@@ -296,9 +270,7 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     final isarAsync = ref.read(isarProvider);
     if (!isarAsync.hasValue) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Database not ready')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
       }
       return;
     }
@@ -307,10 +279,10 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     await isar.writeTxn(() => isar.collection<DailyLog>().clear());
 
     if (!mounted) return;
-    setState(() { _entriesText = '(all DailyLogs deleted)'; });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('All DailyLogs cleared')),
-    );
+    setState(() {
+      _entriesText = '(all DailyLogs deleted)';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All DailyLogs cleared')));
   }
 }
 
@@ -361,16 +333,18 @@ class _EntityFormatter {
 
   String _formatWorkout(Workout e) {
     final base = e.workoutBase;
-    final exerciseLines = ((e.exercises ?? []).where((ex) => ex != null)).map((ex) {
-      final eb = ex as ExerciseBase;
-      final name = eb.name ?? '(null)';
-      final category = eb.categoryName ?? '(null)';
-      final reps = eb.reps ?? '(null)';
-      final sets = eb.sets ?? '(null)';
-      final kg = eb.weightKg ?? '(null)';
-      final cal = eb.burnedCaloriesKcal ?? '(null)';
-      return '  - $name ($category) reps=$reps sets=$sets kg=$kg cal=$cal';
-    }).join('\n');
+    final exerciseLines = ((e.exercises ?? []).where((ex) => ex != null))
+        .map((ex) {
+          final eb = ex as ExerciseBase;
+          final name = eb.name ?? '(null)';
+          final category = eb.categoryName ?? '(null)';
+          final sets = eb.sets?.length ?? '(null)';
+          final reps = eb.sets?[0]?.reps ?? '(null)';
+          final kg = eb.sets?[0]?.weightKg ?? '(null)';
+          final calories = eb.burnedCaloriesKcal ?? '(null)';
+          return '  - $name ($category) reps=$reps sets=$sets kg=$kg calories=$calories';
+        })
+        .join('\n');
     return 'Workout(id=${e.id}, date=${e.date?.toLocal()}\n'
         '${_kv('name', base?.name)}'
         '  exercises:\n$exerciseLines)';
@@ -385,11 +359,10 @@ class _EntityFormatter {
   }
 
   String _formatWorkoutConfig(WorkoutConfig e) {
-    return 'WorkoutConfig(id=${e.id}, name=${e.name}, exercisePresetIds=${e.exercisePresetIds})';
+    return 'WorkoutConfig(id=${e.id}, name=${e.name}, exercisePresetIds=${e.exercisePresetNames})';
   }
 
   String _formatExerciseConfig(ExerciseConfig e) {
     return 'ExerciseConfig(id=${e.id}, name=${e.name}, category=${e.category.name}, type=${e.type.name}, level=${e.intensityLevel.name}, weightKg=${e.weightKg}, reps=${e.reps}, sets=${e.sets}, distanceKm=${e.distanceKm}, durationMin=${e.durationMin}, cal=${e.burnedCaloriesKcal})';
   }
-
 }

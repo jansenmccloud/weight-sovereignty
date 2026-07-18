@@ -57,7 +57,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
           }
           return Column(
             children: [
-              ?header,
+              if (header != null) header!,
               Expanded(
                 child: ListView.builder(
                   itemCount: items.length,

@@ -37,11 +37,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void _navigateToWeightEntry(DateTime selDate) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (ctx) => MorningWeightScreen(selectedDate: selDate),
-      ),
+    Navigator.push(context, MaterialPageRoute(
+        builder: (ctx) => MorningWeightScreen(selectedDate: selDate)),
     );
   }
 

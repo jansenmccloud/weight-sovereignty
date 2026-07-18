@@ -16,7 +16,7 @@ class Workout {
   set setBase(WorkoutConfig conf) {
     workoutBase = WorkoutBase()
       ..name = conf.name
-      ..exercisePresetIds = conf.exercisePresetIds;
+      ..exercisePresetNames = conf.exercisePresetNames;
   }
 
   @ignore
@@ -33,21 +33,27 @@ class Workout {
 @embedded
 class WorkoutBase {
   String? name;
-  List<String?>? exercisePresetIds;
+  List<String?>? exercisePresetNames;
+}
+
+@embedded
+class ExerciseSet {
+  int? weightKg;
+  int? reps;
+  bool finished = false;
 }
 
 @embedded
 class ExerciseBase {
   String? name;
   String? categoryName;
-  String? typeName;
   String? intensityLevelName;
-  int? weightKg;
-  int? reps;
-  int? sets;
+  int? burnedCaloriesKcal;
+
+  String? typeName;
   double? distanceKm;
   int? durationMin;
-  int? burnedCaloriesKcal;
+  List<ExerciseSet?>? sets;
 
   @ignore
   late ExerciseCategory category;
@@ -59,14 +65,14 @@ class ExerciseBase {
   late IntensityLevel intensityLevel;
 
   static ExerciseBase fromConfig(ExerciseConfig c) {
+    final exerciseSets = _createSet(c.weightKg, c.reps, c.sets);
+
     return ExerciseBase()
       ..name = c.name
       ..categoryName = c.category.name
       ..typeName = c.type.name
       ..intensityLevelName = c.intensityLevel.name
-      ..weightKg = c.weightKg
-      ..reps = c.reps
-      ..sets = c.sets
+      ..sets = exerciseSets
       ..distanceKm = c.distanceKm
       ..durationMin = c.durationMin
       ..burnedCaloriesKcal = c.burnedCaloriesKcal
@@ -74,4 +80,19 @@ class ExerciseBase {
       ..type = c.type
       ..intensityLevel = c.intensityLevel;
   }
+}
+
+List<ExerciseSet>? _createSet(int? weightKg, int? reps, int? sets) {
+  if (sets == null) {
+    return null;
+  }
+  final newEntries = <ExerciseSet>[];
+  for (var i = 0; i < sets; i++) {
+    newEntries.add(
+      ExerciseSet()
+        ..reps = reps
+        ..weightKg = weightKg,
+    );
+  }
+  return newEntries;
 }

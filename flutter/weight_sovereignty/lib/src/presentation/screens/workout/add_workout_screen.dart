@@ -4,14 +4,11 @@ import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
 import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
-import 'package:weight_sovereignty/src/application/providers/repository_providers.dart'
-    show exerciseConfigRepositoryProvider, workoutRepositoryProvider;
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/workout/workout_item_selector_widget.dart';
 
-/// Screen to add exercises from ExerciseConfig presets.
-/// Shows a searchable list of ExerciseConfig presets. User selects multiple before saving.
+/// Screen to add workouts
 class AddWorkoutScreen extends ConsumerStatefulWidget {
   final DateTime targetDate;
 
@@ -60,9 +57,7 @@ class _AddWorkoutScreenState extends ConsumerState<AddWorkoutScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
     }
   }
 
@@ -94,10 +89,7 @@ class _AddWorkoutScreenState extends ConsumerState<AddWorkoutScreen> {
         actions: [
           TextButton(
             onPressed: _handleSave,
-            child: const Text(
-              'Save',
-              style: TextStyle(color: AppTheme.purple),
-            ),
+            child: const Text('Save', style: TextStyle(color: AppTheme.purple)),
           ),
         ],
       ),
@@ -127,14 +119,7 @@ class _AddWorkoutScreenState extends ConsumerState<AddWorkoutScreen> {
           // workout list or empty state
           if (_filteredWorkouts.isEmpty)
             Expanded(
-              child: Center(
-                child: Text(
-                  _searchQuery.isEmpty
-                      ? 'No workouts configured yet.'
-                      : 'No workout found.',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
+              child: Center(child: Text(_searchQuery.isEmpty ? 'No workouts configured yet.' : 'No workout found.', style: Theme.of(context).textTheme.bodyLarge)),
             )
           else
             Expanded(
@@ -166,14 +151,18 @@ class _AddWorkoutScreenState extends ConsumerState<AddWorkoutScreen> {
   Future<void> _handleSave() async {
     final newEntries = <Workout>[];
 
+    final exerciseConfigs = await ref.read(exerciseConfigRepositoryProvider).getAll();
+
     for (final workout in _workouts) {
       if (!_selectedWorkoutIds.containsKey(workout.id) || _selectedWorkoutIds[workout.id] == 0) continue;
-      final foodEntity = _createWorkout(workout, widget.targetDate);
-      newEntries.add(foodEntity);
+      final workoutEntity = _createWorkout(workout, exerciseConfigs, widget.targetDate);
+      newEntries.add(workoutEntity);
     }
 
     if (newEntries.isEmpty) {
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
       return;
     }
 
@@ -187,15 +176,28 @@ class _AddWorkoutScreenState extends ConsumerState<AddWorkoutScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save workout: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save workout: $e')));
     }
   }
 
-  Workout _createWorkout(WorkoutConfig config, DateTime targetDate) {
+  Workout _createWorkout(WorkoutConfig config, List<ExerciseConfig> exerciseConfigs, DateTime targetDate) {
+    final exerciseBases = _getExerciseBasesByName(exerciseConfigs, config.exercisePresetNames);
     return Workout()
       ..date = toCalendarDay(targetDate)
-      ..setBase = config;
+      ..setBase = config
+      ..exercises = exerciseBases;
   }
+}
+
+List<ExerciseBase>? _getExerciseBasesByName(List<ExerciseConfig> exerciseConfigs, List<String?>? exercisePresetNames) {
+  if (exercisePresetNames == null) {
+    return null;
+  }
+  final newEntries = <ExerciseBase>[];
+  for (var conf in exerciseConfigs) {
+    if (exercisePresetNames.contains(conf.name)) {
+      newEntries.add(ExerciseBase.fromConfig(conf));
+    }
+  }
+  return newEntries;
 }

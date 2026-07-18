@@ -19,37 +19,19 @@ class WorkoutConfigListScreen extends ConsumerWidget {
       title: 'Workout templates',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(workoutConfigListProvider),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.yellow,
-        foregroundColor: AppTheme.purple,
-        onPressed: () => _openEdit(context),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) {
-        final count = item.exercisePresetIds?.whereType<String>().length ?? 0;
-        return ConfigListTile(
-          title: item.name ?? '—',
-          subtitle: '$count exercise(s)',
-          onTap: () => _openEdit(context, item.id),
-          onDelete: () => _delete(context, ref, item),
-        );
+        final count = item.exercisePresetNames?.whereType<String>().length ?? 0;
+        return ConfigListTile(title: item.name ?? '—', subtitle: '$count exercise(s)', onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, ref, item));
       },
     );
   }
 
   void _openEdit(BuildContext context, [int? id]) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => WorkoutConfigEditScreen(configId: id),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => WorkoutConfigEditScreen(configId: id)));
   }
 
-  Future<void> _delete(
-    BuildContext context,
-    WidgetRef ref,
-    WorkoutConfig item,
-  ) async {
+  Future<void> _delete(BuildContext context, WidgetRef ref, WorkoutConfig item) async {
     if (!await confirmDelete(context, itemName: item.name)) return;
     await ref.read(workoutConfigListProvider.notifier).delete(item.id);
   }

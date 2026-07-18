@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/presentation/screens/workout/add_workout_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/workout/edit_workout_screen.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Section showing logged workouts for the selected date.
@@ -33,15 +34,10 @@ class WorkoutSummary extends ConsumerWidget {
                   icon: const Icon(Icons.add_circle_outline),
                   color: AppTheme.yellow,
                   onPressed: () async {
-                    await Navigator.push<void>(
-                      context,
-                      AddWorkoutScreen.route(targetDate: targetDate),
-                    );
+                    await Navigator.push<void>(context, AddWorkoutScreen.route(targetDate: targetDate));
                     // Refresh workout list and daily log for the selected date after returning from add workout
                     ref.invalidate(workoutListProvider);
-                    await ref
-                        .read(dailyLogServiceProvider)
-                        .refreshForDay(targetDate);
+                    await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
                     await ref.read(dailyLogListProvider.notifier).refresh();
                   },
                 ),
@@ -50,9 +46,7 @@ class WorkoutSummary extends ConsumerWidget {
             const SizedBox(height: 12),
 
             FutureBuilder<List<Workout>>(
-              future: ref
-                  .read(workoutListProvider.notifier)
-                  .listByCalendarDay(targetDate),
+              future: ref.read(workoutListProvider.notifier).listByCalendarDay(targetDate),
               builder: (ctx, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -91,7 +85,13 @@ class WorkoutSummary extends ConsumerWidget {
                               icon: const Icon(Icons.fitness_center_sharp),
                               color: AppTheme.yellow,
                               iconSize: 22.0,
-                              onPressed: () {}, // TODO open edit screen
+                              onPressed: () async {
+                                await Navigator.push<void>(context, EditWorkoutScreen.route(targetDate: targetDate, targetWorkout: workout));
+                                // Refresh workout list and daily log for the selected date after returning from add workout
+                                ref.invalidate(workoutListProvider);
+                                await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
+                                await ref.read(dailyLogListProvider.notifier).refresh();
+                              },
                             ),
                             const SizedBox(height: 60),
                             // Delete button for this workout entry
@@ -109,33 +109,22 @@ class WorkoutSummary extends ConsumerWidget {
                                     ),
                                     actions: [
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
+                                        onPressed: () => Navigator.pop(context, false),
                                         child: const Text('Cancel'),
                                       ),
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: AppTheme.red,
-                                        ),
+                                        onPressed: () => Navigator.pop(context, true),
+                                        style: TextButton.styleFrom(foregroundColor: AppTheme.red),
                                         child: const Text('Delete'),
                                       ),
                                     ],
                                   ),
                                 );
                                 if (confirmed == true) {
-                                  final service = ref.read(
-                                    dailyLogServiceProvider,
-                                  );
-                                  await service.deleteWorkoutByDate(
-                                    workout,
-                                    targetDate,
-                                  );
+                                  final service = ref.read(dailyLogServiceProvider);
+                                  await service.deleteWorkoutByDate(workout,targetDate);
                                   await service.refreshForDay(targetDate);
-                                  await ref
-                                      .read(dailyLogListProvider.notifier)
-                                      .refresh();
+                                  await ref.read(dailyLogListProvider.notifier).refresh();
                                   ref.invalidate(foodListProvider);
                                 }
                               },
