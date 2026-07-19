@@ -41,6 +41,8 @@
  - ✅ continue with workout add screen
  - ✅ workout dash section should not only have delete but als edit action button
  - ✅ workout edit mode is the same like the workout mode
+ - fix workout mode
+ - improve ui layout
 
 # Milestone 3 - UI and Feature Enrichments
 

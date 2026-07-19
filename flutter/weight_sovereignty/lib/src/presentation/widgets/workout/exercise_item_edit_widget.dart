@@ -139,28 +139,33 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
       setWidgets.add(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextField(
-              onSubmitted: (value) {
-                exercise.sets![i]!.weightKg = parseOptionalInt(value);
-                _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
-              },
-              controller: _weightController[i],
-              style: TextStyle(color: AppTheme.white),
-              decoration: const InputDecoration(labelText: 'kg'),
-              keyboardType: TextInputType.number,
-              inputFormatters: [digitsOnly],
+            Expanded(
+              child: TextField(
+                onSubmitted: (value) {
+                  exercise.sets![i]!.weightKg = parseOptionalInt(value);
+                  _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
+                },
+                controller: _weightController[i],
+                style: TextStyle(color: AppTheme.white),
+                decoration: const InputDecoration(labelText: 'kg'),
+                keyboardType: TextInputType.number,
+                inputFormatters: [digitsOnly],
+              ),
             ),
-            TextField(
-              onSubmitted: (value) {
-                exercise.sets![i]!.reps = parseOptionalInt(value);
-                _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
-              },
-              controller: _repsController[i],
-              style: TextStyle(color: AppTheme.white),
-              decoration: const InputDecoration(labelText: 'Reps'),
-              keyboardType: TextInputType.number,
-              inputFormatters: [digitsOnly],
+            Expanded(
+              child: TextField(
+                onSubmitted: (value) {
+                  exercise.sets![i]!.reps = parseOptionalInt(value);
+                  _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
+                },
+                controller: _repsController[i],
+                style: TextStyle(color: AppTheme.white),
+                decoration: const InputDecoration(labelText: 'Reps'),
+                keyboardType: TextInputType.number,
+                inputFormatters: [digitsOnly],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
@@ -202,29 +207,34 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextField(
-            maxLength: 80,
-            onSubmitted: (value) {
-              exercise.distanceKm = parseOptionalDouble(value);
-              _recalculateAndSave(bodyWeight, workout, index, exercise);
-            },
-            controller: _distanceController,
-            style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'km'),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          Expanded(
+            child: TextField(
+              maxLength: 80,
+              onSubmitted: (value) {
+                exercise.distanceKm = parseOptionalDouble(value);
+                _recalculateAndSave(bodyWeight, workout, index, exercise);
+              },
+              controller: _distanceController,
+              style: TextStyle(color: AppTheme.white),
+              decoration: const InputDecoration(labelText: 'km'),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ),
           ),
-          TextField(
-            maxLength: 80,
-            onSubmitted: (value) {
-              exercise.durationMin = parseOptionalInt(value);
-              _recalculateAndSave(bodyWeight, workout, index, exercise);
-            },
-            controller: _durationController,
-            style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'min'),
-            keyboardType: TextInputType.number,
-            inputFormatters: [digitsOnly],
+          Expanded(
+            child: TextField(
+              maxLength: 80,
+              onSubmitted: (value) {
+                exercise.durationMin = parseOptionalInt(value);
+                _recalculateAndSave(bodyWeight, workout, index, exercise);
+              },
+              controller: _durationController,
+              style: TextStyle(color: AppTheme.white),
+              decoration: const InputDecoration(labelText: 'min'),
+              keyboardType: TextInputType.number,
+              inputFormatters: [digitsOnly],
+            ),
           ),
         ],
       ),
@@ -245,6 +255,7 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
 
   void _recalculateAndSave(double bodyWeight, Workout workout, int index, ExerciseBase exercise) {
     exercise.calcAndSetBurnedCalories(bodyWeight);
+    // TODO save
     return;
   }
 }
