@@ -7,12 +7,13 @@ import 'package:weight_sovereignty/src/presentation/widgets/workout/exercise_ite
 class EditWorkoutScreen extends ConsumerStatefulWidget {
   final DateTime targetDate;
   final Workout targetWorkout;
+  final double bodyWeight;
 
-  const EditWorkoutScreen({super.key, required this.targetDate, required this.targetWorkout});
+  const EditWorkoutScreen({super.key, required this.targetDate, required this.targetWorkout, required this.bodyWeight});
 
-  static Route<void> route({required DateTime targetDate, required Workout targetWorkout}) {
+  static Route<void> route({required DateTime targetDate, required Workout targetWorkout, required double bodyWeight}) {
     return MaterialPageRoute(
-      builder: (_) => EditWorkoutScreen(targetDate: targetDate, targetWorkout: targetWorkout),
+      builder: (_) => EditWorkoutScreen(targetDate: targetDate, targetWorkout: targetWorkout, bodyWeight: bodyWeight),
       settings: const RouteSettings(name: 'edit_workout'),
     );
   }
@@ -25,6 +26,7 @@ class _EditWorkoutScreenState extends ConsumerState<EditWorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     final currentWorkout = widget.targetWorkout;
+    final bodyWeight = widget.bodyWeight;
 
     return Scaffold(
       appBar: AppBar(title: Text('Workout ${currentWorkout.workoutBase?.name ?? 'Unknown'}')),
@@ -35,11 +37,8 @@ class _EditWorkoutScreenState extends ConsumerState<EditWorkoutScreen> {
             child: ListView.builder(
               itemCount: currentWorkout.exercises?.length ?? 0,
               itemBuilder: (context, index) {
-                  return ExerciseItemEditWidget(
-                    workout: currentWorkout,
-                    exerciseIndex: index,
-                  );
-                },
+                return ExerciseItemEditWidget(workout: currentWorkout, exerciseIndex: index, bodyWeight: bodyWeight);
+              },
             ),
           ),
           // TODO add button to open exercise selection screen to select an extra exercise for current workout

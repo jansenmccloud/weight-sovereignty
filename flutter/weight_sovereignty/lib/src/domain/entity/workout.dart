@@ -43,6 +43,11 @@ class ExerciseSet {
   bool finished = false;
 }
 
+class CalcConstants {
+  static final Map<IntensityLevel, double> metsCardio = {IntensityLevel.light: 2.9, IntensityLevel.moderate: 3.3, IntensityLevel.intense: 5.3};
+  static final Map<IntensityLevel, double> metsLifting = {IntensityLevel.light: 3.5, IntensityLevel.moderate: 4.5, IntensityLevel.intense: 6.0};
+}
+
 @embedded
 class ExerciseBase {
   String? name;
@@ -79,6 +84,28 @@ class ExerciseBase {
       ..category = c.category
       ..type = c.type
       ..intensityLevel = c.intensityLevel;
+  }
+
+  // A) Calories_burned = MET × weight (kg) × duration (h)
+  // B) Calories_per_minute = (MET × 3.5 × weight(kg)) / 200
+  //    Calories_burned = Calories_per_minute × minutes
+  int calcAndSetBurnedCalories(double bodyWeight) {
+    if (ExerciseType.getTypeFromString(typeName) == ExerciseType.lifting) {
+      final met = CalcConstants.metsLifting[IntensityLevel.getIntensityLevelFromString(intensityLevelName)];
+      burnedCaloriesKcal =  _calculateBurnedCalories(met, bodyWeight);
+    } else {
+      final met = CalcConstants.metsCardio[IntensityLevel.getIntensityLevelFromString(intensityLevelName)];
+      burnedCaloriesKcal = _calculateBurnedCalories(met, bodyWeight);
+    }
+    return burnedCaloriesKcal!;
+  }
+
+  int _calculateBurnedCalories(double? met, double bodyWeight) {
+    if (met == null || durationMin == null) {
+      return 0;
+    }
+    final burned = ((met * 3.5 * bodyWeight) / 200.0) * durationMin!.toDouble();
+    return burned.round();
   }
 }
 

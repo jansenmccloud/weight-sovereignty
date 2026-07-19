@@ -14,8 +14,7 @@ class ExerciseConfigEditScreen extends ConsumerStatefulWidget {
   final int? configId;
 
   @override
-  ConsumerState<ExerciseConfigEditScreen> createState() =>
-      _ExerciseConfigEditScreenState();
+  ConsumerState<ExerciseConfigEditScreen> createState() => _ExerciseConfigEditScreenState();
 }
 
 class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScreen> {
@@ -26,7 +25,6 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
   final _setsController = TextEditingController();
   final _distanceController = TextEditingController();
   final _durationController = TextEditingController();
-  final _burnController = TextEditingController();
 
   ExerciseCategory _category = ExerciseCategory.none;
   ExerciseType _type = ExerciseType.cardio;
@@ -42,9 +40,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing = await ref
-          .read(exerciseConfigListProvider.notifier)
-          .read(widget.configId!);
+      final existing = await ref.read(exerciseConfigListProvider.notifier).read(widget.configId!);
       if (existing != null && mounted) _apply(existing);
     }
     if (mounted) setState(() => _loading = false);
@@ -60,7 +56,6 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
     _setsController.text = c.sets?.toString() ?? '';
     _distanceController.text = c.distanceKm?.toString() ?? '';
     _durationController.text = c.durationMin?.toString() ?? '';
-    _burnController.text = c.burnedCaloriesKcal?.toString() ?? '';
   }
 
   @override
@@ -71,7 +66,6 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
     _setsController.dispose();
     _distanceController.dispose();
     _durationController.dispose();
-    _burnController.dispose();
     super.dispose();
   }
 
@@ -82,8 +76,7 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
       ..reps = parseOptionalInt(_repsController.text)
       ..sets = parseOptionalInt(_setsController.text)
       ..distanceKm = parseOptionalDouble(_distanceController.text)
-      ..durationMin = parseOptionalInt(_durationController.text)
-      ..burnedCaloriesKcal = parseOptionalInt(_burnController.text);
+      ..durationMin = parseOptionalInt(_durationController.text);
     if (widget.configId != null) config.id = widget.configId!;
 
     config.categoryName = _category.name;
@@ -136,27 +129,9 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
             decoration: const InputDecoration(labelText: 'Name'),
           ),
           const SizedBox(height: 12),
-          _enumDropdown(
-            label: 'Type',
-            value: _type,
-            items: ExerciseType.values,
-            labelOf: (v) => v.name,
-            onChanged: (v) => setState(() => _type = v!),
-          ),
-          _enumDropdown(
-            label: 'Category',
-            value: _category,
-            items: ExerciseCategory.values,
-            labelOf: (v) => v.name,
-            onChanged: (v) => setState(() => _category = v!),
-          ),
-          _enumDropdown(
-            label: 'Intensity',
-            value: _intensity,
-            items: IntensityLevel.values,
-            labelOf: (v) => v.name,
-            onChanged: (v) => setState(() => _intensity = v!),
-          ),
+          _enumDropdown(label: 'Type', value: _type, items: ExerciseType.values, labelOf: (v) => v.name, onChanged: (v) => setState(() => _type = v!)),
+          _enumDropdown(label: 'Category', value: _category, items: ExerciseCategory.values, labelOf: (v) => v.name, onChanged: (v) => setState(() => _category = v!)),
+          _enumDropdown(label: 'Intensity', value: _intensity, items: IntensityLevel.values, labelOf: (v) => v.name, onChanged: (v) => setState(() => _intensity = v!)),
           TextField(
             controller: _weightController,
             style: TextStyle(color: AppTheme.white),
@@ -196,35 +171,19 @@ class _ExerciseConfigEditScreenState extends ConsumerState<ExerciseConfigEditScr
             inputFormatters: [digitsOnly],
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _burnController,
-            style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'Burn (kcal)'),
-            keyboardType: TextInputType.number,
-            inputFormatters: [digitsOnly],
-          ),
-          const SizedBox(height: 12),
         ],
       ),
     );
   }
 
-  Widget _enumDropdown<T>({
-    required String label,
-    required T value,
-    required List<T> items,
-    required String Function(T) labelOf,
-    required ValueChanged<T?> onChanged,
-  }) {
+  Widget _enumDropdown<T>({required String label, required T value, required List<T> items, required String Function(T) labelOf, required ValueChanged<T?> onChanged}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<T>(
         initialValue: value,
         style: TextStyle(color: AppTheme.white),
         decoration: InputDecoration(labelText: label),
-        items: items
-            .map((e) => DropdownMenuItem(value: e, child: Text(labelOf(e))))
-            .toList(),
+        items: items.map((e) => DropdownMenuItem(value: e, child: Text(labelOf(e)))).toList(),
         onChanged: onChanged,
       ),
     );

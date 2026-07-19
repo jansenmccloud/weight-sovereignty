@@ -10,7 +10,7 @@
  - ✅ daily log/ dashboard widgets + services
  - ✅ food log widgets + services
  - ✅ workout log widgets + services
- - basic balance calculation
+ - ✅ basic balance calculation
 
 ## TODOs from manually testing:
  - ✅ the deselect food actually doesn't remove the food from dailylog or delete the foodlog entry
@@ -40,7 +40,7 @@
  - ✅ use carousel view
  - ✅ continue with workout add screen
  - ✅ workout dash section should not only have delete but als edit action button
- - workout edit mode is the same like the workout mode
+ - ✅ workout edit mode is the same like the workout mode
 
 # Milestone 3 - UI and Feature Enrichments
 
@@ -52,6 +52,7 @@
  - ✅ make search field in add food sceen less dominant
  - ✅ decrease font size of weight number and center align it, with dot dash round border
  - ✅ clean up macro dashboard (tabbed inner row element to keep equal intents)
+ - adjust default colors in all config pages
  - in add food screen the favorites should be marked and on top
  - weight week avg, 30-day avg
  - show number of day logs 

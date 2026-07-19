@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/food_config/food_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class FoodConfigEditScreen extends ConsumerStatefulWidget {
@@ -123,6 +124,10 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             textCapitalization: TextCapitalization.sentences,
           ),
           const SizedBox(height: 12),
+          Text('Duplicate names replace the existing preset.',
+            style: TextStyle(color: AppTheme.grey),
+          ),
+          const SizedBox(height: 12),
           SwitchListTile(
             title: const Text('Favorite'),
             value: _favorite,
@@ -162,11 +167,6 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             decoration: const InputDecoration(labelText: 'Amount (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Duplicate names replace the existing preset.',
-            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),

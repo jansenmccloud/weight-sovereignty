@@ -34,7 +34,7 @@ class _MorningWeightScreenState extends ConsumerState<MorningWeightScreen> {
         _controller.text = yesterdayLog.bodyWeight!.toString();
       }
     }
-    return await ref.refresh(dailyLogListProvider.future); // force refresh
+    return await ref.refresh(dailyLogListProvider.future);
   }
 
   @override

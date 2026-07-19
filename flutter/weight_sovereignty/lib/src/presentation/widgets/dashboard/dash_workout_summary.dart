@@ -9,8 +9,9 @@ import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 /// Section showing logged workouts for the selected date.
 class WorkoutSummary extends ConsumerWidget {
   final DateTime targetDate;
+  final double bodyWeight;
 
-  const WorkoutSummary({super.key, required this.targetDate});
+  const WorkoutSummary({super.key, required this.targetDate, required this.bodyWeight});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,10 +27,7 @@ class WorkoutSummary extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Workout',
-                  style: text.titleLarge?.copyWith(color: AppTheme.white),
-                ),
+                Text('Workout', style: text.titleLarge?.copyWith(color: AppTheme.white)),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
                   color: AppTheme.yellow,
@@ -52,31 +50,19 @@ class WorkoutSummary extends ConsumerWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Text(
-                    'Error loading workouts: ${snapshot.error}',
-                    style: text.bodyMedium?.copyWith(color: AppTheme.red),
-                  );
+                  return Text('Error loading workouts: ${snapshot.error}', style: text.bodyMedium?.copyWith(color: AppTheme.red));
                 }
                 final workouts = snapshot.data ?? <Workout>[];
                 if (workouts.isEmpty) {
-                  return Text(
-                    'No workouts logged yet',
-                    style: text.bodyMedium?.copyWith(color: AppTheme.grey),
-                  );
+                  return Text('No workouts logged yet', style: text.bodyMedium?.copyWith(color: AppTheme.grey));
                 }
                 return Column(
                   children: [
                     for (final workout in workouts)
                       ListTile(
                         contentPadding: EdgeInsets.all(0),
-                        title: Text(
-                          workout.workoutBase?.name ?? 'Unknown Workout',
-                          style: TextStyle(color: AppTheme.white),
-                        ),
-                        subtitle: Text(
-                          'Burn: ${_sumWorkoutBurn(workout.exercises)} kcal',
-                          style: TextStyle(color: AppTheme.grey),
-                        ),
+                        title: Text(workout.workoutBase?.name ?? 'Unknown Workout', style: TextStyle(color: AppTheme.white)),
+                        subtitle: Text('Burn: ${_sumWorkoutBurn(workout.exercises)} kcal', style: TextStyle(color: AppTheme.grey)),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -86,7 +72,7 @@ class WorkoutSummary extends ConsumerWidget {
                               color: AppTheme.yellow,
                               iconSize: 22.0,
                               onPressed: () async {
-                                await Navigator.push<void>(context, EditWorkoutScreen.route(targetDate: targetDate, targetWorkout: workout));
+                                await Navigator.push<void>(context, EditWorkoutScreen.route(targetDate: targetDate, targetWorkout: workout, bodyWeight: bodyWeight));
                                 // Refresh workout list and daily log for the selected date after returning from add workout
                                 ref.invalidate(workoutListProvider);
                                 await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
@@ -104,14 +90,9 @@ class WorkoutSummary extends ConsumerWidget {
                                   context: context,
                                   builder: (ctx) => AlertDialog(
                                     title: const Text('Delete workout entry?'),
-                                    content: Text(
-                                      'Remove "${workout.workoutBase?.name}" from ${targetDate.day}/${targetDate.month}/${targetDate.year}?',
-                                    ),
+                                    content: Text('Remove "${workout.workoutBase?.name}" from ${targetDate.day}/${targetDate.month}/${targetDate.year}?'),
                                     actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, false),
-                                        child: const Text('Cancel'),
-                                      ),
+                                      TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
                                       TextButton(
                                         onPressed: () => Navigator.pop(context, true),
                                         style: TextButton.styleFrom(foregroundColor: AppTheme.red),
@@ -122,7 +103,7 @@ class WorkoutSummary extends ConsumerWidget {
                                 );
                                 if (confirmed == true) {
                                   final service = ref.read(dailyLogServiceProvider);
-                                  await service.deleteWorkoutByDate(workout,targetDate);
+                                  await service.deleteWorkoutByDate(workout, targetDate);
                                   await service.refreshForDay(targetDate);
                                   await ref.read(dailyLogListProvider.notifier).refresh();
                                   ref.invalidate(foodListProvider);
