@@ -10,17 +10,13 @@ class HomeShellScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Weight Sovereignty', style:TextStyle(color: AppTheme.purple)),
+        title: const Text('Weight Sovereignty', style: TextStyle(color: AppTheme.purple)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined, color:  AppTheme.white,),
+            icon: const Icon(Icons.settings_outlined, color: AppTheme.white),
             tooltip: 'Presets & settings',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const SettingsHubScreen(),
-                ),
-              );
+              Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SettingsHubScreen()));
             },
           ),
         ],

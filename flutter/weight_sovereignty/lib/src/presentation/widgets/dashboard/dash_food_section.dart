@@ -26,18 +26,12 @@ class FoodSection extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Food',
-                  style: text.titleLarge?.copyWith(color: AppTheme.white),
-                ),
+                Text('Food', style: text.titleLarge?.copyWith(color: AppTheme.white)),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
                   color: AppTheme.yellow,
                   onPressed: () async {
-                    await Navigator.push<void>(
-                      context,
-                      AddFoodScreen.route(targetDate: targetDate),
-                    );
+                    await Navigator.push<void>(context, AddFoodScreen.route(targetDate: targetDate));
                     // Refresh food list and daily log for the selected date after returning from add food
                     ref.invalidate(foodListProvider);
                     await ref.read(dailyLogServiceProvider).refreshForDay(targetDate);
@@ -49,35 +43,24 @@ class FoodSection extends ConsumerWidget {
             const SizedBox(height: 8),
 
             FutureBuilder<List<Food>>(
-              future: ref
-                  .read(foodListProvider.notifier)
-                  .listByCalendarDay(targetDate),
+              future: ref.read(foodListProvider.notifier).listByCalendarDay(targetDate),
               builder: (ctx, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Text(
-                    'Error loading food: ${snapshot.error}',
-                    style: text.bodyMedium?.copyWith(color: AppTheme.red),
-                  );
+                  return Text('Error loading food: ${snapshot.error}', style: text.bodyMedium?.copyWith(color: AppTheme.red));
                 }
                 final foods = snapshot.data ?? <Food>[];
                 if (foods.isEmpty) {
-                  return Text(
-                    'No food logged yet',
-                    style: text.bodyMedium?.copyWith(color: AppTheme.grey),
-                  );
+                  return Text('No food logged yet', style: text.bodyMedium?.copyWith(color: AppTheme.grey));
                 }
                 return Column(
                   children: [
                     for (final food in foods)
                       ListTile(
                         contentPadding: EdgeInsets.all(0),
-                        title: Text(
-                          '${food.foodBase?.name ?? 'Unknown'} · ${food.foodBase?.amountG ?? 100}g',
-                          style: TextStyle(color: AppTheme.white),
-                        ),
+                        title: Text('${food.foodBase?.name ?? 'Unknown'} · ${food.foodBase?.amountG ?? 100}g', style: TextStyle(color: AppTheme.white)),
                         subtitle: Text(
                           'Kcal: ${food.foodBase?.intakeCaloriesKcal ?? 0}, P: ${food.foodBase?.intakeProteinG ?? 0}g, C: ${food.foodBase?.intakeCarbsG ?? 0}g, F: ${food.foodBase?.intakeFatG ?? 0}g',
                           style: TextStyle(color: AppTheme.grey),
@@ -97,10 +80,7 @@ class FoodSection extends ConsumerWidget {
                                     title: const Text('Delete food entry?'),
                                     content: Text('Remove "${food.foodBase?.name}" from ${targetDate.day}/${targetDate.month}/${targetDate.year}?'),
                                     actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, false),
-                                        child: const Text('Cancel'),
-                                      ),
+                                      TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
                                       TextButton(
                                         onPressed: () => Navigator.pop(context, true),
                                         style: TextButton.styleFrom(foregroundColor: AppTheme.red),

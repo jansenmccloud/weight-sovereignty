@@ -23,8 +23,7 @@ class DailyLogService {
 
   DailyLogService(this.ref);
 
-  DailyLogConfigRepository get _dailyLogConfigRepo =>
-      ref.read(dailyLogConfigRepositoryProvider);
+  DailyLogConfigRepository get _dailyLogConfigRepo => ref.read(dailyLogConfigRepositoryProvider);
 
   DailyLogRepository get _dailyLogRepo => ref.read(dailyLogRepositoryProvider);
   FoodRepository get _foodRepo => ref.read(foodRepositoryProvider);

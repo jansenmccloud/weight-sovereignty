@@ -5,9 +5,7 @@ import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 
 class IsarFoodRepository implements FoodRepository {
-  IsarFoodRepository(Isar isar)
-      : _foods = isar.foods,
-        _crud = IsarCrud(isar.foods);
+  IsarFoodRepository(Isar isar) : _foods = isar.foods, _crud = IsarCrud(isar.foods);
 
   final IsarCollection<Food> _foods;
   final IsarCrud<Food> _crud;

@@ -41,12 +41,14 @@
  - ✅ continue with workout add screen
  - ✅ workout dash section should not only have delete but als edit action button
  - ✅ workout edit mode is the same like the workout mode
- - fix workout mode
- - improve ui layout
+ - ✅ fix workout mode
+ - ✅ improve ui layout
 
 # Milestone 3 - UI and Feature Enrichments
 
 ## TODOs
+ - add button for more exercises in edit workout mode
+ - add button for more sets in each lifting exercise
  - refactor: move calc logic to service layer
  - ✅ refactor: move colors to primary profile to centralize
  - ✅ handle inline TODOs
@@ -56,11 +58,16 @@
  - ✅ clean up macro dashboard (tabbed inner row element to keep equal intents)
  - adjust default colors in all config pages
  - in add food screen the favorites should be marked and on top
+ - implement sorting and/or ordering where possible
  - weight week avg, 30-day avg
  - show number of day logs 
  - select profile instead of take first
+ - enhance debug menu (domain model adjustments to toString)
 
 # Milestone 4 - Import, Export and default presets
  - export
  - import
  - default presets
+
+# Milestone 5 - extras
+ - add diagrams (weight, calories, exercise PBs)

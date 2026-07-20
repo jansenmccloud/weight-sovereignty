@@ -2,16 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AsyncListScaffold<T> extends StatelessWidget {
-  const AsyncListScaffold({
-    super.key,
-    required this.title,
-    required this.asyncValue,
-    required this.onRetry,
-    required this.itemBuilder,
-    this.floatingActionButton,
-    this.appBarActions,
-    this.header,
-  });
+  const AsyncListScaffold({super.key, required this.title, required this.asyncValue, required this.onRetry, required this.itemBuilder, this.floatingActionButton, this.appBarActions, this.header});
 
   final String title;
   final AsyncValue<List<T>> asyncValue;
@@ -24,10 +15,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: appBarActions,
-      ),
+      appBar: AppBar(title: Text(title), actions: appBarActions),
       floatingActionButton: floatingActionButton,
       body: asyncValue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -49,9 +37,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
             return Column(
               children: [
                 if (header != null) header!,
-                const Expanded(
-                  child: Center(child: Text('No entries yet')),
-                ),
+                const Expanded(child: Center(child: Text('No entries yet'))),
               ],
             );
           }
@@ -59,11 +45,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
             children: [
               if (header != null) header!,
               Expanded(
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) =>
-                      itemBuilder(context, items[index]),
-                ),
+                child: ListView.builder(itemCount: items.length, itemBuilder: (context, index) => itemBuilder(context, items[index])),
               ),
             ],
           );

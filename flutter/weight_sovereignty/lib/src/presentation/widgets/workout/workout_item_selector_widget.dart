@@ -8,12 +8,7 @@ class WorkoutItemSelectorWidget extends StatefulWidget {
   final VoidCallback onSelect;
   final VoidCallback onDeselect;
 
-  const WorkoutItemSelectorWidget({
-    super.key,
-    required this.workoutConfig, 
-    required this.onSelect, 
-    required this.onDeselect,
-  });
+  const WorkoutItemSelectorWidget({super.key, required this.workoutConfig, required this.onSelect, required this.onDeselect});
 
   @override
   State<WorkoutItemSelectorWidget> createState() => _WorkoutItemSelectorWidgetState();
@@ -33,35 +28,24 @@ class _WorkoutItemSelectorWidgetState extends State<WorkoutItemSelectorWidget> {
       return AppTheme.purple;
     }
 
-    final backgroundColor = theme.colorScheme.surfaceContainerHighest.withAlpha((255 * 0.3).round());
+    final backgroundColor = theme.colorScheme.surfaceContainerHighest.withAlpha((255 * 0.3).ceil());
 
     return Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Material(
         color: AppTheme.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Row(
               children: [
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        workoutConfig.name ?? 'Unnamed Workout',
-                        style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white),
-                      ),
-                    ],
+                    children: [Text(workoutConfig.name ?? 'Unnamed Workout', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white))],
                   ),
                 ),
                 // Checkbox

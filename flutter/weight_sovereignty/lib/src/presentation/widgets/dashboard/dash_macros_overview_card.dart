@@ -11,13 +11,13 @@ class MacrosOverviewCard extends StatelessWidget {
   final int plannedCarbs;
 
   const MacrosOverviewCard({
-    super.key, 
-    required this.intakeProtein, 
-    required this.intakeFat, 
-    required this.intakeCarbs, 
-    required this.plannedProtein, 
-    required this.plannedFat, 
-    required this.plannedCarbs, 
+    super.key,
+    required this.intakeProtein,
+    required this.intakeFat,
+    required this.intakeCarbs,
+    required this.plannedProtein,
+    required this.plannedFat,
+    required this.plannedCarbs,
   });
 
   @override
@@ -31,39 +31,44 @@ class MacrosOverviewCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Macros',
-              style: text.titleMedium?.copyWith(color: AppTheme.white),
-            ),
+            Text('Macros', style: text.titleMedium?.copyWith(color: AppTheme.white)),
             const SizedBox(height: 12),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Protein', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                     Text('Fat    ', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                     Text('Carbs  ', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
-                ]),
-                Column(crossAxisAlignment: CrossAxisAlignment.end,
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text('${plannedProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                     Text('${plannedFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                     Text('${plannedCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
-                ]),
-                Column(crossAxisAlignment: CrossAxisAlignment.end,
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text('- ${intakeProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
                     Text('- ${intakeFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
                     Text('- ${intakeCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
-                ]),
-                Column(crossAxisAlignment: CrossAxisAlignment.end,
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${plannedProtein-intakeProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
-                    Text('${plannedFat-intakeFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
-                    Text('${plannedCarbs-intakeCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
-                ]),
+                    Text('${plannedProtein - intakeProtein}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
+                    Text('${plannedFat - intakeFat}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
+                    Text('${plannedCarbs - intakeCarbs}g', style: text.bodyMedium?.copyWith(color: AppTheme.yellow)),
+                  ],
+                ),
               ],
             ),
           ],

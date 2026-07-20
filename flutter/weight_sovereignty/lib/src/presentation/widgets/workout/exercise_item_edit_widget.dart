@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
+import 'package:weight_sovereignty/src/application/providers/providers.dart';
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Widget for editing a workout exercise
-class ExerciseItemEditWidget extends StatefulWidget {
+class ExerciseItemEditWidget extends ConsumerStatefulWidget {
   final Workout workout;
   final int exerciseIndex;
   final double bodyWeight;
@@ -14,10 +16,10 @@ class ExerciseItemEditWidget extends StatefulWidget {
   const ExerciseItemEditWidget({super.key, required this.workout, required this.exerciseIndex, required this.bodyWeight});
 
   @override
-  State<ExerciseItemEditWidget> createState() => _ExerciseItemEditWidgetState();
+  ConsumerState<ExerciseItemEditWidget> createState() => _ExerciseItemEditWidgetState();
 }
 
-class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
+class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget> {
   final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
   final _weightController = initTenTextEditControllers();
   final _repsController = initTenTextEditControllers();
@@ -80,7 +82,7 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
     final bodyWeight = widget.bodyWeight;
 
     final theme = Theme.of(context);
-    final backgroundColor = theme.colorScheme.surfaceContainerHighest.withAlpha((255 * 0.3).round());
+    final backgroundColor = theme.colorScheme.surfaceContainerHighest.withAlpha((255 * 0.3).ceil());
 
     return Container(
       decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(12)),
@@ -93,7 +95,6 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Row(
               children: [
-                const SizedBox(width: 16),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _createItemWidgets(bodyWeight, workout, index, exercise, context)),
                 ),
@@ -113,7 +114,7 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
       Text(exercise.name ?? 'Unnamed Exercise', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
       const SizedBox(height: 2),
       Text('${exercise.typeName}: ${exercise.intensityLevelName} ${exercise.categoryName}: ${exercise.burnedCaloriesKcal ?? 0} kcal', style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey)),
-      const SizedBox(height: 4),
+      const SizedBox(height: 10),
     });
 
     if (ExerciseType.getTypeFromString(exercise.typeName) == ExerciseType.lifting) {
@@ -154,6 +155,7 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
                 inputFormatters: [digitsOnly],
               ),
             ),
+            const SizedBox(width: 10),
             Expanded(
               child: TextField(
                 onSubmitted: (value) {
@@ -191,13 +193,11 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
           ],
         ),
       );
+      setWidgets.add(const SizedBox(height: 10));
     }
 
     final widgets = <Widget>[];
-    widgets.add(Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: setWidgets,
-    ));
+    widgets.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: setWidgets));
 
     // TODO add set button
     return widgets;
@@ -211,8 +211,7 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
         children: [
           Expanded(
             child: TextField(
-              maxLength: 80,
-              onSubmitted: (value) {
+              onChanged: (value) {
                 exercise.distanceKm = parseOptionalDouble(value);
                 _recalculateAndSave(bodyWeight, workout, index, exercise);
               },
@@ -222,10 +221,10 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
           ),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
-              maxLength: 80,
-              onSubmitted: (value) {
+              onChanged: (value) {
                 exercise.durationMin = parseOptionalInt(value);
                 _recalculateAndSave(bodyWeight, workout, index, exercise);
               },
@@ -248,14 +247,16 @@ class _ExerciseItemEditWidgetState extends State<ExerciseItemEditWidget> {
       if (s == null || s.reps == null || !s.finished) continue;
       durationSec += s.reps! * 3;
     }
-    exercise.durationMin = (durationSec / 60.0).round();
+    exercise.durationMin = (durationSec / 60.0).ceil();
 
     return _recalculateAndSave(bodyWeight, workout, index, exercise);
   }
 
   void _recalculateAndSave(double bodyWeight, Workout workout, int index, ExerciseBase exercise) {
     exercise.calcAndSetBurnedCalories(bodyWeight);
-    // TODO save
+    workout.exercises![index] = exercise;
+    final workoutRepo = ref.read(workoutRepositoryProvider);
+    workoutRepo.save(workout);
     return;
   }
 }

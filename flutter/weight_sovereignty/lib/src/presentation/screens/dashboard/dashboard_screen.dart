@@ -37,9 +37,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void _navigateToWeightEntry(DateTime selDate) {
-    Navigator.push(context, MaterialPageRoute(
-        builder: (ctx) => MorningWeightScreen(selectedDate: selDate)),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (ctx) => MorningWeightScreen(selectedDate: selDate)));
   }
 
   void _previousDay() async {
@@ -72,9 +70,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // Filter logs for selected date
     final filteredLogs = logs.where((log) {
       if (log.date == null) return false;
-      return log.date!.year == _selectedDate.year &&
-          log.date!.month == _selectedDate.month &&
-          log.date!.day == _selectedDate.day;
+      return log.date!.year == _selectedDate.year && log.date!.month == _selectedDate.month && log.date!.day == _selectedDate.day;
     }).toList();
 
     // If no logs for the selected date, show an empty dashboard with a button to create one.
@@ -146,7 +142,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.chevron_right, color: AppTheme.white,),
+                  icon: const Icon(Icons.chevron_right, color: AppTheme.white),
                   onPressed: _nextDay,
                 ),
               ],
@@ -172,13 +168,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   SizedBox(height: 8),
 
                   // Calories Overview Card
-                  CalorieOverviewCard(
-                    bmr: bmr ?? 0,
-                    intake: intake,
-                    burn: burn,
-                    deficit: deficit ?? 0,
-                    netSurplus: netSurplus,
-                  ),
+                  CalorieOverviewCard(bmr: bmr ?? 0, intake: intake, burn: burn, deficit: deficit ?? 0, netSurplus: netSurplus),
                   SizedBox(height: 8),
 
                   // Macros Overview Card
@@ -186,25 +176,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     plannedProtein: plannedProtein ?? 0,
                     plannedFat: plannedFat ?? 0,
                     plannedCarbs: plannedCarbs ?? 0,
-                    intakeProtein: intakeProtein.round(),
-                    intakeFat: intakeFat.round(),
-                    intakeCarbs: intakeCarbs.round(),
+                    intakeProtein: intakeProtein.ceil(),
+                    intakeFat: intakeFat.ceil(),
+                    intakeCarbs: intakeCarbs.ceil(),
                   ),
                 ],
               ),
 
               // Page 1 - Food List Section - pass targetDate instead of foodIds
-              Column(
-                children: [
-                  FoodSection(targetDate: _selectedDate),
-                ],
-              ),
+              Column(children: [FoodSection(targetDate: _selectedDate)]),
 
               // Page 2 - Workout Summary Section (placeholder for future implementation)
               Column(
-                children: [
-                  WorkoutSummary(targetDate: _selectedDate, bodyWeight: dayWeight!),
-                ],
+                children: [WorkoutSummary(targetDate: _selectedDate, bodyWeight: dayWeight!)],
               ),
             ],
           ),

@@ -13,8 +13,7 @@ class DailyLogConfigEditScreen extends ConsumerStatefulWidget {
   final int? configId;
 
   @override
-  ConsumerState<DailyLogConfigEditScreen> createState() =>
-      _DailyLogConfigEditScreenState();
+  ConsumerState<DailyLogConfigEditScreen> createState() => _DailyLogConfigEditScreenState();
 }
 
 class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScreen> {
@@ -36,9 +35,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing = await ref
-          .read(dailyLogConfigListProvider.notifier)
-          .read(widget.configId!);
+      final existing = await ref.read(dailyLogConfigListProvider.notifier).read(widget.configId!);
       if (existing != null && mounted) {
         _nameController.text = existing.name ?? '';
         _bmrController.text = existing.bmrCaloriesKcal?.toString() ?? '';
@@ -77,8 +74,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
         ..plannedDeficitKcal = parseOptionalInt(_deficitController.text)
         ..plannedProteinG = parseOptionalInt(_proteinController.text)
         ..plannedFatG = parseOptionalInt(_fatController.text)
-        ..plannedCarbsG = parseOptionalInt(_carbsController.text)
-        ;
+        ..plannedCarbsG = parseOptionalInt(_carbsController.text);
       if (widget.configId != null) config.id = widget.configId!;
 
       final notifier = ref.read(dailyLogConfigListProvider.notifier);

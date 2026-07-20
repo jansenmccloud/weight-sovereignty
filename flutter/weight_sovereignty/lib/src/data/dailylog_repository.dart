@@ -5,9 +5,7 @@ import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 
 class IsarDailyLogRepository implements DailyLogRepository {
-  IsarDailyLogRepository(Isar isar)
-      : _dailyLogs = isar.dailyLogs,
-        _crud = IsarCrud(isar.dailyLogs);
+  IsarDailyLogRepository(Isar isar) : _dailyLogs = isar.dailyLogs, _crud = IsarCrud(isar.dailyLogs);
 
   final IsarCollection<DailyLog> _dailyLogs;
   final IsarCrud<DailyLog> _crud;

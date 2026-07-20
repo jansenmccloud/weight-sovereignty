@@ -12,8 +12,7 @@ class FoodConfigListScreen extends ConsumerStatefulWidget {
   const FoodConfigListScreen({super.key});
 
   @override
-  ConsumerState<FoodConfigListScreen> createState() =>
-      _FoodConfigListScreenState();
+  ConsumerState<FoodConfigListScreen> createState() => _FoodConfigListScreenState();
 }
 
 class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
@@ -34,24 +33,10 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
       onRetry: () => ref.invalidate(foodConfigListProvider),
       header: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: FilterChip(
-          label: const Text('Favorites only'),
-          selected: _favoritesOnly,
-          onSelected: (v) => setState(() => _favoritesOnly = v),
-        ),
+        child: FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, onSelected: (v) => setState(() => _favoritesOnly = v)),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.yellow,
-        foregroundColor: AppTheme.purple,
-        onPressed: () => _openEdit(context),
-        child: const Icon(Icons.add),
-      ),
-      itemBuilder: (context, item) => ConfigListTile(
-        title: _foodTitle(item),
-        subtitle: _foodSubtitle(item),
-        onTap: () => _openEdit(context, item.id),
-        onDelete: () => _delete(context, item),
-      ),
+      floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
+      itemBuilder: (context, item) => ConfigListTile(title: _foodTitle(item), subtitle: _foodSubtitle(item), onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),
     );
   }
 
@@ -75,11 +60,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   }
 
   void _openEdit(BuildContext context, [int? id]) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => FoodConfigEditScreen(configId: id),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => FoodConfigEditScreen(configId: id)));
   }
 
   Future<void> _delete(BuildContext context, FoodConfig item) async {

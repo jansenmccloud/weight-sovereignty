@@ -13,8 +13,7 @@ class FoodConfigEditScreen extends ConsumerStatefulWidget {
   final int? configId;
 
   @override
-  ConsumerState<FoodConfigEditScreen> createState() =>
-      _FoodConfigEditScreenState();
+  ConsumerState<FoodConfigEditScreen> createState() => _FoodConfigEditScreenState();
 }
 
 class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
@@ -37,9 +36,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing = await ref
-          .read(foodConfigListProvider.notifier)
-          .read(widget.configId!);
+      final existing = await ref.read(foodConfigListProvider.notifier).read(widget.configId!);
       if (existing != null && mounted) {
         _apply(existing);
       }
@@ -124,15 +121,9 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             textCapitalization: TextCapitalization.sentences,
           ),
           const SizedBox(height: 12),
-          Text('Duplicate names replace the existing preset.',
-            style: TextStyle(color: AppTheme.grey),
-          ),
+          Text('Duplicate names replace the existing preset.', style: TextStyle(color: AppTheme.grey)),
           const SizedBox(height: 12),
-          SwitchListTile(
-            title: const Text('Favorite'),
-            value: _favorite,
-            onChanged: (v) => setState(() => _favorite = v),
-          ),
+          SwitchListTile(title: const Text('Favorite'), value: _favorite, onChanged: (v) => setState(() => _favorite = v)),
           const SizedBox(height: 12),
           TextField(
             controller: _kcalController,

@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
-import 'package:weight_sovereignty/src/application/providers/repository_providers.dart'
-    show foodConfigRepositoryProvider, foodRepositoryProvider;
+import 'package:weight_sovereignty/src/application/providers/repository_providers.dart' show foodConfigRepositoryProvider, foodRepositoryProvider;
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/food/food_item_selector_widget.dart';
-
-
 
 /// Screen to add eaten food to the current day's DailyLog.
 /// Shows a searchable list of FoodConfig presets. User adjusts amount before adding.
@@ -51,7 +48,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     try {
       final foodsRepo = ref.read(foodConfigRepositoryProvider);
       final allFoods = await foodsRepo.getAll();
-      
+
       if (!mounted) return;
 
       // Initialize amount overrides to FoodConfig.amount (default serving size) for new foods
@@ -59,7 +56,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       for (final food in newFoods) {
         _amountOverrides[food.id] = (food.amountG ?? 100);
       }
-      
+
       setState(() {
         _foods = allFoods;
         _isLoading = false;
@@ -67,9 +64,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load data: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
     }
   }
 
@@ -101,10 +96,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
         actions: [
           TextButton(
             onPressed: _handleSave,
-            child: const Text(
-              'Save',
-              style: TextStyle(color: AppTheme.purple),
-              ),
+            child: const Text('Save', style: TextStyle(color: AppTheme.purple)),
           ),
         ],
       ),
@@ -134,14 +126,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
           // Food list or empty state
           if (_filteredFoods.isEmpty)
             Expanded(
-              child: Center(
-                child: Text(
-                  _searchQuery.isEmpty
-                      ? 'No foods configured yet.'
-                      : 'No foods found.',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
+              child: Center(child: Text(_searchQuery.isEmpty ? 'No foods configured yet.' : 'No foods found.', style: Theme.of(context).textTheme.bodyLarge)),
             )
           else
             Expanded(
@@ -150,25 +135,25 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
                 itemBuilder: (context, index) {
                   final food = _filteredFoods[index];
                   final amount = _amountOverrides[food.id] ?? (food.amountG ?? 100);
-                   return FoodItemSelectorWidget(
-                     foodConfig: food,
-                     amount: amount,
-                     onAmountChanged: (value) {
-                       setState(() {
-                         _amountOverrides[food.id] = value;
-                       });
-                     },
-                     onSelect: () {
-                       setState(() {
-                         _selectedFoodIds[food.id] = 1;
-                       });
-                     },
-                     onDeselect: () {
-                       setState(() {
-                         _selectedFoodIds[food.id] = 0;
-                       });
-                     },
-                   );
+                  return FoodItemSelectorWidget(
+                    foodConfig: food,
+                    amount: amount,
+                    onAmountChanged: (value) {
+                      setState(() {
+                        _amountOverrides[food.id] = value;
+                      });
+                    },
+                    onSelect: () {
+                      setState(() {
+                        _selectedFoodIds[food.id] = 1;
+                      });
+                    },
+                    onDeselect: () {
+                      setState(() {
+                        _selectedFoodIds[food.id] = 0;
+                      });
+                    },
+                  );
                 },
               ),
             ),
@@ -179,7 +164,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
 
   Future<void> _handleSave() async {
     final newEntries = <Food>[];
-    
+
     for (final food in _foods) {
       if (!_selectedFoodIds.containsKey(food.id) || _selectedFoodIds[food.id] == 0) continue;
       final userAmount = _amountOverrides[food.id] ?? 0;
@@ -199,15 +184,13 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       for (final foodEntity in newEntries) {
         await foodRepo.save(foodEntity);
       }
-      
+
       if (mounted) {
         Navigator.pop(context);
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save food: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save food: $e')));
     }
   }
 
@@ -216,11 +199,10 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     return Food()
       ..date = toCalendarDay(targetDate)
       ..setBase = config
-      ..foodBase!.intakeCaloriesKcal = ((config.intakeCaloriesKcal ?? 0).toDouble() * ratio).round()
-      ..foodBase!.intakeProteinG = ((config.intakeProteinG ?? 0).toDouble() * ratio).round()
-      ..foodBase!.intakeFatG = ((config.intakeFatG ?? 0).toDouble() * ratio).round()
-      ..foodBase!.intakeCarbsG = ((config.intakeCarbsG ?? 0).toDouble() * ratio).round()
+      ..foodBase!.intakeCaloriesKcal = ((config.intakeCaloriesKcal ?? 0).toDouble() * ratio).ceil()
+      ..foodBase!.intakeProteinG = ((config.intakeProteinG ?? 0).toDouble() * ratio).ceil()
+      ..foodBase!.intakeFatG = ((config.intakeFatG ?? 0).toDouble() * ratio).ceil()
+      ..foodBase!.intakeCarbsG = ((config.intakeCarbsG ?? 0).toDouble() * ratio).ceil()
       ..foodBase!.amountG = userAmount;
   }
-
 }

@@ -4,18 +4,13 @@ import 'package:weight_sovereignty/src/application/providers/repository_provider
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/domain/repo/crud_repository.dart';
 
-final foodListProvider = AsyncNotifierProvider<FoodListNotifier, List<Food>>(
-  FoodListNotifier.new,
-);
+final foodListProvider = AsyncNotifierProvider<FoodListNotifier, List<Food>>(FoodListNotifier.new);
 
-class FoodListNotifier extends AsyncNotifier<List<Food>>
-    with CrudListNotifierMixin<Food> {
+class FoodListNotifier extends AsyncNotifier<List<Food>> with CrudListNotifierMixin<Food> {
   @override
   CrudRepository<Food> repository() => ref.read(foodRepositoryProvider);
 
-  Future<List<Food>> listByCalendarDay(DateTime day) =>
-      ref.read(foodRepositoryProvider).listByCalendarDay(day);
+  Future<List<Food>> listByCalendarDay(DateTime day) => ref.read(foodRepositoryProvider).listByCalendarDay(day);
 
-  Future<List<Food>> listByIds(List<int> ids) =>
-      ref.read(foodRepositoryProvider).listByIds(ids);
+  Future<List<Food>> listByIds(List<int> ids) => ref.read(foodRepositoryProvider).listByIds(ids);
 }

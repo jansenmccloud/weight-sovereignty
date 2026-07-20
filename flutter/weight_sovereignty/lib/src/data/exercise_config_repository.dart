@@ -4,9 +4,7 @@ import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
 import 'package:weight_sovereignty/src/domain/repo/exercise_config_repo.dart';
 
 class IsarExerciseConfigRepository implements ExerciseConfigRepository {
-  IsarExerciseConfigRepository(Isar isar)
-      : _configs = isar.exerciseConfigs,
-        _crud = IsarCrud(isar.exerciseConfigs);
+  IsarExerciseConfigRepository(Isar isar) : _configs = isar.exerciseConfigs, _crud = IsarCrud(isar.exerciseConfigs);
 
   final IsarCollection<ExerciseConfig> _configs;
   final IsarCrud<ExerciseConfig> _crud;

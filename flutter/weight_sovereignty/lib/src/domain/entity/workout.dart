@@ -92,7 +92,7 @@ class ExerciseBase {
   int calcAndSetBurnedCalories(double bodyWeight) {
     if (ExerciseType.getTypeFromString(typeName) == ExerciseType.lifting) {
       final met = CalcConstants.metsLifting[IntensityLevel.getIntensityLevelFromString(intensityLevelName)];
-      burnedCaloriesKcal =  _calculateBurnedCalories(met, bodyWeight);
+      burnedCaloriesKcal = _calculateBurnedCalories(met, bodyWeight);
     } else {
       final met = CalcConstants.metsCardio[IntensityLevel.getIntensityLevelFromString(intensityLevelName)];
       burnedCaloriesKcal = _calculateBurnedCalories(met, bodyWeight);
@@ -105,7 +105,7 @@ class ExerciseBase {
       return 0;
     }
     final burned = ((met * 3.5 * bodyWeight) / 200.0) * durationMin!.toDouble();
-    return burned.round();
+    return burned.ceil();
   }
 }
 

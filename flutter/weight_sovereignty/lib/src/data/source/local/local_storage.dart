@@ -18,18 +18,7 @@ class LocalStorage {
       return _instance!;
     }
     final dir = await getApplicationDocumentsDirectory();
-    _instance = await Isar.open(
-      [
-        DailyLogSchema,
-        FoodSchema,
-        WorkoutSchema,
-        DailyLogConfigSchema,
-        FoodConfigSchema,
-        WorkoutConfigSchema,
-        ExerciseConfigSchema,
-      ],
-      directory: dir.path,
-    );
+    _instance = await Isar.open([DailyLogSchema, FoodSchema, WorkoutSchema, DailyLogConfigSchema, FoodConfigSchema, WorkoutConfigSchema, ExerciseConfigSchema], directory: dir.path);
     return _instance!;
   }
 
@@ -43,15 +32,7 @@ class LocalStorage {
   /// Opens an isolated database (tests). Does not replace the app singleton.
   static Future<Isar> openForTest(String directory) {
     return Isar.open(
-      [
-        DailyLogSchema,
-        FoodSchema,
-        WorkoutSchema,
-        DailyLogConfigSchema,
-        FoodConfigSchema,
-        WorkoutConfigSchema,
-        ExerciseConfigSchema,
-      ],
+      [DailyLogSchema, FoodSchema, WorkoutSchema, DailyLogConfigSchema, FoodConfigSchema, WorkoutConfigSchema, ExerciseConfigSchema],
       directory: directory,
       name: 'test_${DateTime.now().microsecondsSinceEpoch}',
     );

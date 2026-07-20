@@ -21,8 +21,7 @@ class DailyLog {
       ..plannedDeficitKcal = conf.plannedDeficitKcal
       ..plannedProteinG = conf.plannedProteinG
       ..plannedFatG = conf.plannedFatG
-      ..plannedCarbsG = conf.plannedCarbsG
-      ;
+      ..plannedCarbsG = conf.plannedCarbsG;
   }
 }
 

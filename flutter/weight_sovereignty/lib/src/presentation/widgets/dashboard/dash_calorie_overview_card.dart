@@ -9,14 +9,7 @@ class CalorieOverviewCard extends StatelessWidget {
   final int deficit;
   final int netSurplus;
 
-  const CalorieOverviewCard({
-    super.key,
-    required this.bmr,
-    required this.intake,
-    required this.burn,
-    required this.deficit,
-    required this.netSurplus,
-  });
+  const CalorieOverviewCard({super.key, required this.bmr, required this.intake, required this.burn, required this.deficit, required this.netSurplus});
 
   @override
   Widget build(BuildContext context) {
@@ -29,31 +22,38 @@ class CalorieOverviewCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Calories',
-              style: text.titleMedium?.copyWith(color: AppTheme.white),
-            ),
+            Text('Calories', style: text.titleMedium?.copyWith(color: AppTheme.white)),
             const SizedBox(height: 12),
-
-            // BMR baseline
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('BMR Baseline', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
-                Text('$bmr kcal', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
-              ],
-            ),
-            const SizedBox(height: 4),
 
             // Intake
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text( 'Intake', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                Text('Intake', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
                 Text('$intake kcal', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
               ],
             ),
+            const SizedBox(height: 4),
+
+            // Deficit
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Deficit', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+                Text('$deficit kcal', style: text.bodyMedium?.copyWith(color: AppTheme.white)),
+              ],
+            ),
             const Divider(height: 24),
+
+            // BMR baseline
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('BMR Baseline', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
+                Text('- $bmr kcal', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
+              ],
+            ),
+            const SizedBox(height: 4),
 
             // Burned
             Row(
@@ -63,23 +63,16 @@ class CalorieOverviewCard extends StatelessWidget {
                 Text('- $burn kcal', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
               ],
             ),
-            const SizedBox(height: 4),
-
-            // Deficit
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Deficit', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
-                Text('- $deficit kcal', style: text.bodyMedium?.copyWith(color: AppTheme.purple)),
-              ],
-            ),
             const Divider(height: 24),
 
             // Net Surplus/Deficit
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Net', style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold,color: AppTheme.yellow)),
+                Text(
+                  'Net',
+                  style: text.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppTheme.yellow),
+                ),
                 Text(
                   '$netSurplus kcal',
                   style: text.titleSmall?.copyWith(
