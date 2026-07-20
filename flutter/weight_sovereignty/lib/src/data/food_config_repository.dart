@@ -4,9 +4,7 @@ import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 import 'package:weight_sovereignty/src/domain/repo/food_config_repo.dart';
 
 class IsarFoodConfigRepository implements FoodConfigRepository {
-  IsarFoodConfigRepository(Isar isar)
-      : _configs = isar.foodConfigs,
-        _crud = IsarCrud(isar.foodConfigs);
+  IsarFoodConfigRepository(Isar isar) : _configs = isar.foodConfigs, _crud = IsarCrud(isar.foodConfigs);
 
   final IsarCollection<FoodConfig> _configs;
   final IsarCrud<FoodConfig> _crud;

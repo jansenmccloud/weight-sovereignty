@@ -5,9 +5,7 @@ import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 
 class IsarDailyLogRepository implements DailyLogRepository {
-  IsarDailyLogRepository(Isar isar)
-      : _dailyLogs = isar.dailyLogs,
-        _crud = IsarCrud(isar.dailyLogs);
+  IsarDailyLogRepository(Isar isar) : _dailyLogs = isar.dailyLogs, _crud = IsarCrud(isar.dailyLogs);
 
   final IsarCollection<DailyLog> _dailyLogs;
   final IsarCrud<DailyLog> _crud;
@@ -30,13 +28,14 @@ class IsarDailyLogRepository implements DailyLogRepository {
   }
 
   @override
-  Future<DailyLog> getOrCreateForDay(DateTime day) async {
+  Future<DailyLog> upsertByCalendarDay(DateTime day, DailyLog log) async {
     final calendarDay = toCalendarDay(day);
+    log.date = calendarDay;
     final existing = await getByCalendarDay(calendarDay);
-    if (existing != null) return existing;
-
-    final log = DailyLog()..date = calendarDay;
-    await save(log);
+    if (existing != null) {
+      log.id = existing.id;
+    }
+    await _crud.put(log);
     return (await getByCalendarDay(calendarDay))!;
   }
 }

@@ -5,9 +5,7 @@ import 'package:weight_sovereignty/src/domain/repo/workout_repo.dart';
 import 'package:weight_sovereignty/src/domain/util/date_only.dart';
 
 class IsarWorkoutRepository implements WorkoutRepository {
-  IsarWorkoutRepository(Isar isar)
-      : _workouts = isar.workouts,
-        _crud = IsarCrud(isar.workouts);
+  IsarWorkoutRepository(Isar isar) : _workouts = isar.workouts, _crud = IsarCrud(isar.workouts);
 
   final IsarCollection<Workout> _workouts;
   final IsarCrud<Workout> _crud;

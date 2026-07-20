@@ -38,16 +38,6 @@ const DailyLogSchema = CollectionSchema(
       id: 3,
       name: r'date',
       type: IsarType.dateTime,
-    ),
-    r'foodIds': PropertySchema(
-      id: 4,
-      name: r'foodIds',
-      type: IsarType.longList,
-    ),
-    r'workoutIds': PropertySchema(
-      id: 5,
-      name: r'workoutIds',
-      type: IsarType.longList,
     )
   },
   estimateSize: _dailyLogEstimateSize,
@@ -103,18 +93,6 @@ int _dailyLogEstimateSize(
               value, allOffsets[DailyLogBase]!, allOffsets);
     }
   }
-  {
-    final value = object.foodIds;
-    if (value != null) {
-      bytesCount += 3 + value.length * 8;
-    }
-  }
-  {
-    final value = object.workoutIds;
-    if (value != null) {
-      bytesCount += 3 + value.length * 8;
-    }
-  }
   return bytesCount;
 }
 
@@ -138,8 +116,6 @@ void _dailyLogSerialize(
     object.dailyLogBase,
   );
   writer.writeDateTime(offsets[3], object.date);
-  writer.writeLongList(offsets[4], object.foodIds);
-  writer.writeLongList(offsets[5], object.workoutIds);
 }
 
 DailyLog _dailyLogDeserialize(
@@ -161,9 +137,7 @@ DailyLog _dailyLogDeserialize(
     allOffsets,
   );
   object.date = reader.readDateTimeOrNull(offsets[3]);
-  object.foodIds = reader.readLongOrNullList(offsets[4]);
   object.id = id;
-  object.workoutIds = reader.readLongOrNullList(offsets[5]);
   return object;
 }
 
@@ -190,10 +164,6 @@ P _dailyLogDeserializeProp<P>(
       )) as P;
     case 3:
       return (reader.readDateTimeOrNull(offset)) as P;
-    case 4:
-      return (reader.readLongOrNullList(offset)) as P;
-    case 5:
-      return (reader.readLongOrNullList(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -588,180 +558,6 @@ extension DailyLogQueryFilter
     });
   }
 
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'foodIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'foodIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      foodIdsElementIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.elementIsNull(
-        property: r'foodIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      foodIdsElementIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.elementIsNotNull(
-        property: r'foodIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsElementEqualTo(
-      int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'foodIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      foodIdsElementGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'foodIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      foodIdsElementLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'foodIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsElementBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'foodIds',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsLengthEqualTo(
-      int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'foodIds',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'foodIds',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'foodIds',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'foodIds',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      foodIdsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'foodIds',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> foodIdsLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'foodIds',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
   QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -811,185 +607,6 @@ extension DailyLogQueryFilter
         upper: upper,
         includeUpper: includeUpper,
       ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> workoutIdsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'workoutIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'workoutIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsElementIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.elementIsNull(
-        property: r'workoutIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsElementIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.elementIsNotNull(
-        property: r'workoutIds',
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsElementEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'workoutIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsElementGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'workoutIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsElementLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'workoutIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsElementBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'workoutIds',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'workoutIds',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition> workoutIdsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'workoutIds',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'workoutIds',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'workoutIds',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'workoutIds',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QAfterFilterCondition>
-      workoutIdsLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'workoutIds',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
     });
   }
 }
@@ -1092,18 +709,6 @@ extension DailyLogQueryWhereDistinct
       return query.addDistinctBy(r'date');
     });
   }
-
-  QueryBuilder<DailyLog, DailyLog, QDistinct> distinctByFoodIds() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'foodIds');
-    });
-  }
-
-  QueryBuilder<DailyLog, DailyLog, QDistinct> distinctByWorkoutIds() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'workoutIds');
-    });
-  }
 }
 
 extension DailyLogQueryProperty
@@ -1138,18 +743,6 @@ extension DailyLogQueryProperty
       return query.addPropertyName(r'date');
     });
   }
-
-  QueryBuilder<DailyLog, List<int?>?, QQueryOperations> foodIdsProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'foodIds');
-    });
-  }
-
-  QueryBuilder<DailyLog, List<int?>?, QQueryOperations> workoutIdsProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'workoutIds');
-    });
-  }
 }
 
 // **************************************************************************
@@ -1172,6 +765,26 @@ const DailyLogBaseSchema = Schema(
       id: 1,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'plannedCarbsG': PropertySchema(
+      id: 2,
+      name: r'plannedCarbsG',
+      type: IsarType.long,
+    ),
+    r'plannedDeficitKcal': PropertySchema(
+      id: 3,
+      name: r'plannedDeficitKcal',
+      type: IsarType.long,
+    ),
+    r'plannedFatG': PropertySchema(
+      id: 4,
+      name: r'plannedFatG',
+      type: IsarType.long,
+    ),
+    r'plannedProteinG': PropertySchema(
+      id: 5,
+      name: r'plannedProteinG',
+      type: IsarType.long,
     )
   },
   estimateSize: _dailyLogBaseEstimateSize,
@@ -1203,6 +816,10 @@ void _dailyLogBaseSerialize(
 ) {
   writer.writeLong(offsets[0], object.bmrCaloriesKcal);
   writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.plannedCarbsG);
+  writer.writeLong(offsets[3], object.plannedDeficitKcal);
+  writer.writeLong(offsets[4], object.plannedFatG);
+  writer.writeLong(offsets[5], object.plannedProteinG);
 }
 
 DailyLogBase _dailyLogBaseDeserialize(
@@ -1214,6 +831,10 @@ DailyLogBase _dailyLogBaseDeserialize(
   final object = DailyLogBase();
   object.bmrCaloriesKcal = reader.readLongOrNull(offsets[0]);
   object.name = reader.readStringOrNull(offsets[1]);
+  object.plannedCarbsG = reader.readLongOrNull(offsets[2]);
+  object.plannedDeficitKcal = reader.readLongOrNull(offsets[3]);
+  object.plannedFatG = reader.readLongOrNull(offsets[4]);
+  object.plannedProteinG = reader.readLongOrNull(offsets[5]);
   return object;
 }
 
@@ -1228,6 +849,14 @@ P _dailyLogBaseDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
+      return (reader.readLongOrNull(offset)) as P;
+    case 5:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1456,6 +1085,302 @@ extension DailyLogBaseQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedCarbsGIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedCarbsG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedCarbsGIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedCarbsG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedCarbsGEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedCarbsG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedCarbsGGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedCarbsG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedCarbsGLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedCarbsG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedCarbsGBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedCarbsG',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedDeficitKcalBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedDeficitKcal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedFatGIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedFatG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedFatGIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedFatG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedFatGEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedFatG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedFatGGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedFatG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedFatGLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedFatG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedFatGBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedFatG',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedProteinGIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedProteinG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedProteinGIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedProteinG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedProteinGEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedProteinG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedProteinGGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedProteinG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedProteinGLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedProteinG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogBase, DailyLogBase, QAfterFilterCondition>
+      plannedProteinGBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedProteinG',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }

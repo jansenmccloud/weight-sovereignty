@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/dailylog_config/dailylog_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_form_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class DailyLogConfigEditScreen extends ConsumerStatefulWidget {
   const DailyLogConfigEditScreen({super.key, this.configId});
@@ -12,14 +13,17 @@ class DailyLogConfigEditScreen extends ConsumerStatefulWidget {
   final int? configId;
 
   @override
-  ConsumerState<DailyLogConfigEditScreen> createState() =>
-      _DailyLogConfigEditScreenState();
+  ConsumerState<DailyLogConfigEditScreen> createState() => _DailyLogConfigEditScreenState();
 }
 
 class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScreen> {
   final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
   final _nameController = TextEditingController();
   final _bmrController = TextEditingController();
+  final _deficitController = TextEditingController();
+  final _proteinController = TextEditingController();
+  final _fatController = TextEditingController();
+  final _carbsController = TextEditingController();
   bool _loading = true;
   bool _saving = false;
 
@@ -31,12 +35,14 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing = await ref
-          .read(dailyLogConfigListProvider.notifier)
-          .read(widget.configId!);
+      final existing = await ref.read(dailyLogConfigListProvider.notifier).read(widget.configId!);
       if (existing != null && mounted) {
         _nameController.text = existing.name ?? '';
         _bmrController.text = existing.bmrCaloriesKcal?.toString() ?? '';
+        _deficitController.text = existing.plannedDeficitKcal?.toString() ?? '';
+        _proteinController.text = existing.plannedProteinG?.toString() ?? '';
+        _fatController.text = existing.plannedFatG?.toString() ?? '';
+        _carbsController.text = existing.plannedCarbsG?.toString() ?? '';
       }
     }
     if (mounted) setState(() => _loading = false);
@@ -46,6 +52,10 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
   void dispose() {
     _nameController.dispose();
     _bmrController.dispose();
+    _deficitController.dispose();
+    _proteinController.dispose();
+    _fatController.dispose();
+    _carbsController.dispose();
     super.dispose();
   }
 
@@ -60,7 +70,11 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
     try {
       final config = DailyLogConfig()
         ..name = _nameController.text.trim()
-        ..bmrCaloriesKcal = parseOptionalInt(_bmrController.text);
+        ..bmrCaloriesKcal = parseOptionalInt(_bmrController.text)
+        ..plannedDeficitKcal = parseOptionalInt(_deficitController.text)
+        ..plannedProteinG = parseOptionalInt(_proteinController.text)
+        ..plannedFatG = parseOptionalInt(_fatController.text)
+        ..plannedCarbsG = parseOptionalInt(_carbsController.text);
       if (widget.configId != null) config.id = widget.configId!;
 
       final notifier = ref.read(dailyLogConfigListProvider.notifier);
@@ -92,12 +106,46 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
         children: [
           TextField(
             controller: _nameController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'Name'),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _bmrController,
+            style: TextStyle(color: AppTheme.white),
             decoration: const InputDecoration(labelText: 'BMR (kcal)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _deficitController,
+            style: TextStyle(color: AppTheme.white),
+            decoration: const InputDecoration(labelText: 'Planned Deficit (kcal)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _proteinController,
+            style: TextStyle(color: AppTheme.white),
+            decoration: const InputDecoration(labelText: 'Planned Protein (g)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _fatController,
+            style: TextStyle(color: AppTheme.white),
+            decoration: const InputDecoration(labelText: 'Planned Fat (g)'),
+            keyboardType: TextInputType.number,
+            inputFormatters: [digitsOnly],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _carbsController,
+            style: TextStyle(color: AppTheme.white),
+            decoration: const InputDecoration(labelText: 'Planned Carbs (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),

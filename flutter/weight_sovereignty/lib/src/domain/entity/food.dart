@@ -19,8 +19,7 @@ class Food {
       ..intakeProteinG = conf.intakeProteinG
       ..intakeCarbsG = conf.intakeCarbsG
       ..intakeFatG = conf.intakeFatG
-      ..amount = conf.amount
-      ..unit = conf.unit;
+      ..amountG = conf.amountG;
   }
 }
 
@@ -32,6 +31,5 @@ class FoodBase {
   int? intakeProteinG;
   int? intakeCarbsG;
   int? intakeFatG;
-  int? amount;
-  String? unit;
+  int? amountG;
 }

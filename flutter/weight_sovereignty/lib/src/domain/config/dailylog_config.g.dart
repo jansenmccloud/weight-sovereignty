@@ -26,6 +26,26 @@ const DailyLogConfigSchema = CollectionSchema(
       id: 1,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'plannedCarbsG': PropertySchema(
+      id: 2,
+      name: r'plannedCarbsG',
+      type: IsarType.long,
+    ),
+    r'plannedDeficitKcal': PropertySchema(
+      id: 3,
+      name: r'plannedDeficitKcal',
+      type: IsarType.long,
+    ),
+    r'plannedFatG': PropertySchema(
+      id: 4,
+      name: r'plannedFatG',
+      type: IsarType.long,
+    ),
+    r'plannedProteinG': PropertySchema(
+      id: 5,
+      name: r'plannedProteinG',
+      type: IsarType.long,
     )
   },
   estimateSize: _dailyLogConfigEstimateSize,
@@ -79,6 +99,10 @@ void _dailyLogConfigSerialize(
 ) {
   writer.writeLong(offsets[0], object.bmrCaloriesKcal);
   writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.plannedCarbsG);
+  writer.writeLong(offsets[3], object.plannedDeficitKcal);
+  writer.writeLong(offsets[4], object.plannedFatG);
+  writer.writeLong(offsets[5], object.plannedProteinG);
 }
 
 DailyLogConfig _dailyLogConfigDeserialize(
@@ -91,6 +115,10 @@ DailyLogConfig _dailyLogConfigDeserialize(
   object.bmrCaloriesKcal = reader.readLongOrNull(offsets[0]);
   object.id = id;
   object.name = reader.readStringOrNull(offsets[1]);
+  object.plannedCarbsG = reader.readLongOrNull(offsets[2]);
+  object.plannedDeficitKcal = reader.readLongOrNull(offsets[3]);
+  object.plannedFatG = reader.readLongOrNull(offsets[4]);
+  object.plannedProteinG = reader.readLongOrNull(offsets[5]);
   return object;
 }
 
@@ -105,6 +133,14 @@ P _dailyLogConfigDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
+      return (reader.readLongOrNull(offset)) as P;
+    case 5:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -609,6 +645,302 @@ extension DailyLogConfigQueryFilter
       ));
     });
   }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedCarbsGIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedCarbsG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedCarbsGIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedCarbsG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedCarbsGEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedCarbsG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedCarbsGGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedCarbsG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedCarbsGLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedCarbsG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedCarbsGBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedCarbsG',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedDeficitKcal',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedDeficitKcal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedDeficitKcalBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedDeficitKcal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedFatGIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedFatG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedFatGIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedFatG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedFatGEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedFatG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedFatGGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedFatG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedFatGLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedFatG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedFatGBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedFatG',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedProteinGIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'plannedProteinG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedProteinGIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'plannedProteinG',
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedProteinGEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedProteinG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedProteinGGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedProteinG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedProteinGLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedProteinG',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterFilterCondition>
+      plannedProteinGBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedProteinG',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension DailyLogConfigQueryObject
@@ -642,6 +974,62 @@ extension DailyLogConfigQuerySortBy
   QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedCarbsG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedCarbsG', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedCarbsGDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedCarbsG', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedDeficitKcal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedDeficitKcalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedFatG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedFatG', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedFatGDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedFatG', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedProteinG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedProteinG', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      sortByPlannedProteinGDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedProteinG', Sort.desc);
     });
   }
 }
@@ -685,6 +1073,62 @@ extension DailyLogConfigQuerySortThenBy
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedCarbsG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedCarbsG', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedCarbsGDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedCarbsG', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedDeficitKcal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedDeficitKcalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedDeficitKcal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedFatG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedFatG', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedFatGDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedFatG', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedProteinG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedProteinG', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QAfterSortBy>
+      thenByPlannedProteinGDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedProteinG', Sort.desc);
+    });
+  }
 }
 
 extension DailyLogConfigQueryWhereDistinct
@@ -700,6 +1144,34 @@ extension DailyLogConfigQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QDistinct>
+      distinctByPlannedCarbsG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannedCarbsG');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QDistinct>
+      distinctByPlannedDeficitKcal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannedDeficitKcal');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QDistinct>
+      distinctByPlannedFatG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannedFatG');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, DailyLogConfig, QDistinct>
+      distinctByPlannedProteinG() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannedProteinG');
     });
   }
 }
@@ -722,6 +1194,32 @@ extension DailyLogConfigQueryProperty
   QueryBuilder<DailyLogConfig, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, int?, QQueryOperations> plannedCarbsGProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannedCarbsG');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, int?, QQueryOperations>
+      plannedDeficitKcalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannedDeficitKcal');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, int?, QQueryOperations> plannedFatGProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannedFatG');
+    });
+  }
+
+  QueryBuilder<DailyLogConfig, int?, QQueryOperations>
+      plannedProteinGProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannedProteinG');
     });
   }
 }

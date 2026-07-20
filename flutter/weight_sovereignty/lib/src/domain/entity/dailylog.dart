@@ -11,15 +11,17 @@ class DailyLog {
   DateTime? date;
 
   double? bodyWeight;
-  List<int?>? foodIds;
-  List<int?>? workoutIds;
   Calculation? calculation;
 
   @ignore
   set setBase(DailyLogConfig conf) {
     dailyLogBase = DailyLogBase()
       ..name = conf.name
-      ..bmrCaloriesKcal = conf.bmrCaloriesKcal;
+      ..bmrCaloriesKcal = conf.bmrCaloriesKcal
+      ..plannedDeficitKcal = conf.plannedDeficitKcal
+      ..plannedProteinG = conf.plannedProteinG
+      ..plannedFatG = conf.plannedFatG
+      ..plannedCarbsG = conf.plannedCarbsG;
   }
 }
 
@@ -27,6 +29,10 @@ class DailyLog {
 class DailyLogBase {
   String? name;
   int? bmrCaloriesKcal;
+  int? plannedDeficitKcal;
+  int? plannedProteinG;
+  int? plannedFatG;
+  int? plannedCarbsG;
 }
 
 @embedded

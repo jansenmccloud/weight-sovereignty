@@ -14,26 +14,17 @@ class AppRoot extends ConsumerWidget {
     return isarAsync.when(
       loading: () => MaterialApp(
         theme: AppTheme.dark(),
-        home: const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       error: (error, _) => MaterialApp(
         theme: AppTheme.dark(),
         home: Scaffold(
           body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text('Failed to open database: $error'),
-            ),
+            child: Padding(padding: const EdgeInsets.all(24), child: Text('Failed to open database: $error')),
           ),
         ),
       ),
-      data: (_) => MaterialApp(
-        title: 'Weight Sovereignty',
-        theme: AppTheme.dark(),
-        home: const HomeShellScreen(),
-      ),
+      data: (_) => MaterialApp(title: 'Weight Sovereignty', theme: AppTheme.dark(), home: const HomeShellScreen()),
     );
   }
 }

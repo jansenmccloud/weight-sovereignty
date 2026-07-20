@@ -4,9 +4,7 @@ import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
 import 'package:weight_sovereignty/src/domain/repo/dailylog_config_repo.dart';
 
 class IsarDailyLogConfigRepository implements DailyLogConfigRepository {
-  IsarDailyLogConfigRepository(Isar isar)
-      : _configs = isar.dailyLogConfigs,
-        _crud = IsarCrud(isar.dailyLogConfigs);
+  IsarDailyLogConfigRepository(Isar isar) : _configs = isar.dailyLogConfigs, _crud = IsarCrud(isar.dailyLogConfigs);
 
   final IsarCollection<DailyLogConfig> _configs;
   final IsarCrud<DailyLogConfig> _crud;

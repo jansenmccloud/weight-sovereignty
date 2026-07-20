@@ -6,7 +6,7 @@ import 'package:weight_sovereignty/src/application/workout_config/workout_config
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
 import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/exercise_config_list_screen.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_form_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class WorkoutConfigEditScreen extends ConsumerStatefulWidget {
   const WorkoutConfigEditScreen({super.key, this.configId});
@@ -14,12 +14,10 @@ class WorkoutConfigEditScreen extends ConsumerStatefulWidget {
   final int? configId;
 
   @override
-  ConsumerState<WorkoutConfigEditScreen> createState() =>
-      _WorkoutConfigEditScreenState();
+  ConsumerState<WorkoutConfigEditScreen> createState() => _WorkoutConfigEditScreenState();
 }
 
-class _WorkoutConfigEditScreenState
-    extends ConsumerState<WorkoutConfigEditScreen> {
+class _WorkoutConfigEditScreenState extends ConsumerState<WorkoutConfigEditScreen> {
   final _nameController = TextEditingController();
   final Set<String> _selectedExerciseNames = {};
   bool _loading = true;
@@ -33,14 +31,10 @@ class _WorkoutConfigEditScreenState
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing = await ref
-          .read(workoutConfigListProvider.notifier)
-          .read(widget.configId!);
+      final existing = await ref.read(workoutConfigListProvider.notifier).read(widget.configId!);
       if (existing != null && mounted) {
         _nameController.text = existing.name ?? '';
-        _selectedExerciseNames.addAll(
-          existing.exercisePresetIds?.whereType<String>() ?? [],
-        );
+        _selectedExerciseNames.addAll(existing.exercisePresetNames?.whereType<String>() ?? []);
       }
     }
     if (mounted) setState(() => _loading = false);
@@ -69,7 +63,7 @@ class _WorkoutConfigEditScreenState
     try {
       final config = WorkoutConfig()
         ..name = _nameController.text.trim()
-        ..exercisePresetIds = _selectedExerciseNames.toList();
+        ..exercisePresetNames = _selectedExerciseNames.toList();
       if (widget.configId != null) config.id = widget.configId!;
 
       final notifier = ref.read(workoutConfigListProvider.notifier);
@@ -108,36 +102,24 @@ class _WorkoutConfigEditScreenState
           const SizedBox(height: 12),
           Text('Exercises', style: Theme.of(context).textTheme.titleMedium),
           exercisesAsync.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.all(12),
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator()),
             error: (e, _) => Text('Error loading exercises: $e'),
             data: (exercises) {
               if (exercises.isEmpty) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('No exercise presets yet.'),
-                    ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text('No exercise presets yet.')),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const ExerciseConfigListScreen(),
-                          ),
-                        );
+                        Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ExerciseConfigListScreen()));
                       },
                       child: const Text('Add exercise presets'),
                     ),
                   ],
                 );
               }
-              return Column(
-                children: exercises.map(_exerciseCheckbox).toList(),
-              );
+              return Column(children: exercises.map(_exerciseCheckbox).toList());
             },
           ),
         ],

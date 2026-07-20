@@ -72,6 +72,5 @@ class ExerciseConfig {
   ExerciseType get type => ExerciseType.getTypeFromString(typeName);
 
   @ignore
-  IntensityLevel get intensityLevel =>
-      IntensityLevel.getIntensityLevelFromString(intensityLevelName);
+  IntensityLevel get intensityLevel => IntensityLevel.getIntensityLevelFromString(intensityLevelName);
 }

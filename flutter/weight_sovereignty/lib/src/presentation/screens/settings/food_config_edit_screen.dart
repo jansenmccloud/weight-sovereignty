@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/config/config_validation.dart';
 import 'package:weight_sovereignty/src/application/food_config/food_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_form_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class FoodConfigEditScreen extends ConsumerStatefulWidget {
   const FoodConfigEditScreen({super.key, this.configId});
@@ -12,8 +13,7 @@ class FoodConfigEditScreen extends ConsumerStatefulWidget {
   final int? configId;
 
   @override
-  ConsumerState<FoodConfigEditScreen> createState() =>
-      _FoodConfigEditScreenState();
+  ConsumerState<FoodConfigEditScreen> createState() => _FoodConfigEditScreenState();
 }
 
 class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
@@ -24,7 +24,6 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
   final _carbsController = TextEditingController();
   final _fatController = TextEditingController();
   final _amountController = TextEditingController();
-  final _unitController = TextEditingController();
   bool _favorite = false;
   bool _loading = true;
   bool _saving = false;
@@ -37,9 +36,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
 
   Future<void> _load() async {
     if (widget.configId != null) {
-      final existing = await ref
-          .read(foodConfigListProvider.notifier)
-          .read(widget.configId!);
+      final existing = await ref.read(foodConfigListProvider.notifier).read(widget.configId!);
       if (existing != null && mounted) {
         _apply(existing);
       }
@@ -54,8 +51,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
     _proteinController.text = c.intakeProteinG?.toString() ?? '';
     _carbsController.text = c.intakeCarbsG?.toString() ?? '';
     _fatController.text = c.intakeFatG?.toString() ?? '';
-    _amountController.text = c.amount?.toString() ?? '';
-    _unitController.text = c.unit ?? '';
+    _amountController.text = c.amountG?.toString() ?? '';
   }
 
   @override
@@ -66,7 +62,6 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
     _carbsController.dispose();
     _fatController.dispose();
     _amountController.dispose();
-    _unitController.dispose();
     super.dispose();
   }
 
@@ -78,10 +73,7 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
       ..intakeProteinG = parseOptionalInt(_proteinController.text)
       ..intakeCarbsG = parseOptionalInt(_carbsController.text)
       ..intakeFatG = parseOptionalInt(_fatController.text)
-      ..amount = parseOptionalInt(_amountController.text)
-      ..unit = _unitController.text.trim().isEmpty
-          ? null
-          : _unitController.text.trim();
+      ..amountG = parseOptionalInt(_amountController.text);
     if (widget.configId != null) config.id = widget.configId!;
     return config;
   }
@@ -129,11 +121,9 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
             textCapitalization: TextCapitalization.sentences,
           ),
           const SizedBox(height: 12),
-          SwitchListTile(
-            title: const Text('Favorite'),
-            value: _favorite,
-            onChanged: (v) => setState(() => _favorite = v),
-          ),
+          Text('Duplicate names replace the existing preset.', style: TextStyle(color: AppTheme.grey)),
+          const SizedBox(height: 12),
+          SwitchListTile(title: const Text('Favorite'), value: _favorite, onChanged: (v) => setState(() => _favorite = v)),
           const SizedBox(height: 12),
           TextField(
             controller: _kcalController,
@@ -165,19 +155,9 @@ class _FoodConfigEditScreenState extends ConsumerState<FoodConfigEditScreen> {
           const SizedBox(height: 12),
           TextField(
             controller: _amountController,
-            decoration: const InputDecoration(labelText: 'Amount'),
+            decoration: const InputDecoration(labelText: 'Amount (g)'),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _unitController,
-            decoration: const InputDecoration(labelText: 'Unit'),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Duplicate names replace the existing preset.',
-            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),

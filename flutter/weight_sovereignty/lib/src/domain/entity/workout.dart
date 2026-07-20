@@ -16,7 +16,7 @@ class Workout {
   set setBase(WorkoutConfig conf) {
     workoutBase = WorkoutBase()
       ..name = conf.name
-      ..exercisePresetIds = conf.exercisePresetIds;
+      ..exercisePresetNames = conf.exercisePresetNames;
   }
 
   @ignore
@@ -33,21 +33,32 @@ class Workout {
 @embedded
 class WorkoutBase {
   String? name;
-  List<String?>? exercisePresetIds;
+  List<String?>? exercisePresetNames;
+}
+
+@embedded
+class ExerciseSet {
+  int? weightKg;
+  int? reps;
+  bool finished = false;
+}
+
+class CalcConstants {
+  static final Map<IntensityLevel, double> metsCardio = {IntensityLevel.light: 2.9, IntensityLevel.moderate: 3.3, IntensityLevel.intense: 5.3};
+  static final Map<IntensityLevel, double> metsLifting = {IntensityLevel.light: 3.5, IntensityLevel.moderate: 4.5, IntensityLevel.intense: 6.0};
 }
 
 @embedded
 class ExerciseBase {
   String? name;
   String? categoryName;
-  String? typeName;
   String? intensityLevelName;
-  int? weightKg;
-  int? reps;
-  int? sets;
+  int? burnedCaloriesKcal;
+
+  String? typeName;
   double? distanceKm;
   int? durationMin;
-  int? burnedCaloriesKcal;
+  List<ExerciseSet?>? sets;
 
   @ignore
   late ExerciseCategory category;
@@ -59,14 +70,14 @@ class ExerciseBase {
   late IntensityLevel intensityLevel;
 
   static ExerciseBase fromConfig(ExerciseConfig c) {
+    final exerciseSets = _createSet(c.weightKg, c.reps, c.sets);
+
     return ExerciseBase()
       ..name = c.name
       ..categoryName = c.category.name
       ..typeName = c.type.name
       ..intensityLevelName = c.intensityLevel.name
-      ..weightKg = c.weightKg
-      ..reps = c.reps
-      ..sets = c.sets
+      ..sets = exerciseSets
       ..distanceKm = c.distanceKm
       ..durationMin = c.durationMin
       ..burnedCaloriesKcal = c.burnedCaloriesKcal
@@ -74,4 +85,41 @@ class ExerciseBase {
       ..type = c.type
       ..intensityLevel = c.intensityLevel;
   }
+
+  // A) Calories_burned = MET × weight (kg) × duration (h)
+  // B) Calories_per_minute = (MET × 3.5 × weight(kg)) / 200
+  //    Calories_burned = Calories_per_minute × minutes
+  int calcAndSetBurnedCalories(double bodyWeight) {
+    if (ExerciseType.getTypeFromString(typeName) == ExerciseType.lifting) {
+      final met = CalcConstants.metsLifting[IntensityLevel.getIntensityLevelFromString(intensityLevelName)];
+      burnedCaloriesKcal = _calculateBurnedCalories(met, bodyWeight);
+    } else {
+      final met = CalcConstants.metsCardio[IntensityLevel.getIntensityLevelFromString(intensityLevelName)];
+      burnedCaloriesKcal = _calculateBurnedCalories(met, bodyWeight);
+    }
+    return burnedCaloriesKcal!;
+  }
+
+  int _calculateBurnedCalories(double? met, double bodyWeight) {
+    if (met == null || durationMin == null) {
+      return 0;
+    }
+    final burned = ((met * 3.5 * bodyWeight) / 200.0) * durationMin!.toDouble();
+    return burned.ceil();
+  }
+}
+
+List<ExerciseSet>? _createSet(int? weightKg, int? reps, int? sets) {
+  if (sets == null) {
+    return null;
+  }
+  final newEntries = <ExerciseSet>[];
+  for (var i = 0; i < sets; i++) {
+    newEntries.add(
+      ExerciseSet()
+        ..reps = reps
+        ..weightKg = weightKg,
+    );
+  }
+  return newEntries;
 }

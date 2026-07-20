@@ -3,16 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/food_config/food_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_edit_screen.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/async_list_scaffold.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/config_list_tile.dart';
-import 'package:weight_sovereignty/src/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/async_list_scaffold.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/config_list_tile.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/settings/confirm_delete_dialog.dart';
 
 class FoodConfigListScreen extends ConsumerStatefulWidget {
   const FoodConfigListScreen({super.key});
 
   @override
-  ConsumerState<FoodConfigListScreen> createState() =>
-      _FoodConfigListScreenState();
+  ConsumerState<FoodConfigListScreen> createState() => _FoodConfigListScreenState();
 }
 
 class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
@@ -33,22 +33,10 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
       onRetry: () => ref.invalidate(foodConfigListProvider),
       header: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: FilterChip(
-          label: const Text('Favorites only'),
-          selected: _favoritesOnly,
-          onSelected: (v) => setState(() => _favoritesOnly = v),
-        ),
+        child: FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, onSelected: (v) => setState(() => _favoritesOnly = v)),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openEdit(context),
-        child: const Icon(Icons.add),
-      ),
-      itemBuilder: (context, item) => ConfigListTile(
-        title: _foodTitle(item),
-        subtitle: _foodSubtitle(item),
-        onTap: () => _openEdit(context, item.id),
-        onDelete: () => _delete(context, item),
-      ),
+      floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
+      itemBuilder: (context, item) => ConfigListTile(title: _foodTitle(item), subtitle: _foodSubtitle(item), onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),
     );
   }
 
@@ -61,7 +49,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
 
   String? _foodSubtitle(FoodConfig item) {
     final parts = <String>[];
-    if (item.amount != null) parts.add('${item.amount}${item.unit}');
+    if (item.amountG != null) parts.add('${item.amountG}g');
     if (item.intakeCaloriesKcal != null) {
       parts.add('${item.intakeCaloriesKcal} kcal');
     }
@@ -72,11 +60,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   }
 
   void _openEdit(BuildContext context, [int? id]) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => FoodConfigEditScreen(configId: id),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => FoodConfigEditScreen(configId: id)));
   }
 
   Future<void> _delete(BuildContext context, FoodConfig item) async {

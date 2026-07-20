@@ -66,14 +66,5 @@ void main() {
       final may15 = await foodRepo.listByCalendarDay(DateTime(2026, 5, 15));
       expect(may15, hasLength(2));
     });
-
-    test('DailyLog getOrCreateForDay creates once', () async {
-      final day = toCalendarDay(DateTime(2026, 5, 15));
-      final first = await dailyLogRepo.getOrCreateForDay(day);
-      final second = await dailyLogRepo.getOrCreateForDay(day);
-
-      expect(first.id, second.id);
-      expect(await dailyLogRepo.getAll(), hasLength(1));
-    });
   });
 }
