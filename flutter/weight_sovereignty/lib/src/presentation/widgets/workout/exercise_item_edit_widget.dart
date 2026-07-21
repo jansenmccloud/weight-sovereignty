@@ -20,17 +20,18 @@ class ExerciseItemEditWidget extends ConsumerStatefulWidget {
 }
 
 class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget> {
+  static final int maxNumberOfSets = 15;
   final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
-  final _weightController = initTenTextEditControllers();
-  final _repsController = initTenTextEditControllers();
+  final _weightController = initTextEditControllers(maxNumberOfSets);
+  final _repsController = initTextEditControllers(maxNumberOfSets);
   final _distanceController = TextEditingController();
   final _durationController = TextEditingController();
   bool _loading = true;
   bool isChecked = false;
 
-  static List<TextEditingController> initTenTextEditControllers() {
+  static List<TextEditingController> initTextEditControllers(int numberOfSets) {
     final l = <TextEditingController>[];
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < maxNumberOfSets; i++) {
       l.add(TextEditingController());
     }
     return l;
@@ -149,8 +150,12 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
                   _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
                 },
                 controller: _weightController[i],
-                style: TextStyle(color: AppTheme.white),
-                decoration: const InputDecoration(labelText: 'kg'),
+                style: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                decoration: InputDecoration(
+                  labelText: 'kg',
+                  labelStyle: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: finished ? AppTheme.purple : AppTheme.white)),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [digitsOnly],
               ),
@@ -163,8 +168,12 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
                   _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
                 },
                 controller: _repsController[i],
-                style: TextStyle(color: AppTheme.white),
-                decoration: const InputDecoration(labelText: 'Reps'),
+                style: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                decoration: InputDecoration(
+                  labelText: 'Reps',
+                  labelStyle: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: finished ? AppTheme.purple : AppTheme.white)),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [digitsOnly],
               ),
@@ -196,10 +205,23 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
       setWidgets.add(const SizedBox(height: 10));
     }
 
-    final widgets = <Widget>[];
+    var widgets = <Widget>[];
     widgets.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: setWidgets));
 
-    // TODO add set button
+    if (exercise.sets!.length < maxNumberOfSets) {
+      widgets.add(
+        FilledButton(
+          onPressed: () {
+            exercise.sets!.add(exercise.sets![exercise.sets!.length - 1]);
+            workout.exercises![index] = exercise;
+            ref.read(workoutRepositoryProvider).save(workout);
+            // TODO refresh widget
+          },
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+          child: const Text('Add Set'),
+        ),
+      );
+    }
     return widgets;
   }
 
@@ -245,7 +267,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     int durationSec = 0;
     for (var s in exercise.sets!) {
       if (s == null || s.reps == null || !s.finished) continue;
-      durationSec += s.reps! * 3;
+      durationSec += s.reps! * CalcConstants.timePerRepSeconds;
     }
     exercise.durationMin = (durationSec / 60.0).ceil();
 

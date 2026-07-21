@@ -47,6 +47,10 @@
 # Milestone 3 - UI and Feature Enrichments
 
 ## TODOs
+ - ✅ adjust 3s to 5s foreach lifting rep
+ - ✅ debug calc of set => ceil() to often?
+ - show all data in debug menu
+ - ✅ color finished sets
  - add button for more exercises in edit workout mode
  - add button for more sets in each lifting exercise
  - refactor: move calc logic to service layer
@@ -71,3 +75,5 @@
 
 # Milestone 5 - extras
  - add diagrams (weight, calories, exercise PBs)
+ - info dialog with used formular and MET mapping
+ - exclude formular parameters to config
