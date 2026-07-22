@@ -51,8 +51,9 @@
  - ✅ debug calc of set => ceil() to often?
  - show all data in debug menu
  - ✅ color finished sets
- - add button for more exercises in edit workout mode
+ - ✅ add button for more exercises in edit workout mode
  - ✅ add button for more sets in each lifting exercise
+ - improve workout reloading after adding exercise
  - refactor: move calc logic to service layer
  - ✅ refactor: move colors to primary profile to centralize
  - ✅ handle inline TODOs
