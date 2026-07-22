@@ -112,7 +112,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
 
     final widgets = <Widget>[];
     widgets.addAll({
-      Text(exercise.name ?? 'Unnamed Exercise', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _addTitleAndConditionalButton(workout, index, exercise, context)),
       const SizedBox(height: 2),
       Text('${exercise.typeName}: ${exercise.intensityLevelName} ${exercise.categoryName}: ${exercise.burnedCaloriesKcal ?? 0} kcal', style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey)),
       const SizedBox(height: 10),
@@ -122,6 +122,17 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
       widgets.addAll(_createLiftingItemWidgets(bodyWeight, workout, index, exercise));
     } else {
       widgets.addAll(_createCardioItemWidgets(bodyWeight, workout, index, exercise));
+    }
+    return widgets;
+  }
+
+  List<Widget> _addTitleAndConditionalButton(Workout workout, int index, ExerciseBase exercise, BuildContext context) {
+    final widgets = <Widget>[];
+    widgets.add(
+      Text(exercise.name ?? 'Unnamed Exercise', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.white)),
+    );
+    if (ExerciseType.getTypeFromString(exercise.typeName) == ExerciseType.lifting && exercise.sets!.length < maxNumberOfSets) {
+      widgets.add(IconButton(icon: const Icon(Icons.add_circle_outline), color: AppTheme.yellow, onPressed: () => _addSetAndRefresh(workout, index, exercise)));
     }
     return widgets;
   }
@@ -208,15 +219,6 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     var widgets = <Widget>[];
     widgets.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: setWidgets));
 
-    if (exercise.sets!.length < maxNumberOfSets) {
-      widgets.add(
-        FilledButton(
-          onPressed: () => addSetAndRefresh(workout, index, exercise),
-          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-          child: const Text('Add Set'),
-        ),
-      );
-    }
     return widgets;
   }
 
@@ -277,13 +279,13 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     return;
   }
 
-  void addSetAndRefresh(Workout workout, int index, ExerciseBase exercise) {
+  void _addSetAndRefresh(Workout workout, int index, ExerciseBase exercise) {
     final cp = exercise.sets!.last!.copy();
     final cpList = List<ExerciseSet>.from(exercise.sets ?? []);
     cpList.add(cp);
     workout.exercises![index]!.sets = cpList;
     final workoutRepo = ref.read(workoutRepositoryProvider);
     workoutRepo.save(workout);
-    Navigator.pop(context);
+    setState(() {});
   }
 }
