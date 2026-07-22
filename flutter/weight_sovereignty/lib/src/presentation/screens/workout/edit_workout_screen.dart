@@ -37,7 +37,11 @@ class _EditWorkoutScreenState extends ConsumerState<EditWorkoutScreen> {
             child: ListView.builder(
               itemCount: currentWorkout.exercises?.length ?? 0,
               itemBuilder: (context, index) {
-                return ExerciseItemEditWidget(workout: currentWorkout, exerciseIndex: index, bodyWeight: bodyWeight);
+                return ExerciseItemEditWidget(
+                  workout: currentWorkout, 
+                  exerciseIndex: index, 
+                  bodyWeight: bodyWeight,
+                  );
               },
             ),
           ),

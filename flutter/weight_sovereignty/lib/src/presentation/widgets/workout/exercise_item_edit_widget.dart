@@ -211,12 +211,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     if (exercise.sets!.length < maxNumberOfSets) {
       widgets.add(
         FilledButton(
-          onPressed: () {
-            exercise.sets!.add(exercise.sets![exercise.sets!.length - 1]);
-            workout.exercises![index] = exercise;
-            ref.read(workoutRepositoryProvider).save(workout);
-            // TODO refresh widget
-          },
+          onPressed: () => addSetAndRefresh(workout, index, exercise),
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
           child: const Text('Add Set'),
         ),
@@ -280,5 +275,15 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     final workoutRepo = ref.read(workoutRepositoryProvider);
     workoutRepo.save(workout);
     return;
+  }
+
+  void addSetAndRefresh(Workout workout, int index, ExerciseBase exercise) {
+    final cp = exercise.sets!.last!.copy();
+    final cpList = List<ExerciseSet>.from(exercise.sets ?? []);
+    cpList.add(cp);
+    workout.exercises![index]!.sets = cpList;
+    final workoutRepo = ref.read(workoutRepositoryProvider);
+    workoutRepo.save(workout);
+    Navigator.pop(context);
   }
 }

@@ -41,6 +41,14 @@ class ExerciseSet {
   int? weightKg;
   int? reps;
   bool finished = false;
+
+  ExerciseSet copy() {
+    final newE = ExerciseSet();
+    newE.weightKg = weightKg;
+    newE.reps = reps;
+    newE.finished = finished;
+    return newE;
+  }
 }
 
 class CalcConstants {
