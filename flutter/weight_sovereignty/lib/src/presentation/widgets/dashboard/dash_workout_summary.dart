@@ -72,7 +72,7 @@ class WorkoutSummary extends ConsumerWidget {
                               color: AppTheme.yellow,
                               iconSize: 22.0,
                               onPressed: () async {
-                                final route = EditWorkoutScreen.route(targetDate: targetDate, targetWorkout: workout, bodyWeight: bodyWeight);
+                                final route = EditWorkoutScreen.route(targetDate: targetDate, targetWorkoutId: workout.id, bodyWeight: bodyWeight);
                                 await Navigator.push<void>(context, route);
                                 // Refresh workout list and daily log for the selected date after returning from add workout
                                 ref.invalidate(workoutListProvider);

@@ -1,15 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weight_sovereignty/src/application/config/config_validation.dart';
-import 'package:weight_sovereignty/src/application/exercise_config/exercise_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/application/providers/providers.dart';
-import 'package:weight_sovereignty/src/application/workout_config/workout_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
-import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
-import 'package:weight_sovereignty/src/presentation/screens/settings/exercise_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
@@ -60,10 +53,10 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
 
       widget.workout.exercises = newExercises;
       final workoutRepo = ref.read(workoutRepositoryProvider);
-      workoutRepo.save(widget.workout);
+      await workoutRepo.save(widget.workout);
       setState(() {});
 
-      if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.of(context).pop(widget.workout);
     } catch (e) {
       if (mounted) showConfigError(context, e);
     } finally {

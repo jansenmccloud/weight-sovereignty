@@ -9,14 +9,14 @@ import 'package:weight_sovereignty/src/presentation/widgets/workout/exercise_ite
 /// Screen to edit workouts
 class EditWorkoutScreen extends ConsumerStatefulWidget {
   final DateTime targetDate;
-  final Workout targetWorkout;
+  final int targetWorkoutId;
   final double bodyWeight;
 
-  const EditWorkoutScreen({super.key, required this.targetDate, required this.targetWorkout, required this.bodyWeight});
+  const EditWorkoutScreen({super.key, required this.targetDate, required this.targetWorkoutId, required this.bodyWeight});
 
-  static Route<void> route({required DateTime targetDate, required Workout targetWorkout, required double bodyWeight}) {
+  static Route<void> route({required DateTime targetDate, required int targetWorkoutId, required double bodyWeight}) {
     return MaterialPageRoute(
-      builder: (_) => EditWorkoutScreen(targetDate: targetDate, targetWorkout: targetWorkout, bodyWeight: bodyWeight),
+      builder: (_) => EditWorkoutScreen(targetDate: targetDate, targetWorkoutId: targetWorkoutId, bodyWeight: bodyWeight),
       settings: const RouteSettings(name: 'edit_workout'),
     );
   }
@@ -26,11 +26,34 @@ class EditWorkoutScreen extends ConsumerStatefulWidget {
 }
 
 class _EditWorkoutScreenState extends ConsumerState<EditWorkoutScreen> {
+  late Workout currentWorkout;
+  late double bodyWeight;
+
+  @override
+  Future<void> initState() async {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final w = await ref.read(workoutRepositoryProvider).getById(widget.targetWorkoutId);
+
+      if (!mounted) return;
+
+      setState(() {
+        currentWorkout = w!;
+        bodyWeight = widget.bodyWeight;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => {});
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Workout currentWorkout = widget.targetWorkout;
-    final bodyWeight = widget.bodyWeight;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Workout ${currentWorkout.workoutBase?.name ?? 'Unknown'}'),
@@ -39,7 +62,12 @@ class _EditWorkoutScreenState extends ConsumerState<EditWorkoutScreen> {
             icon: const Icon(Icons.add_circle_outline, color: AppTheme.purple),
             tooltip: 'Add Exercise',
             onPressed: () async {
-              Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => AddExerciseScreen(workout: currentWorkout)));
+              final result = await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => AddExerciseScreen(workout: currentWorkout)));
+              if(mounted){
+                setState(() {
+                  currentWorkout = result as Workout;
+                });
+              }
             },
           ),
         ],
