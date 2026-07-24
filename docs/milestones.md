@@ -45,8 +45,6 @@
  - ✅ improve ui layout
 
 # Milestone 3 - UI and Feature Enrichments
-
-## TODOs
  - ✅ adjust 3s to 5s foreach lifting rep
  - ✅ debug calc of set => ceil() to often?
  - ✅ color finished sets
@@ -62,10 +60,8 @@
  - ✅ change slider input of food grams to textfield
  - ✅ adjust default colors in all config pages
  - implement sorting and/or ordering where possible
- - select profile instead of take first
- - enhance debug menu (domain model adjustments to toString)
- - show all data in debug menu
- - refactor: move calc logic to service layer
+ - ✅ select profile instead of take first or disable add profile when already given
+ - ✅ enhance debug menu (domain model adjustments to toString) - show more data in debug menu
 
 # Milestone 4 - Import, Export and default presets
  - export
@@ -79,3 +75,7 @@
  - info dialog with used formular and MET mapping
  - exclude formular parameters to config
  - in add food screen the favorites should be marked and on top
+
+# Bonus
+ - refactor: move calc logic to service layer
+ - handle open code TODOS

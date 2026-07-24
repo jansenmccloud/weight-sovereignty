@@ -52,7 +52,7 @@ class DailyLogService {
 
     final config = await _dailyLogConfigRepo.getAll();
     if (config.isNotEmpty && config.first.bmrCaloriesKcal != null) {
-      bmrPreset = config.first;
+      bmrPreset = config.first; // TODO select profile instead of taking first
     }
 
     final log = DailyLog()
