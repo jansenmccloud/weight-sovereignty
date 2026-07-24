@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
@@ -17,7 +18,21 @@ class FoodItemSelectorWidget extends StatefulWidget {
 }
 
 class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
+  final digitsOnly = FilteringTextInputFormatter.digitsOnly;
+  late TextEditingController _amountController;
   bool isChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController = TextEditingController(text: widget.amount.toString());
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,26 +85,24 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
                     ],
                   ),
                 ),
-                // Amount controls (only when selected)
                 SizedBox(
                   width: 200,
-                  child: Column(
-                    children: [
-                      Text('${amount.toStringAsFixed(0)}g', style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.purple)),
-                      const SizedBox(height: 2),
-                      Slider(
-                        thumbColor: AppTheme.purple,
-                        activeColor: AppTheme.purple,
-                        value: amount.toDouble(),
-                        min: 0.0,
-                        max: (foodConfig.amountG ?? 100) * 5,
-                        divisions: 100,
-                        label: '${amount.toStringAsFixed(0)}g',
-                        onChanged: (double val) {
-                          onAmountChanged(val.ceil());
-                        },
-                      ),
-                    ],
+                  child: TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [digitsOnly],
+                    onChanged: (value) {
+                      final parsed = int.tryParse(value);
+                      if (parsed != null && parsed >= 0) {
+                        onAmountChanged(parsed);
+                      }
+                    },
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.white),
+                    decoration: const InputDecoration(
+                      labelText: 'g',
+                      labelStyle: TextStyle(color: AppTheme.white),
+                    ),
                   ),
                 ),
                 // Checkbox

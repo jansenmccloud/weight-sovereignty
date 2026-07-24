@@ -107,13 +107,13 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           TextField(
             controller: _nameController,
             style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'Name'),
+            decoration: const InputDecoration(labelText: 'Name', labelStyle: TextStyle(color: AppTheme.white)),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _bmrController,
             style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'BMR (kcal)'),
+            decoration: const InputDecoration(labelText: 'BMR (kcal)', labelStyle: TextStyle(color: AppTheme.white)),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),
@@ -121,7 +121,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           TextField(
             controller: _deficitController,
             style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'Planned Deficit (kcal)'),
+            decoration: const InputDecoration(labelText: 'Planned Deficit (kcal)', labelStyle: TextStyle(color: AppTheme.white)),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),
@@ -129,7 +129,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           TextField(
             controller: _proteinController,
             style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'Planned Protein (g)'),
+            decoration: const InputDecoration(labelText: 'Planned Protein (g)', labelStyle: TextStyle(color: AppTheme.white)),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),
@@ -137,7 +137,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           TextField(
             controller: _fatController,
             style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'Planned Fat (g)'),
+            decoration: const InputDecoration(labelText: 'Planned Fat (g)', labelStyle: TextStyle(color: AppTheme.white)),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),
@@ -145,7 +145,7 @@ class _DailyLogConfigEditScreenState extends ConsumerState<DailyLogConfigEditScr
           TextField(
             controller: _carbsController,
             style: TextStyle(color: AppTheme.white),
-            decoration: const InputDecoration(labelText: 'Planned Carbs (g)'),
+            decoration: const InputDecoration(labelText: 'Planned Carbs (g)', labelStyle: TextStyle(color: AppTheme.white)),
             keyboardType: TextInputType.number,
             inputFormatters: [digitsOnly],
           ),

@@ -59,7 +59,8 @@
  - ✅ make search field in add food sceen less dominant
  - ✅ decrease font size of weight number and center align it, with dot dash round border
  - ✅ clean up macro dashboard (tabbed inner row element to keep equal intents)
- - adjust default colors in all config pages
+ - ✅ change slider input of food grams to textfield
+ - ✅ adjust default colors in all config pages
  - implement sorting and/or ordering where possible
  - select profile instead of take first
  - enhance debug menu (domain model adjustments to toString)
