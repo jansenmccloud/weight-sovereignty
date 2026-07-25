@@ -30,6 +30,8 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   String _searchQuery = '';
   List<FoodConfig> _foods = [];
   bool _isLoading = true;
+  bool _favoritesOnly = false;
+  bool _sortAsc = true;
   final Map<int, int> _amountOverrides = {};
   final Map<int, int> _selectedFoodIds = {};
 
@@ -68,14 +70,28 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     }
   }
 
-  /// Filtered food list based on search query.
+  /// Filtered and sorted food list based on search query and favorite filter.
   List<FoodConfig> get _filteredFoods {
-    if (_searchQuery.isEmpty) return _foods;
-    final query = _searchQuery.toLowerCase();
-    return _foods.where((food) {
-      final name = food.name?.toLowerCase() ?? '';
-      return name.contains(query);
-    }).toList();
+    var list = _foods;
+
+    // Filter by name
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      list = list.where((food) => (food.name?.toLowerCase() ?? '').contains(query)).toList();
+    }
+
+    // Filter by favorite
+    if (_favoritesOnly) {
+      list = list.where((food) => food.favorite == true).toList();
+    }
+
+    // Sort by name
+    list = List<FoodConfig>.from(list)
+      ..sort((a, b) => _sortAsc
+          ? (a.name ?? '').compareTo(b.name ?? '')
+          : (b.name ?? '').compareTo(a.name ?? ''));
+
+    return list;
   }
 
   @override
@@ -94,6 +110,16 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
       appBar: AppBar(
         title: const Text('Add Food'),
         actions: [
+          IconButton(
+            icon: Icon(_favoritesOnly ? Icons.star : Icons.star_border, color: AppTheme.yellow),
+            tooltip: _favoritesOnly ? 'Hide favorites' : 'Show favorites only',
+            onPressed: () => setState(() => _favoritesOnly = !_favoritesOnly),
+          ),
+          IconButton(
+            icon: Icon(Icons.sort_by_alpha),
+            tooltip: _sortAsc ? 'Sort A→Z' : 'Sort Z→A',
+            onPressed: () => setState(() => _sortAsc = !_sortAsc),
+          ),
           TextButton(
             onPressed: _handleSave,
             child: const Text('Save', style: TextStyle(color: AppTheme.purple)),

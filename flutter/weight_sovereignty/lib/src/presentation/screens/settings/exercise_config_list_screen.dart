@@ -18,7 +18,7 @@ class ExerciseConfigListScreen extends ConsumerStatefulWidget {
 }
 
 class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScreen> {
-  ExerciseSortOrder _sortOrder = ExerciseSortOrder.nameAsc;
+  bool _sortAsc = true;
   ExerciseCategory? _categoryFilter;
 
   @override
@@ -58,35 +58,10 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
       onRetry: () => ref.invalidate(exerciseConfigListProvider),
       comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
       filter: _categoryFilter != null ? (e) => e.categoryName == _categoryFilter!.name : null,
-      reversed: _sortOrder == ExerciseSortOrder.nameDesc,
+      reversed: !_sortAsc,
       header: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: headerContent),
       appBarActions: [
-        PopupMenuButton<ExerciseSortOrder>(
-          icon: const Icon(Icons.sort),
-          itemBuilder: (_) => [
-            PopupMenuItem(
-              value: ExerciseSortOrder.nameAsc,
-              child: Row(
-                children: [
-                  Icon(Icons.check, size: 18, color: _sortOrder == ExerciseSortOrder.nameAsc ? Theme.of(context).colorScheme.primary : Colors.transparent),
-                  const SizedBox(width: 8),
-                  const Text('Name A→Z'),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: ExerciseSortOrder.nameDesc,
-              child: Row(
-                children: [
-                  Icon(Icons.check, size: 18, color: _sortOrder == ExerciseSortOrder.nameDesc ? Theme.of(context).colorScheme.primary : Colors.transparent),
-                  const SizedBox(width: 8),
-                  const Text('Name Z→A'),
-                ],
-              ),
-            ),
-          ],
-          onSelected: (v) => setState(() => _sortOrder = v),
-        ),
+        IconButton(icon: Icon(Icons.sort_by_alpha), tooltip: _sortAsc ? 'Sort A→Z' : 'Sort Z→A', onPressed: () => setState(() => _sortAsc = !_sortAsc)),
       ],
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) =>

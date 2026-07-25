@@ -69,62 +69,67 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(foodConfig.name ?? 'Unnamed Food', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${cal.toStringAsFixed(0)} kcal\nP: ${protein.toStringAsFixed(0)}g\nF: ${fat.toStringAsFixed(0)}g\nC: ${carbs.toStringAsFixed(0)}g',
-                        style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey),
+                Text('${foodConfig.favorite == true ? '★ ':''} ${foodConfig.name ?? 'Unnamed Food'}', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${cal.toStringAsFixed(0)} kcal\nP: ${protein.toStringAsFixed(0)}g\nF: ${fat.toStringAsFixed(0)}g\nC: ${carbs.toStringAsFixed(0)}g',
+                            style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 200,
-                  child: TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [digitsOnly],
-                    onChanged: (value) {
-                      final parsed = int.tryParse(value);
-                      if (parsed != null && parsed >= 0) {
-                        onAmountChanged(parsed);
-                      }
-                    },
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.white),
-                    decoration: const InputDecoration(
-                      labelText: 'g',
-                      labelStyle: TextStyle(color: AppTheme.white),
                     ),
-                  ),
-                ),
-                // Checkbox
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Checkbox(
-                    side: BorderSide(color: AppTheme.grey),
-                    checkColor: AppTheme.yellow,
-                    fillColor: WidgetStateProperty.resolveWith(getColor),
-                    focusColor: AppTheme.yellow,
-                    value: isChecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isChecked = value!;
-                      });
-                      if (value!) {
-                        onSelect();
-                      } else {
-                        onDeselect();
-                      }
-                    },
-                  ),
+                    SizedBox(
+                      width: 200,
+                      child: TextField(
+                        controller: _amountController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [digitsOnly],
+                        onChanged: (value) {
+                          final parsed = int.tryParse(value);
+                          if (parsed != null && parsed >= 0) {
+                            onAmountChanged(parsed);
+                          }
+                        },
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.white),
+                        decoration: const InputDecoration(
+                          labelText: 'g',
+                          labelStyle: TextStyle(color: AppTheme.white),
+                        ),
+                      ),
+                    ),
+                    // Checkbox
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Checkbox(
+                        side: BorderSide(color: AppTheme.grey),
+                        checkColor: AppTheme.yellow,
+                        fillColor: WidgetStateProperty.resolveWith(getColor),
+                        focusColor: AppTheme.yellow,
+                        value: isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                          if (value!) {
+                            onSelect();
+                          } else {
+                            onDeselect();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

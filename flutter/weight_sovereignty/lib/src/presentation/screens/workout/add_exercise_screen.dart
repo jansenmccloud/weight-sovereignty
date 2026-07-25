@@ -20,7 +20,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
   final Set<String> _selectedExerciseNames = {};
   bool _loading = true;
   bool _saving = false;
-  ExerciseSortOrder _sortOrder = ExerciseSortOrder.nameAsc;
+  bool _sortAsc = true;
   ExerciseCategory? _categoryFilter;
 
   @override
@@ -92,39 +92,14 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
         .toList()
       ..sort((a, b) {
         final cmp = (a.name ?? '').compareTo(b.name ?? '');
-        return _sortOrder == ExerciseSortOrder.nameAsc ? cmp : -cmp;
+        return _sortAsc ? cmp : -cmp;
       });
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add exercise'),
         actions: [
-          PopupMenuButton<ExerciseSortOrder>(
-            icon: const Icon(Icons.sort),
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                value: ExerciseSortOrder.nameAsc,
-                child: Row(
-                  children: [
-                    Icon(Icons.check, size: 18, color: _sortOrder == ExerciseSortOrder.nameAsc ? Theme.of(context).colorScheme.primary : Colors.transparent),
-                    const SizedBox(width: 8),
-                    const Text('Name A→Z'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: ExerciseSortOrder.nameDesc,
-                child: Row(
-                  children: [
-                    Icon(Icons.check, size: 18, color: _sortOrder == ExerciseSortOrder.nameDesc ? Theme.of(context).colorScheme.primary : Colors.transparent),
-                    const SizedBox(width: 8),
-                    const Text('Name Z→A'),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (v) => setState(() => _sortOrder = v),
-          ),
+          IconButton(icon: Icon(Icons.sort_by_alpha), tooltip: _sortAsc ? 'Sort A→Z' : 'Sort Z→A', onPressed: () => setState(() => _sortAsc = !_sortAsc)),
           TextButton(
             onPressed: _saving ? null : _save,
             child: _saving

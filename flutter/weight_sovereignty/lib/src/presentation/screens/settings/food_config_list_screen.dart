@@ -19,7 +19,7 @@ enum FoodSortOrder { nameAsc, nameDesc }
 
 class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   bool _favoritesOnly = false;
-  FoodSortOrder _sortOrder = FoodSortOrder.nameAsc;
+  bool _sortAsc = true;
 
   @override
   Widget build(BuildContext context) {
@@ -34,47 +34,17 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
         if (_favoritesOnly) return item.favorite == true;
         return true;
       },
-      reversed: _sortOrder == FoodSortOrder.nameDesc,
-      header: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: _buildHeader()),
+      reversed: !_sortAsc,
       appBarActions: [
-        PopupMenuButton<FoodSortOrder>(
-          icon: const Icon(Icons.sort),
-          itemBuilder: (_) => [
-            PopupMenuItem(
-              value: FoodSortOrder.nameAsc,
-              child: Row(
-                children: [
-                  Icon(Icons.check, size: 18, color: _sortOrder == FoodSortOrder.nameAsc ? Theme.of(context).colorScheme.primary : Colors.transparent),
-                  const SizedBox(width: 8),
-                  const Text('Name A→Z'),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: FoodSortOrder.nameDesc,
-              child: Row(
-                children: [
-                  Icon(Icons.check, size: 18, color: _sortOrder == FoodSortOrder.nameDesc ? Theme.of(context).colorScheme.primary : Colors.transparent),
-                  const SizedBox(width: 8),
-                  const Text('Name Z→A'),
-                ],
-              ),
-            ),
-          ],
-          onSelected: (v) => setState(() => _sortOrder = v),
+        IconButton(
+          icon: Icon(_favoritesOnly ? Icons.star : Icons.star_border, color: AppTheme.yellow),
+          tooltip: _favoritesOnly ? 'Hide favorites' : 'Show favorites only',
+          onPressed: () => setState(() => _favoritesOnly = !_favoritesOnly),
         ),
+        IconButton(icon: Icon(Icons.sort_by_alpha), tooltip: _sortAsc ? 'Sort A→Z' : 'Sort Z→A', onPressed: () => setState(() => _sortAsc = !_sortAsc)),
       ],
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) => ConfigListTile(title: _foodTitle(item), subtitle: _foodSubtitle(item), onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),
-    );
-  }
-
-  Widget _buildHeader() {
-    final chip = FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, showCheckmark: false, selectedColor: AppTheme.purple, onSelected: (v) => setState(() => _favoritesOnly = v));
-    return Column(
-      children: [
-        Row(children: [chip, const SizedBox(width: 8)]),
-      ],
     );
   }
 
