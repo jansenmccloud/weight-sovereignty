@@ -22,15 +22,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   FoodSortOrder _sortOrder = FoodSortOrder.nameAsc;
 
   List<FoodConfig> visible(List<FoodConfig> all) {
-    List<FoodConfig> filtered = _favoritesOnly ? all.where((f) => f.favorite == true).toList() : all;
-    
-    // Apply sorting
-    filtered = List.from(filtered)..sort((a, b) {
-      int result = (a.name ?? '').compareTo(b.name ?? '');
-      return _sortOrder == FoodSortOrder.nameDesc ? -result : result;
-    });
-    
-    return filtered;
+    return _favoritesOnly ? all.where((f) => f.favorite == true).toList() : all;
   }
 
   @override
@@ -41,6 +33,15 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
       title: 'Food presets',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(foodConfigListProvider),
+      comparator: (a, b) {
+        int result = (a.name ?? '').compareTo(b.name ?? '');
+        return _sortOrder == FoodSortOrder.nameDesc ? -result : result;
+      },
+      filter: (item) {
+        if (_favoritesOnly) return item.favorite == true;
+        return true;
+      },
+      reversed: _sortOrder == FoodSortOrder.nameDesc,
       header: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         child: _buildHeader(),

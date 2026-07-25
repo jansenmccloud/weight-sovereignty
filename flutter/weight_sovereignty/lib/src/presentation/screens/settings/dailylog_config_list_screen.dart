@@ -19,6 +19,7 @@ class DailyLogConfigListScreen extends ConsumerWidget {
       title: 'Daily log profiles',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(dailyLogConfigListProvider),
+      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
       floatingActionButton: asyncList.when(
         data: (configs) {
           return FloatingActionButton(
