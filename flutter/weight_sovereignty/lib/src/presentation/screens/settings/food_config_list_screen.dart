@@ -15,44 +15,99 @@ class FoodConfigListScreen extends ConsumerStatefulWidget {
   ConsumerState<FoodConfigListScreen> createState() => _FoodConfigListScreenState();
 }
 
+enum FoodSortOrder { nameAsc, nameDesc }
+
 class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   bool _favoritesOnly = false;
+  FoodSortOrder _sortOrder = FoodSortOrder.nameAsc;
+
+  List<FoodConfig> visible(List<FoodConfig> all) {
+    List<FoodConfig> filtered = _favoritesOnly ? all.where((f) => f.favorite == true).toList() : all;
+    
+    // Apply sorting
+    filtered = List.from(filtered)..sort((a, b) {
+      int result = (a.name ?? '').compareTo(b.name ?? '');
+      return _sortOrder == FoodSortOrder.nameDesc ? -result : result;
+    });
+    
+    return filtered;
+  }
 
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(foodConfigListProvider);
 
-    List<FoodConfig> visible(List<FoodConfig> all) {
-      if (!_favoritesOnly) return all;
-      return all.where((f) => f.favorite == true).toList();
-    }
-
     return AsyncListScaffold<FoodConfig>(
       title: 'Food presets',
-      asyncValue: asyncList.whenData(visible),
+      asyncValue: asyncList,
       onRetry: () => ref.invalidate(foodConfigListProvider),
       header: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, onSelected: (v) => setState(() => _favoritesOnly = v)),
+        child: _buildHeader(),
       ),
+      appBarActions: [
+        PopupMenuButton<FoodSortOrder>(
+          icon: const Icon(Icons.sort),
+          itemBuilder: (_) => [
+            PopupMenuItem(
+              value: FoodSortOrder.nameAsc,
+              child: Row(
+                children: [
+                  Icon(Icons.check, size: 18, color: _sortOrder == FoodSortOrder.nameAsc ? Theme.of(context).colorScheme.primary : Colors.transparent),
+                  const SizedBox(width: 8),
+                  const Text('Name A→Z'),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: FoodSortOrder.nameDesc,
+              child: Row(
+                children: [
+                  Icon(Icons.check, size: 18, color: _sortOrder == FoodSortOrder.nameDesc ? Theme.of(context).colorScheme.primary : Colors.transparent),
+                  const SizedBox(width: 8),
+                  const Text('Name Z→A'),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (v) => setState(() => _sortOrder = v),
+        ),
+      ],
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) => ConfigListTile(title: _foodTitle(item), subtitle: _foodSubtitle(item), onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),
+    );
+  }
+
+  Widget _buildHeader() {
+    final chip = FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, onSelected: (v) => setState(() => _favoritesOnly = v));
+    
+    final hasActiveFilters = _favoritesOnly || _sortOrder != FoodSortOrder.nameAsc;
+    if (!hasActiveFilters) {
+      return chip;
+    }
+    
+    return Column(
+      children: [
+        Row(children: [chip, const SizedBox(width: 8)]),
+        FilledButton.tonal(
+          onPressed: () => setState(() { _favoritesOnly = false; _sortOrder = FoodSortOrder.nameAsc; }),
+          child: const Text('Clear filters'),
+        ),
+      ],
     );
   }
 
   String _foodTitle(FoodConfig item) {
     final parts = <String>[];
     if (item.favorite == true) parts.add('★');
-    if (item.name != null) parts.add('${item.name}');
+    if (item.name != null) parts.add(item.name!);
     return parts.isEmpty ? '—' : parts.join(' ');
   }
 
   String? _foodSubtitle(FoodConfig item) {
     final parts = <String>[];
     if (item.amountG != null) parts.add('${item.amountG}g');
-    if (item.intakeCaloriesKcal != null) {
-      parts.add('${item.intakeCaloriesKcal} kcal');
-    }
+    if (item.intakeCaloriesKcal != null) parts.add('${item.intakeCaloriesKcal} kcal');
     if (item.intakeProteinG != null) parts.add('P ${item.intakeProteinG}g');
     if (item.intakeCarbsG != null) parts.add('C ${item.intakeCarbsG}g');
     if (item.intakeFatG != null) parts.add('F ${item.intakeFatG}g');
