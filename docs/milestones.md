@@ -59,7 +59,7 @@
  - ✅ clean up macro dashboard (tabbed inner row element to keep equal intents)
  - ✅ change slider input of food grams to textfield
  - ✅ adjust default colors in all config pages
- - implement sorting and/or ordering where possible
+ - ✅ implement sorting and/or ordering where possible
  - ✅ select profile instead of take first or disable add profile when already given
  - ✅ enhance debug menu (domain model adjustments to toString) - show more data in debug menu
 
