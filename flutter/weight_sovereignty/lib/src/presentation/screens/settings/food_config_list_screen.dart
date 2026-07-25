@@ -80,20 +80,16 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   }
 
   Widget _buildHeader() {
-    final chip = FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, onSelected: (v) => setState(() => _favoritesOnly = v));
-    
-    final hasActiveFilters = _favoritesOnly || _sortOrder != FoodSortOrder.nameAsc;
-    if (!hasActiveFilters) {
-      return chip;
-    }
-    
+    final chip = FilterChip(
+      label: const Text('Favorites only'), 
+      selected: _favoritesOnly, 
+      showCheckmark: false,
+      selectedColor: AppTheme.purple,
+      onSelected: (v) => setState(() => _favoritesOnly = v)
+    );
     return Column(
       children: [
         Row(children: [chip, const SizedBox(width: 8)]),
-        FilledButton.tonal(
-          onPressed: () => setState(() { _favoritesOnly = false; _sortOrder = FoodSortOrder.nameAsc; }),
-          child: const Text('Clear filters'),
-        ),
       ],
     );
   }

@@ -59,7 +59,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
 
           // Apply sort
           final comp = reversed ? ((a, b) => comparator(b, a)) : comparator;
-          displayItems..sort(comp);
+          displayItems.sort(comp);
 
           if (displayItems.isEmpty) {
             return Column(

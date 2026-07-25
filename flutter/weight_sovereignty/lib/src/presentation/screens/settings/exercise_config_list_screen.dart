@@ -29,10 +29,13 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
     final categoryChips = <Widget>[];
     var spacer = const SizedBox(width: 8);
     for (final category in ExerciseCategory.values) {
+      if (category == ExerciseCategory.none) continue;
       categoryChips.add(
         FilterChip(
           label: Text(_categoryDisplayName(category)),
           selected: _categoryFilter == category,
+          showCheckmark: false,
+          selectedColor: AppTheme.purple,
           onSelected: (selected) {
             setState(() {
               _categoryFilter = selected ? category : null;
@@ -46,34 +49,8 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
     // Build the header row with category chips and clear button
     Widget headerContent = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: categoryChips,
-      ),
+      child: Row(children: categoryChips),
     );
-
-    // Add clear button if filters are active
-    final hasActiveFilters = _categoryFilter != null || _sortOrder != ExerciseSortOrder.nameAsc;
-    if (hasActiveFilters) {
-      headerContent = Column(
-        children: [
-          headerContent,
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.tonal(
-                onPressed: () => setState(() {
-                  _categoryFilter = null;
-                  _sortOrder = ExerciseSortOrder.nameAsc;
-                }),
-                child: const Text('Clear filters'),
-              ),
-            ),
-          ),
-        ],
-      );
-    }
 
     return AsyncListScaffold<ExerciseConfig>(
       title: 'Exercise presets',
@@ -107,27 +84,18 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
           onSelected: (v) => setState(() => _sortOrder = v),
         ),
       ],
-      header: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: headerContent,
-      ),
+      header: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: headerContent),
       filter: _categoryFilter != null ? (e) => e.categoryName == _categoryFilter!.name : null,
       comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
       reversed: _sortOrder == ExerciseSortOrder.nameDesc,
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
-      itemBuilder: (context, item) => ConfigListTile(
-        title: item.name ?? '—',
-        subtitle: '${item.type.name} · ${item.category.name}',
-        onTap: () => _openEdit(context, item.id),
-        onDelete: () => _delete(context, item),
-      ),
+      itemBuilder: (context, item) =>
+          ConfigListTile(title: item.name ?? '—', subtitle: '${item.type.name} · ${item.category.name}', onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),
     );
   }
 
   String _categoryDisplayName(ExerciseCategory category) {
     switch (category) {
-      case ExerciseCategory.none:
-        return 'None';
       case ExerciseCategory.back:
         return 'Back';
       case ExerciseCategory.arms:
@@ -138,6 +106,8 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
         return 'Legs';
       case ExerciseCategory.shoulders:
         return 'Shoulders';
+      case ExerciseCategory.none:
+        return '';
     }
   }
 
