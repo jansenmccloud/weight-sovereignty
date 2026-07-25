@@ -56,6 +56,10 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
       title: 'Exercise presets',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(exerciseConfigListProvider),
+      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
+      filter: _categoryFilter != null ? (e) => e.categoryName == _categoryFilter!.name : null,
+      reversed: _sortOrder == ExerciseSortOrder.nameDesc,
+      header: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: headerContent),
       appBarActions: [
         PopupMenuButton<ExerciseSortOrder>(
           icon: const Icon(Icons.sort),
@@ -84,10 +88,6 @@ class _ExerciseConfigListScreenState extends ConsumerState<ExerciseConfigListScr
           onSelected: (v) => setState(() => _sortOrder = v),
         ),
       ],
-      header: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: headerContent),
-      filter: _categoryFilter != null ? (e) => e.categoryName == _categoryFilter!.name : null,
-      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
-      reversed: _sortOrder == ExerciseSortOrder.nameDesc,
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) =>
           ConfigListTile(title: item.name ?? '—', subtitle: '${item.type.name} · ${item.category.name}', onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),

@@ -21,10 +21,6 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   bool _favoritesOnly = false;
   FoodSortOrder _sortOrder = FoodSortOrder.nameAsc;
 
-  List<FoodConfig> visible(List<FoodConfig> all) {
-    return _favoritesOnly ? all.where((f) => f.favorite == true).toList() : all;
-  }
-
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(foodConfigListProvider);
@@ -33,19 +29,13 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
       title: 'Food presets',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(foodConfigListProvider),
-      comparator: (a, b) {
-        int result = (a.name ?? '').compareTo(b.name ?? '');
-        return _sortOrder == FoodSortOrder.nameDesc ? -result : result;
-      },
+      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
       filter: (item) {
         if (_favoritesOnly) return item.favorite == true;
         return true;
       },
       reversed: _sortOrder == FoodSortOrder.nameDesc,
-      header: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: _buildHeader(),
-      ),
+      header: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: _buildHeader()),
       appBarActions: [
         PopupMenuButton<FoodSortOrder>(
           icon: const Icon(Icons.sort),
@@ -80,13 +70,7 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   }
 
   Widget _buildHeader() {
-    final chip = FilterChip(
-      label: const Text('Favorites only'), 
-      selected: _favoritesOnly, 
-      showCheckmark: false,
-      selectedColor: AppTheme.purple,
-      onSelected: (v) => setState(() => _favoritesOnly = v)
-    );
+    final chip = FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, showCheckmark: false, selectedColor: AppTheme.purple, onSelected: (v) => setState(() => _favoritesOnly = v));
     return Column(
       children: [
         Row(children: [chip, const SizedBox(width: 8)]),
