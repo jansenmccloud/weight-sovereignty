@@ -41,11 +41,20 @@ class ExerciseSet {
   int? weightKg;
   int? reps;
   bool finished = false;
+
+  ExerciseSet copy() {
+    final newE = ExerciseSet();
+    newE.weightKg = weightKg;
+    newE.reps = reps;
+    newE.finished = finished;
+    return newE;
+  }
 }
 
 class CalcConstants {
   static final Map<IntensityLevel, double> metsCardio = {IntensityLevel.light: 2.9, IntensityLevel.moderate: 3.3, IntensityLevel.intense: 5.3};
   static final Map<IntensityLevel, double> metsLifting = {IntensityLevel.light: 3.5, IntensityLevel.moderate: 4.5, IntensityLevel.intense: 6.0};
+  static final int timePerRepSeconds = 6;
 }
 
 @embedded

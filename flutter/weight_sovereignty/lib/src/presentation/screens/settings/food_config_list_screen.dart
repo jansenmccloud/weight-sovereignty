@@ -15,26 +15,34 @@ class FoodConfigListScreen extends ConsumerStatefulWidget {
   ConsumerState<FoodConfigListScreen> createState() => _FoodConfigListScreenState();
 }
 
+enum FoodSortOrder { nameAsc, nameDesc }
+
 class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   bool _favoritesOnly = false;
+  bool _sortAsc = true;
 
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(foodConfigListProvider);
 
-    List<FoodConfig> visible(List<FoodConfig> all) {
-      if (!_favoritesOnly) return all;
-      return all.where((f) => f.favorite == true).toList();
-    }
-
     return AsyncListScaffold<FoodConfig>(
       title: 'Food presets',
-      asyncValue: asyncList.whenData(visible),
+      asyncValue: asyncList,
       onRetry: () => ref.invalidate(foodConfigListProvider),
-      header: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: FilterChip(label: const Text('Favorites only'), selected: _favoritesOnly, onSelected: (v) => setState(() => _favoritesOnly = v)),
-      ),
+      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
+      filter: (item) {
+        if (_favoritesOnly) return item.favorite == true;
+        return true;
+      },
+      reversed: !_sortAsc,
+      appBarActions: [
+        IconButton(
+          icon: Icon(_favoritesOnly ? Icons.star : Icons.star_border, color: AppTheme.yellow),
+          tooltip: _favoritesOnly ? 'Hide favorites' : 'Show favorites only',
+          onPressed: () => setState(() => _favoritesOnly = !_favoritesOnly),
+        ),
+        IconButton(icon: Icon(Icons.sort_by_alpha), tooltip: _sortAsc ? 'Sort A→Z' : 'Sort Z→A', onPressed: () => setState(() => _sortAsc = !_sortAsc)),
+      ],
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) => ConfigListTile(title: _foodTitle(item), subtitle: _foodSubtitle(item), onTap: () => _openEdit(context, item.id), onDelete: () => _delete(context, item)),
     );
@@ -43,16 +51,14 @@ class _FoodConfigListScreenState extends ConsumerState<FoodConfigListScreen> {
   String _foodTitle(FoodConfig item) {
     final parts = <String>[];
     if (item.favorite == true) parts.add('★');
-    if (item.name != null) parts.add('${item.name}');
+    if (item.name != null) parts.add(item.name!);
     return parts.isEmpty ? '—' : parts.join(' ');
   }
 
   String? _foodSubtitle(FoodConfig item) {
     final parts = <String>[];
     if (item.amountG != null) parts.add('${item.amountG}g');
-    if (item.intakeCaloriesKcal != null) {
-      parts.add('${item.intakeCaloriesKcal} kcal');
-    }
+    if (item.intakeCaloriesKcal != null) parts.add('${item.intakeCaloriesKcal} kcal');
     if (item.intakeProteinG != null) parts.add('P ${item.intakeProteinG}g');
     if (item.intakeCarbsG != null) parts.add('C ${item.intakeCarbsG}g');
     if (item.intakeFatG != null) parts.add('F ${item.intakeFatG}g');

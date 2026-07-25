@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AsyncListScaffold<T> extends StatelessWidget {
-  const AsyncListScaffold({super.key, required this.title, required this.asyncValue, required this.onRetry, required this.itemBuilder, this.floatingActionButton, this.appBarActions, this.header});
+  const AsyncListScaffold({
+    super.key,
+    required this.title,
+    required this.asyncValue,
+    required this.onRetry,
+    required this.itemBuilder,
+    this.floatingActionButton,
+    this.appBarActions,
+    this.header,
+    this.filter,
+    required this.comparator,
+    this.reversed = false,
+  });
 
   final String title;
   final AsyncValue<List<T>> asyncValue;
@@ -11,6 +23,15 @@ class AsyncListScaffold<T> extends StatelessWidget {
   final Widget? floatingActionButton;
   final List<Widget>? appBarActions;
   final Widget? header;
+
+  /// Filter predicate — only items matching are shown. null = no filter.
+  final bool Function(T item)? filter;
+
+  /// Comparator for sorting. Must not be null.
+  final int Function(T a, T b) comparator;
+
+  /// Whether to reverse the comparator (for descending sort).
+  final bool reversed;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +54,14 @@ class AsyncListScaffold<T> extends StatelessWidget {
           ),
         ),
         data: (items) {
-          if (items.isEmpty) {
+          // Apply filter if provided
+          var displayItems = filter != null ? items.where(filter!).toList() : items;
+
+          // Apply sort
+          final comp = reversed ? ((a, b) => comparator(b, a)) : comparator;
+          displayItems.sort(comp);
+
+          if (displayItems.isEmpty) {
             return Column(
               children: [
                 if (header != null) header!,
@@ -45,7 +73,7 @@ class AsyncListScaffold<T> extends StatelessWidget {
             children: [
               if (header != null) header!,
               Expanded(
-                child: ListView.builder(itemCount: items.length, itemBuilder: (context, index) => itemBuilder(context, items[index])),
+                child: ListView.builder(itemCount: displayItems.length, itemBuilder: (context, index) => itemBuilder(context, displayItems[index])),
               ),
             ],
           );

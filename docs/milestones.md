@@ -45,29 +45,37 @@
  - ✅ improve ui layout
 
 # Milestone 3 - UI and Feature Enrichments
-
-## TODOs
- - add button for more exercises in edit workout mode
- - add button for more sets in each lifting exercise
- - refactor: move calc logic to service layer
+ - ✅ adjust 3s to 5s foreach lifting rep
+ - ✅ debug calc of set => ceil() to often?
+ - ✅ color finished sets
+ - ✅ add button for more exercises in edit workout mode
+ - ✅ add button for more sets in each lifting exercise
+ - ✅ improve workout reloading after adding exercise
  - ✅ refactor: move colors to primary profile to centralize
  - ✅ handle inline TODOs
  - ✅ remove separator line in add food screen
  - ✅ make search field in add food sceen less dominant
  - ✅ decrease font size of weight number and center align it, with dot dash round border
  - ✅ clean up macro dashboard (tabbed inner row element to keep equal intents)
- - adjust default colors in all config pages
- - in add food screen the favorites should be marked and on top
- - implement sorting and/or ordering where possible
- - weight week avg, 30-day avg
- - show number of day logs 
- - select profile instead of take first
- - enhance debug menu (domain model adjustments to toString)
+ - ✅ change slider input of food grams to textfield
+ - ✅ adjust default colors in all config pages
+ - ✅ implement sorting and/or ordering where possible
+ - ✅ select profile instead of take first or disable add profile when already given
+ - ✅ enhance debug menu (domain model adjustments to toString) - show more data in debug menu
 
 # Milestone 4 - Import, Export and default presets
  - export
  - import
  - default presets
 
-# Milestone 5 - extras
+# Milestone 5 - stats & extras
  - add diagrams (weight, calories, exercise PBs)
+ - weight week avg, 30-day avg
+ - show number of day logs 
+ - info dialog with used formular and MET mapping
+ - exclude formular parameters to config
+ - in add food screen the favorites should be marked and on top
+
+# Bonus
+ - refactor: move calc logic to service layer
+ - handle open code TODOS

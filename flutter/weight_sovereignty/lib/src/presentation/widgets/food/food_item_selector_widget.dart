@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:weight_sovereignty/src/domain/config/food_config.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
@@ -17,7 +18,21 @@ class FoodItemSelectorWidget extends StatefulWidget {
 }
 
 class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
+  final digitsOnly = FilteringTextInputFormatter.digitsOnly;
+  late TextEditingController _amountController;
   bool isChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController = TextEditingController(text: widget.amount.toString());
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,64 +69,67 @@ class _FoodItemSelectorWidgetState extends State<FoodItemSelectorWidget> {
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(foodConfig.name ?? 'Unnamed Food', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${cal.toStringAsFixed(0)} kcal\nP: ${protein.toStringAsFixed(0)}g\nF: ${fat.toStringAsFixed(0)}g\nC: ${carbs.toStringAsFixed(0)}g',
-                        style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey),
+                Text('${foodConfig.favorite == true ? '★ ':''} ${foodConfig.name ?? 'Unnamed Food'}', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${cal.toStringAsFixed(0)} kcal\nP: ${protein.toStringAsFixed(0)}g\nF: ${fat.toStringAsFixed(0)}g\nC: ${carbs.toStringAsFixed(0)}g',
+                            style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                // Amount controls (only when selected)
-                SizedBox(
-                  width: 200,
-                  child: Column(
-                    children: [
-                      Text('${amount.toStringAsFixed(0)}g', style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.purple)),
-                      const SizedBox(height: 2),
-                      Slider(
-                        thumbColor: AppTheme.purple,
-                        activeColor: AppTheme.purple,
-                        value: amount.toDouble(),
-                        min: 0.0,
-                        max: (foodConfig.amountG ?? 100) * 5,
-                        divisions: 100,
-                        label: '${amount.toStringAsFixed(0)}g',
-                        onChanged: (double val) {
-                          onAmountChanged(val.ceil());
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: TextField(
+                        controller: _amountController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [digitsOnly],
+                        onChanged: (value) {
+                          final parsed = int.tryParse(value);
+                          if (parsed != null && parsed >= 0) {
+                            onAmountChanged(parsed);
+                          }
+                        },
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.white),
+                        decoration: const InputDecoration(
+                          labelText: 'g',
+                          labelStyle: TextStyle(color: AppTheme.white),
+                        ),
+                      ),
+                    ),
+                    // Checkbox
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Checkbox(
+                        side: BorderSide(color: AppTheme.grey),
+                        checkColor: AppTheme.yellow,
+                        fillColor: WidgetStateProperty.resolveWith(getColor),
+                        focusColor: AppTheme.yellow,
+                        value: isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                          if (value!) {
+                            onSelect();
+                          } else {
+                            onDeselect();
+                          }
                         },
                       ),
-                    ],
-                  ),
-                ),
-                // Checkbox
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Checkbox(
-                    side: BorderSide(color: AppTheme.grey),
-                    checkColor: AppTheme.yellow,
-                    fillColor: WidgetStateProperty.resolveWith(getColor),
-                    focusColor: AppTheme.yellow,
-                    value: isChecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isChecked = value!;
-                      });
-                      if (value!) {
-                        onSelect();
-                      } else {
-                        onDeselect();
-                      }
-                    },
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

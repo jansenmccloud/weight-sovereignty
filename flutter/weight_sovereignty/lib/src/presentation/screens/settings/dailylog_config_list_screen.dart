@@ -19,7 +19,19 @@ class DailyLogConfigListScreen extends ConsumerWidget {
       title: 'Daily log profiles',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(dailyLogConfigListProvider),
-      floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
+      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
+      floatingActionButton: asyncList.when(
+        data: (configs) {
+          return FloatingActionButton(
+            backgroundColor: configs.isEmpty ? AppTheme.yellow : AppTheme.background,
+            foregroundColor: configs.isEmpty ? AppTheme.purple : AppTheme.background,
+            onPressed: configs.isEmpty ? () => _openEdit(context) : null,
+            child: const Icon(Icons.add),
+          );
+        },
+        loading: () => const CircularProgressIndicator(),
+        error: (_, __) => null,
+      ),
       itemBuilder: (context, item) => ConfigListTile(
         title: item.name ?? '—',
         subtitle: item.bmrCaloriesKcal != null ? 'BMR ${item.bmrCaloriesKcal} kcal' : null,

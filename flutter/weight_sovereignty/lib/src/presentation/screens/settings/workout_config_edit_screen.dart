@@ -6,6 +6,7 @@ import 'package:weight_sovereignty/src/application/workout_config/workout_config
 import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
 import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/exercise_config_list_screen.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/settings/config_form_scaffold.dart';
 
 class WorkoutConfigEditScreen extends ConsumerStatefulWidget {
@@ -89,7 +90,7 @@ class _WorkoutConfigEditScreenState extends ConsumerState<WorkoutConfigEditScree
     final exercisesAsync = ref.watch(exerciseConfigListProvider);
 
     return ConfigFormScaffold(
-      title: widget.configId == null ? 'New template' : 'Edit template',
+      title: widget.configId == null ? 'New workout' : 'Edit workout',
       isSaving: _saving,
       onSave: _save,
       child: Column(
@@ -97,10 +98,10 @@ class _WorkoutConfigEditScreenState extends ConsumerState<WorkoutConfigEditScree
         children: [
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Name'),
+            decoration: const InputDecoration(labelText: 'Name', labelStyle: TextStyle(color: AppTheme.white)),
           ),
           const SizedBox(height: 12),
-          Text('Exercises', style: Theme.of(context).textTheme.titleMedium),
+          Text('Exercises', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.white)),
           exercisesAsync.when(
             loading: () => const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator()),
             error: (e, _) => Text('Error loading exercises: $e'),
@@ -132,8 +133,8 @@ class _WorkoutConfigEditScreenState extends ConsumerState<WorkoutConfigEditScree
     if (name == null || name.isEmpty) return const SizedBox.shrink();
 
     return CheckboxListTile(
-      title: Text(name),
-      subtitle: Text('${exercise.type.name} · ${exercise.category.name}'),
+      title: Text(name,style: TextStyle(color: AppTheme.white)),
+      subtitle: Text('${exercise.type.name} · ${exercise.category.name}', style: TextStyle(color: AppTheme.grey)),
       value: _selectedExerciseNames.contains(name),
       onChanged: (checked) {
         setState(() {

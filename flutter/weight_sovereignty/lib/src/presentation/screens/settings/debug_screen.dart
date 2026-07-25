@@ -309,26 +309,31 @@ class _EntityFormatter {
     return 'DailyLog(id=${e.id}\n'
         '${_kv('date', e.date?.toLocal())}'
         '${_kv('bodyWeight', e.bodyWeight != null ? '${e.bodyWeight} kg' : '(null)')}'
-        '${_kv('bmrCaloriesKcal', e.dailyLogBase?.bmrCaloriesKcal)}'
-        '${_kv('name', e.dailyLogBase?.name)}'
-        '${_kv('totalBurnedCaloriesKcal', e.calculation?.totalBurnedCaloriesKcal)}'
-        '${_kv('totalIntakeCaloriesKcal', e.calculation?.totalIntakeCaloriesKcal)}'
-        '${_kv('totalIntakeProteinG', e.calculation?.totalIntakeProteinG)}'
-        '${_kv('totalIntakeCarbsG', e.calculation?.totalIntakeCarbsG)}'
-        '${_kv('totalIntakeFatG', e.calculation?.totalIntakeFatG)}'
+        '${_kv('dailyLogBase.name', e.dailyLogBase?.name)}'
+        '${_kv('dailyLogBase.bmrCaloriesKcal', e.dailyLogBase?.bmrCaloriesKcal)}'
+        '${_kv('dailyLogBase.plannedDeficitKcal', e.dailyLogBase?.plannedDeficitKcal)}'
+        '${_kv('dailyLogBase.plannedProteinG', e.dailyLogBase?.plannedProteinG)}'
+        '${_kv('dailyLogBase.plannedFatG', e.dailyLogBase?.plannedFatG)}'
+        '${_kv('dailyLogBase.plannedCarbsG', e.dailyLogBase?.plannedCarbsG)}'
+        '${_kv('calculation.totalBurnedCaloriesKcal', e.calculation?.totalBurnedCaloriesKcal)}'
+        '${_kv('calculation.totalIntakeCaloriesKcal', e.calculation?.totalIntakeCaloriesKcal)}'
+        '${_kv('calculation.totalIntakeProteinG', e.calculation?.totalIntakeProteinG)}'
+        '${_kv('calculation.totalIntakeCarbsG', e.calculation?.totalIntakeCarbsG)}'
+        '${_kv('calculation.totalIntakeFatG', e.calculation?.totalIntakeFatG)}'
         ')';
   }
 
   String _formatFood(Food e) {
     final base = e.foodBase;
     return 'Food(id=${e.id}, date=${e.date?.toLocal()}\n'
-        '${_kv('name', base?.name)}'
-        '${_kv('favorite', base?.favorite)}'
-        '${_kv('caloriesKcal', base?.intakeCaloriesKcal)}'
-        '${_kv('proteinG', base?.intakeProteinG)}'
-        '${_kv('carbsG', base?.intakeCarbsG)}'
-        '${_kv('fatG', base?.intakeFatG)}'
-        '${_kv('amountG', base?.amountG)}';
+        '${_kv('foodBase.name', base?.name)}'
+        '${_kv('foodBase.favorite', base?.favorite)}'
+        '${_kv('foodBase.intakeCaloriesKcal', base?.intakeCaloriesKcal)}'
+        '${_kv('foodBase.intakeProteinG', base?.intakeProteinG)}'
+        '${_kv('foodBase.intakeCarbsG', base?.intakeCarbsG)}'
+        '${_kv('foodBase.intakeFatG', base?.intakeFatG)}'
+        '${_kv('foodBase.amountG', base?.amountG)}'
+        ')';
   }
 
   String _formatWorkout(Workout e) {
@@ -338,20 +343,25 @@ class _EntityFormatter {
           final eb = ex as ExerciseBase;
           final name = eb.name ?? '(null)';
           final category = eb.categoryName ?? '(null)';
-          final sets = eb.sets?.length ?? '(null)';
-          final reps = eb.sets?[0]?.reps ?? '(null)';
-          final kg = eb.sets?[0]?.weightKg ?? '(null)';
-          final calories = eb.burnedCaloriesKcal ?? '(null)';
-          return '  - $name ($category) reps=$reps sets=$sets kg=$kg calories=$calories';
+          final type = eb.typeName ?? '(null)';
+          final level = eb.intensityLevelName ?? '(null)';
+          final sets = eb.sets?.length ?? 0;
+          final calories = eb.burnedCaloriesKcal ?? 0;
+          final setDetails = (eb.sets ?? []).where((s) => s != null).map((s) {
+            final es = s as ExerciseSet;
+            return '    weightKg=${es.weightKg}, reps=${es.reps}, finished=${es.finished}';
+          }).join(', ');
+          return '  - $name ($category/$type, level=$level)\n    sets($sets): [$setDetails] calories=$calories';
         })
         .join('\n');
     return 'Workout(id=${e.id}, date=${e.date?.toLocal()}\n'
-        '${_kv('name', base?.name)}'
-        '  exercises:\n$exerciseLines)';
+        '${_kv('workoutBase.name', base?.name)}'
+        '${_kv('workoutBase.exercisePresetNames', base?.exercisePresetNames)}'
+        '  exercises:\n$exerciseLines\n)';
   }
 
   String _formatDailyLogConfig(DailyLogConfig e) {
-    return 'DailyLogConfig(id=${e.id}, name=${e.name}, bmrCaloriesKcal=${e.bmrCaloriesKcal})';
+    return 'DailyLogConfig(id=${e.id}, name=${e.name}, bmrCaloriesKcal=${e.bmrCaloriesKcal}, plannedDeficitKcal=${e.plannedDeficitKcal}, plannedProteinG=${e.plannedProteinG}, plannedFatG=${e.plannedFatG}, plannedCarbsG=${e.plannedCarbsG})';
   }
 
   String _formatFoodConfig(FoodConfig e) {

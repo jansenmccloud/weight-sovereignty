@@ -10,3 +10,15 @@ final dummy = Container(
   color: AppTheme.surface,
   child: Center(child: Text('dummy')),
 );
+
+// snackbar try-catch
+/* 
+try {
+      
+} catch (e, stack) {
+  if (mounted) {
+    debugPrint('error: $e\n$stack');
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'), backgroundColor: Colors.red));
+  }
+} 
+*/

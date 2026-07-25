@@ -20,17 +20,18 @@ class ExerciseItemEditWidget extends ConsumerStatefulWidget {
 }
 
 class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget> {
+  static final int maxNumberOfSets = 15;
   final digitsOnly = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
-  final _weightController = initTenTextEditControllers();
-  final _repsController = initTenTextEditControllers();
+  final _weightController = initTextEditControllers(maxNumberOfSets);
+  final _repsController = initTextEditControllers(maxNumberOfSets);
   final _distanceController = TextEditingController();
   final _durationController = TextEditingController();
   bool _loading = true;
   bool isChecked = false;
 
-  static List<TextEditingController> initTenTextEditControllers() {
+  static List<TextEditingController> initTextEditControllers(int numberOfSets) {
     final l = <TextEditingController>[];
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < maxNumberOfSets; i++) {
       l.add(TextEditingController());
     }
     return l;
@@ -111,7 +112,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
 
     final widgets = <Widget>[];
     widgets.addAll({
-      Text(exercise.name ?? 'Unnamed Exercise', style: theme.textTheme.titleMedium?.copyWith(color: AppTheme.white)),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: _addTitleAndConditionalButton(workout, index, exercise, context)),
       const SizedBox(height: 2),
       Text('${exercise.typeName}: ${exercise.intensityLevelName} ${exercise.categoryName}: ${exercise.burnedCaloriesKcal ?? 0} kcal', style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.grey)),
       const SizedBox(height: 10),
@@ -121,6 +122,17 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
       widgets.addAll(_createLiftingItemWidgets(bodyWeight, workout, index, exercise));
     } else {
       widgets.addAll(_createCardioItemWidgets(bodyWeight, workout, index, exercise));
+    }
+    return widgets;
+  }
+
+  List<Widget> _addTitleAndConditionalButton(Workout workout, int index, ExerciseBase exercise, BuildContext context) {
+    final widgets = <Widget>[];
+    widgets.add(
+      Text(exercise.name ?? 'Unnamed Exercise', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.white)),
+    );
+    if (ExerciseType.getTypeFromString(exercise.typeName) == ExerciseType.lifting && exercise.sets!.length < maxNumberOfSets) {
+      widgets.add(IconButton(icon: const Icon(Icons.add_circle_outline), color: AppTheme.yellow, onPressed: () => _addSetAndRefresh(workout, index, exercise)));
     }
     return widgets;
   }
@@ -149,8 +161,12 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
                   _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
                 },
                 controller: _weightController[i],
-                style: TextStyle(color: AppTheme.white),
-                decoration: const InputDecoration(labelText: 'kg'),
+                style: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                decoration: InputDecoration(
+                  labelText: 'kg',
+                  labelStyle: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: finished ? AppTheme.purple : AppTheme.white)),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [digitsOnly],
               ),
@@ -163,8 +179,12 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
                   _recalculateLiftingAndSave(bodyWeight, workout, index, exercise);
                 },
                 controller: _repsController[i],
-                style: TextStyle(color: AppTheme.white),
-                decoration: const InputDecoration(labelText: 'Reps'),
+                style: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                decoration: InputDecoration(
+                  labelText: 'Reps',
+                  labelStyle: finished ? TextStyle(color: AppTheme.purple) : TextStyle(color: AppTheme.white),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: finished ? AppTheme.purple : AppTheme.white)),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [digitsOnly],
               ),
@@ -196,10 +216,9 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
       setWidgets.add(const SizedBox(height: 10));
     }
 
-    final widgets = <Widget>[];
+    var widgets = <Widget>[];
     widgets.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: setWidgets));
 
-    // TODO add set button
     return widgets;
   }
 
@@ -217,7 +236,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
               },
               controller: _distanceController,
               style: TextStyle(color: AppTheme.white),
-              decoration: const InputDecoration(labelText: 'km'),
+              decoration: const InputDecoration(labelText: 'km', labelStyle: TextStyle(color: AppTheme.white)),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
           ),
@@ -230,7 +249,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
               },
               controller: _durationController,
               style: TextStyle(color: AppTheme.white),
-              decoration: const InputDecoration(labelText: 'min'),
+              decoration: const InputDecoration(labelText: 'min', labelStyle: TextStyle(color: AppTheme.white)),
               keyboardType: TextInputType.number,
               inputFormatters: [digitsOnly],
             ),
@@ -245,7 +264,7 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     int durationSec = 0;
     for (var s in exercise.sets!) {
       if (s == null || s.reps == null || !s.finished) continue;
-      durationSec += s.reps! * 3;
+      durationSec += s.reps! * CalcConstants.timePerRepSeconds;
     }
     exercise.durationMin = (durationSec / 60.0).ceil();
 
@@ -258,5 +277,15 @@ class _ExerciseItemEditWidgetState extends ConsumerState<ExerciseItemEditWidget>
     final workoutRepo = ref.read(workoutRepositoryProvider);
     workoutRepo.save(workout);
     return;
+  }
+
+  void _addSetAndRefresh(Workout workout, int index, ExerciseBase exercise) {
+    final cp = exercise.sets!.last!.copy();
+    final cpList = List<ExerciseSet>.from(exercise.sets ?? []);
+    cpList.add(cp);
+    workout.exercises![index]!.sets = cpList;
+    final workoutRepo = ref.read(workoutRepositoryProvider);
+    workoutRepo.save(workout);
+    setState(() {});
   }
 }

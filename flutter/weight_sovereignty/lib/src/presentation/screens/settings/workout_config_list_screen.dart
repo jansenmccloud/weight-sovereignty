@@ -19,6 +19,7 @@ class WorkoutConfigListScreen extends ConsumerWidget {
       title: 'Workout templates',
       asyncValue: asyncList,
       onRetry: () => ref.invalidate(workoutConfigListProvider),
+      comparator: (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
       floatingActionButton: FloatingActionButton(backgroundColor: AppTheme.yellow, foregroundColor: AppTheme.purple, onPressed: () => _openEdit(context), child: const Icon(Icons.add)),
       itemBuilder: (context, item) {
         final count = item.exercisePresetNames?.whereType<String>().length ?? 0;
