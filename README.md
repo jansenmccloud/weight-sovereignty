@@ -27,6 +27,12 @@
 A private, offline-first fitness tracking app built for long-term consistency, independence, and clarity.
 No gamification. No manipulation. No external validation.
 
+## Preview
+
+| ![](./docs/screens/preview/00.png) | ![](./docs/screens/preview/01.png) | ![](./docs/screens/preview/02.png) |
+|----------------------------|----------------------------|----------------------------|
+| ![](./docs/screens/preview/03.png) | ![](./docs/screens/preview/04.png) | ![](./docs/screens/preview/05.png) |
+
 ## Core Principles
 
 **1. Local Sovereignty**
@@ -79,6 +85,10 @@ No gamification. No manipulation. No external validation.
 * All formulas transparent
 * One-tap export to CSV
 * No feature unless it reduces friction
+
+## Milestones
+
+* [milestones.md](./docs/milestones.md): details about the curret state and upcoming features and planned TODOs
 
 ## Further documentation
 
