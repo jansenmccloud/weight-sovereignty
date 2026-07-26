@@ -92,4 +92,4 @@ No gamification. No manipulation. No external validation.
 
 ## Further documentation
 
-* [development.md](./docs/development.md): details about the project domain, UX and architecture
+* [development.md](./docs/development_kickoff.md): details about the project domain, UX and architecture
