@@ -1,0 +1,194 @@
+import 'package:weight_sovereignty/src/data/dailylog_repository.dart';
+import 'package:weight_sovereignty/src/data/food_repository.dart';
+import 'package:weight_sovereignty/src/data/workout_repository.dart';
+import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
+import 'package:weight_sovereignty/src/domain/entity/food.dart';
+import 'package:weight_sovereignty/src/domain/entity/workout.dart';
+
+/// Generates CSV strings for exported domain models.
+class ExportService {
+  ExportService({
+    required this.dailyLogRepo,
+    required this.foodRepo,
+    required this.workoutRepo,
+  });
+
+  final DailyLogRepository dailyLogRepo;
+  final FoodRepository foodRepo;
+  final WorkoutRepository workoutRepo;
+
+  /// Export today's [DailyLog] entries within the given date range as CSV.
+  Future<String> toDailyLogCsv(DateTime start, DateTime end) async {
+    final logs = await dailyLogRepo.queryByDateRange(start, end);
+    const eol = '\n';
+    const sep = ',';
+
+    final buf = StringBuffer();
+    // UTF-8 BOM for Excel compatibility
+    buf.write('\uFEFF');
+
+    // Header
+    buf.writeln(
+      [
+        'date',
+        'body_weight_kg',
+        'bmr_calories',
+        'planned_deficit_kcal',
+        'planned_protein_g',
+        'planned_fat_g',
+        'planned_carbs_g',
+        'total_burned_calories',
+        'total_intake_calories',
+        'total_intake_protein_g',
+        'total_intake_carbs_g',
+        'total_intake_fat_g',
+      ].join(sep),
+    );
+
+    for (final log in logs) {
+      final base = log.dailyLogBase;
+      final calcs = log.calculation;
+      buf.writeln(
+        [
+          log.date?.toIso8601String() ?? '',
+          _fmt(log.bodyWeight),
+          _fmt(base?.bmrCaloriesKcal),
+          _fmt(base?.plannedDeficitKcal),
+          _fmt(base?.plannedProteinG),
+          _fmt(base?.plannedFatG),
+          _fmt(base?.plannedCarbsG),
+          _fmt(calcs?.totalBurnedCaloriesKcal),
+          _fmt(calcs?.totalIntakeCaloriesKcal),
+          _fmt(calcs?.totalIntakeProteinG),
+          _fmt(calcs?.totalIntakeCarbsG),
+          _fmt(calcs?.totalIntakeFatG),
+        ].join(sep),
+      );
+    }
+
+    return buf.toString();
+  }
+
+  /// Export [Food] entries within the given date range as CSV.
+  Future<String> toFoodCsv(DateTime start, DateTime end) async {
+    final foods = await foodRepo.queryByDateRange(start, end);
+    const eol = '\n';
+    const sep = ',';
+
+    final buf = StringBuffer();
+    buf.write('\uFEFF');
+
+    buf.writeln(
+      ['date', 'name', 'calories', 'protein_g', 'carbs_g', 'fat_g', 'amount_g'].join(sep),
+    );
+
+    for (final food in foods) {
+      final fb = food.foodBase;
+      buf.writeln(
+        [
+          food.date?.toIso8601String() ?? '',
+          _csvSafe(fb?.name ?? ''),
+          _fmt(fb?.intakeCaloriesKcal),
+          _fmt(fb?.intakeProteinG),
+          _fmt(fb?.intakeCarbsG),
+          _fmt(fb?.intakeFatG),
+          _fmt(fb?.amountG),
+        ].join(sep),
+      );
+    }
+
+    return buf.toString();
+  }
+
+  /// Export [Workout] entries within the given date range as CSV.
+  /// Each row represents one exercise set (flat structure).
+  Future<String> toWorkoutCsv(DateTime start, DateTime end) async {
+    final workouts = await workoutRepo.queryByDateRange(start, end);
+    const eol = '\n';
+    const sep = ',';
+
+    final buf = StringBuffer();
+    buf.write('\uFEFF');
+
+    buf.writeln(
+      [
+        'date',
+        'workout_name',
+        'exercise_name',
+        'category',
+        'type',
+        'intensity',
+        'weight_kg',
+        'reps',
+        'duration_min',
+        'distance_km',
+        'burned_calories',
+      ].join(sep),
+    );
+
+    for (final workout in workouts) {
+      final wb = workout.workoutBase;
+      final exercises = workout.exercises ?? [];
+      for (final exercise in exercises) {
+        if (exercise == null) continue;
+        final sets = exercise.sets ?? [];
+        if (sets.isEmpty) {
+          // Export exercise-level summary even without sets
+          buf.writeln(
+            [
+              workout.date?.toIso8601String() ?? '',
+              _csvSafe(wb?.name ?? ''),
+              _csvSafe(exercise.name ?? ''),
+              exercise.categoryName ?? '',
+              exercise.typeName ?? '',
+              exercise.intensityLevelName ?? '',
+              '',
+              '',
+              _fmt(exercise.durationMin),
+              _fmt(exercise.distanceKm),
+              _fmt(exercise.burnedCaloriesKcal),
+            ].join(sep),
+          );
+        } else {
+          for (final set in sets) {
+            if (set == null) continue;
+            buf.writeln(
+              [
+                workout.date?.toIso8601String() ?? '',
+                _csvSafe(wb?.name ?? ''),
+                _csvSafe(exercise.name ?? ''),
+                exercise.categoryName ?? '',
+                exercise.typeName ?? '',
+                exercise.intensityLevelName ?? '',
+                _fmt(set.weightKg),
+                _fmt(set.reps),
+                _fmt(exercise.durationMin),
+                _fmt(exercise.distanceKm),
+                _fmt(exercise.burnedCaloriesKcal),
+              ].join(sep),
+            );
+          }
+        }
+      }
+    }
+
+    return buf.toString();
+  }
+
+  /// Format nullable values for CSV output.
+  String _fmt(Object? value) {
+    if (value == null) return '';
+    if (value is int) return value.toString();
+    if (value is double) return value.toStringAsFixed(2);
+    if (value is num) return value.toString();
+    return value.toString();
+  }
+
+  /// Quote the value if it contains commas or quotes to keep CSV valid.
+  String _csvSafe(String value) {
+    if (value.contains(',') || value.contains('"')) {
+      return '"${value.replaceAll('"', '""')}"';
+    }
+    return value;
+  }
+}

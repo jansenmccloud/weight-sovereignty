@@ -5,4 +5,7 @@ abstract class WorkoutRepository implements CrudRepository<Workout> {
   Future<List<Workout>> listByCalendarDay(DateTime day);
 
   Future<List<Workout>> listByIds(List<int> ids);
+
+  /// Query all Workout entries within the given date range (inclusive).
+  Future<List<Workout>> queryByDateRange(DateTime start, DateTime end);
 }
