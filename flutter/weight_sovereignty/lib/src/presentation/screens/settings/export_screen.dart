@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/export_service.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
@@ -18,8 +18,8 @@ enum ExportDataType { dailyLog, food, workout }
 
 class _ExportScreenState extends ConsumerState<ExportScreen> {
   ExportDataType _dataType = ExportDataType.dailyLog;
-  DateTime? _startDate;
-  DateTime? _endDate;
+  DateTime? _startDate = DateTime.now();
+  DateTime? _endDate = DateTime.now();
   String _statusMessage = 'Select data type and date range.';
   bool _exporting = false;
 
@@ -39,6 +39,11 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
     if (date != null) {
       setState(() => _endDate = date);
     }
+  }
+
+  /// Format a [DateTime] as 'yyyymmdd' for filenames.
+  String _ymd(DateTime dt) {
+    return '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
   }
 
   Future<void> _handleExport() async {
@@ -71,7 +76,8 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 
       final fileName =
           'weight_sovereignty_${_dataType.name}'
-          '_${_startDate!.toString().replaceAll('-', '')}_to_${_endDate!.toString().replaceAll('-', '')}.csv';
+          '_${_ymd(_startDate!)}'
+          '_to_${_ymd(_endDate!)}.csv';
 
       final result = await FilePicker.platform.saveFile(fileName: fileName, bytes: utf8.encode(csvContent));
 

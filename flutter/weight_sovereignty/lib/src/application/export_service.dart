@@ -7,17 +7,13 @@ import 'package:weight_sovereignty/src/domain/entity/workout.dart';
 
 /// Generates CSV strings for exported domain models.
 class ExportService {
-  ExportService({
-    required this.dailyLogRepo,
-    required this.foodRepo,
-    required this.workoutRepo,
-  });
+  ExportService({required this.dailyLogRepo, required this.foodRepo, required this.workoutRepo});
 
   final DailyLogRepository dailyLogRepo;
   final FoodRepository foodRepo;
   final WorkoutRepository workoutRepo;
 
-  /// Export today's [DailyLog] entries within the given date range as CSV.
+  /// Export [DailyLog] entries within the given date range as CSV.
   Future<String> toDailyLogCsv(DateTime start, DateTime end) async {
     final logs = await dailyLogRepo.queryByDateRange(start, end);
     const sep = ',';
@@ -49,7 +45,7 @@ class ExportService {
       final calcs = log.calculation;
       buf.writeln(
         [
-          log.date?.toIso8601String() ?? '',
+          _dateOnly(log.date),
           _fmt(log.bodyWeight),
           _fmt(base?.bmrCaloriesKcal),
           _fmt(base?.plannedDeficitKcal),
@@ -76,23 +72,11 @@ class ExportService {
     final buf = StringBuffer();
     buf.write('\uFEFF');
 
-    buf.writeln(
-      ['date', 'name', 'calories', 'protein_g', 'carbs_g', 'fat_g', 'amount_g'].join(sep),
-    );
+    buf.writeln(['date', 'name', 'calories', 'protein_g', 'carbs_g', 'fat_g', 'amount_g'].join(sep));
 
     for (final food in foods) {
       final fb = food.foodBase;
-      buf.writeln(
-        [
-          food.date?.toIso8601String() ?? '',
-          _csvSafe(fb?.name ?? ''),
-          _fmt(fb?.intakeCaloriesKcal),
-          _fmt(fb?.intakeProteinG),
-          _fmt(fb?.intakeCarbsG),
-          _fmt(fb?.intakeFatG),
-          _fmt(fb?.amountG),
-        ].join(sep),
-      );
+      buf.writeln([_dateOnly(food.date), _csvSafe(fb?.name ?? ''), _fmt(fb?.intakeCaloriesKcal), _fmt(fb?.intakeProteinG), _fmt(fb?.intakeCarbsG), _fmt(fb?.intakeFatG), _fmt(fb?.amountG)].join(sep));
     }
 
     return buf.toString();
@@ -107,21 +91,7 @@ class ExportService {
     final buf = StringBuffer();
     buf.write('\uFEFF');
 
-    buf.writeln(
-      [
-        'date',
-        'workout_name',
-        'exercise_name',
-        'category',
-        'type',
-        'intensity',
-        'weight_kg',
-        'reps',
-        'duration_min',
-        'distance_km',
-        'burned_calories',
-      ].join(sep),
-    );
+    buf.writeln(['date', 'workout_name', 'exercise_name', 'category', 'type', 'intensity', 'weight_kg', 'reps', 'duration_min', 'distance_km', 'burned_calories'].join(sep));
 
     for (final workout in workouts) {
       final wb = workout.workoutBase;
@@ -133,7 +103,7 @@ class ExportService {
           // Export exercise-level summary even without sets
           buf.writeln(
             [
-              workout.date?.toIso8601String() ?? '',
+              _dateOnly(workout.date),
               _csvSafe(wb?.name ?? ''),
               _csvSafe(exercise.name ?? ''),
               exercise.categoryName ?? '',
@@ -151,7 +121,7 @@ class ExportService {
             if (set == null) continue;
             buf.writeln(
               [
-                workout.date?.toIso8601String() ?? '',
+                _dateOnly(workout.date),
                 _csvSafe(wb?.name ?? ''),
                 _csvSafe(exercise.name ?? ''),
                 exercise.categoryName ?? '',
@@ -170,6 +140,12 @@ class ExportService {
     }
 
     return buf.toString();
+  }
+
+  /// Format a DateTime as 'yyyy-MM-dd' (calendar day only).
+  String _dateOnly(DateTime? dt) {
+    if (dt == null) return '';
+    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
   }
 
   /// Format nullable values for CSV output.
