@@ -1,17 +1,39 @@
-import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
-import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
-import 'package:weight_sovereignty/src/domain/repo/workout_repo.dart';
+import 'dart:convert';
+
+import 'package:weight_sovereignty/src/domain/config/dailylog_config.dart';
+import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
+import 'package:weight_sovereignty/src/domain/config/food_config.dart';
+import 'package:weight_sovereignty/src/domain/config/workout_config.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
+import 'package:weight_sovereignty/src/domain/repo/dailylog_config_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/exercise_config_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/food_config_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/workout_config_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/workout_repo.dart';
 
-/// Generates CSV strings for exported domain models.
+/// Generates CSV strings for exported domain models, and JSON for config presets.
 class ExportService {
-  ExportService({required this.dailyLogRepo, required this.foodRepo, required this.workoutRepo});
+  ExportService({
+    required this.dailyLogRepo,
+    required this.foodRepo,
+    required this.workoutRepo,
+    required this.foodConfigRepo,
+    required this.exerciseConfigRepo,
+    required this.workoutConfigRepo,
+    required this.dailyLogConfigRepo,
+  });
 
   final DailyLogRepository dailyLogRepo;
   final FoodRepository foodRepo;
   final WorkoutRepository workoutRepo;
+  final FoodConfigRepository foodConfigRepo;
+  final ExerciseConfigRepository exerciseConfigRepo;
+  final WorkoutConfigRepository workoutConfigRepo;
+  final DailyLogConfigRepository dailyLogConfigRepo;
 
   /// Export [DailyLog] entries within the given date range as CSV (semicolon-separated for Excel compatibility).
   Future<String> toDailyLogCsv(DateTime start, DateTime end) async {
@@ -80,6 +102,84 @@ class ExportService {
     }
 
     return buf.toString();
+  }
+
+  // ── Config presets export ─────────────────────────────────────────────
+
+  /// Export all config presets as a single JSON object.
+  Future<String> toConfigJson() async {
+    final foodConfigs = await foodConfigRepo.getAll();
+    final exerciseConfigs = await exerciseConfigRepo.getAll();
+    final workoutConfigs = await workoutConfigRepo.getAll();
+    final dailyLogConfigs = await dailyLogConfigRepo.getAll();
+
+    final map = <String, dynamic>{
+      'exportFormat': 'weight_sovereignty_config',
+      'version': '1.0',
+      'exportedAt': DateTime.now().toIso8601String(),
+      'foodConfigs': foodConfigs.map(_toJson).toList(),
+      'exerciseConfigs': exerciseConfigs.map(_toJson).toList(),
+      'workoutConfigs': workoutConfigs.map(_toJson).toList(),
+      'dailyLogConfigs': dailyLogConfigs.map(_toJson).toList(),
+    };
+    return const JsonEncoder.withIndent('  ').convert(map);
+  }
+
+  /// Convert an Isar model to a plain JSON map (all fields except `@ignore` getters become properties).
+  Map<String, dynamic> _toJson(dynamic entity) {
+    if (entity == null) return <String, dynamic>{};
+    // Use jsonEncode on the entity if it has toJson, otherwise reflect via package.
+    // Since these are Isar models they don't have built-in toJson — use a helper approach.
+    // We'll just serialize the raw properties manually per type below.
+    return _entityMap(entity);
+  }
+
+  Map<String, dynamic> _entityMap(dynamic e) {
+    if (e is FoodConfig) {
+      return {
+        'type': 'FoodConfig',
+        'id': e.id,
+        'name': e.name,
+        'intakeCaloriesKcal': e.intakeCaloriesKcal,
+        'intakeProteinG': e.intakeProteinG,
+        'intakeCarbsG': e.intakeCarbsG,
+        'intakeFatG': e.intakeFatG,
+        'amountG': e.amountG,
+        'favorite': e.favorite,
+      };
+    }
+    if (e is ExerciseConfig) {
+      return {
+        'type': 'ExerciseConfig',
+        'id': e.id,
+        'name': e.name,
+        'categoryName': e.categoryName,
+        'typeName': e.typeName,
+        'intensityLevelName': e.intensityLevelName,
+        'weightKg': e.weightKg,
+        'reps': e.reps,
+        'sets': e.sets,
+        'distanceKm': e.distanceKm,
+        'durationMin': e.durationMin,
+        'burnedCaloriesKcal': e.burnedCaloriesKcal,
+      };
+    }
+    if (e is WorkoutConfig) {
+      return {'type': 'WorkoutConfig', 'id': e.id, 'name': e.name, 'exercisePresetNames': e.exercisePresetNames};
+    }
+    if (e is DailyLogConfig) {
+      return {
+        'type': 'DailyLogConfig',
+        'id': e.id,
+        'name': e.name,
+        'bmrCaloriesKcal': e.bmrCaloriesKcal,
+        'plannedDeficitKcal': e.plannedDeficitKcal,
+        'plannedProteinG': e.plannedProteinG,
+        'plannedCarbsG': e.plannedCarbsG,
+        'plannedFatG': e.plannedFatG,
+      };
+    }
+    return {'type': 'unknown', 'id': -1};
   }
 
   /// Export [Workout] entries within the given date range as CSV (semicolon-separated for Excel compatibility).
