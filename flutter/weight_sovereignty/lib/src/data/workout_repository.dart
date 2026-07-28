@@ -33,4 +33,15 @@ class IsarWorkoutRepository implements WorkoutRepository {
     final items = await _workouts.getAll(ids);
     return items.whereType<Workout>().toList();
   }
+
+  @override
+  Future<List<Workout>> queryByDateRange(DateTime start, DateTime end) {
+    final startDate = toCalendarDay(start);
+    final endDate = toCalendarDay(end);
+    return _workouts
+        .filter()
+        .dateBetween(startDate, endDate)
+        .sortByDate()
+        .findAll();
+  }
 }

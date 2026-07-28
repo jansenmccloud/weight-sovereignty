@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/export_service.dart';
-import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
-import 'package:weight_sovereignty/src/data/dailylog_repository.dart';
-import 'package:weight_sovereignty/src/data/food_repository.dart';
-import 'package:weight_sovereignty/src/data/workout_repository.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Export screen — lets the user export DailyLog, Food, or Workout data as CSV.
 class ExportScreen extends ConsumerStatefulWidget {
@@ -171,7 +168,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 
   Widget _dateButton(DateTime date, String label, VoidCallback onTap) {
     return Material(
-      color: AppTheme.surfaceDark,
+      color: AppTheme.surface,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
@@ -229,7 +226,7 @@ class _SegmentedListState extends State<SegmentedList> {
         itemBuilder: (context, index) {
           final isSelected = index == _selected;
           return Material(
-            color: isSelected ? AppTheme.accent : AppTheme.surfaceLight,
+            color: isSelected ? AppTheme.accent : AppTheme.surface,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
               borderRadius: BorderRadius.circular(8),

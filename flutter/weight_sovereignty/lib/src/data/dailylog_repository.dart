@@ -45,9 +45,7 @@ class IsarDailyLogRepository implements DailyLogRepository {
     final endDate = toCalendarDay(end);
     return _dailyLogs
         .filter()
-        .dateGreaterThanEqualTo(startDate)
-        .and()
-        .dateLessThanOrEqualTo(endDate)
+        .dateBetween(startDate, endDate)
         .sortByDate()
         .findAll();
   }

@@ -1,6 +1,6 @@
-import 'package:weight_sovereignty/src/data/dailylog_repository.dart';
-import 'package:weight_sovereignty/src/data/food_repository.dart';
-import 'package:weight_sovereignty/src/data/workout_repository.dart';
+import 'package:weight_sovereignty/src/domain/repo/dailylog_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/food_repo.dart';
+import 'package:weight_sovereignty/src/domain/repo/workout_repo.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/domain/entity/food.dart';
 import 'package:weight_sovereignty/src/domain/entity/workout.dart';
@@ -20,7 +20,6 @@ class ExportService {
   /// Export today's [DailyLog] entries within the given date range as CSV.
   Future<String> toDailyLogCsv(DateTime start, DateTime end) async {
     final logs = await dailyLogRepo.queryByDateRange(start, end);
-    const eol = '\n';
     const sep = ',';
 
     final buf = StringBuffer();
@@ -72,7 +71,6 @@ class ExportService {
   /// Export [Food] entries within the given date range as CSV.
   Future<String> toFoodCsv(DateTime start, DateTime end) async {
     final foods = await foodRepo.queryByDateRange(start, end);
-    const eol = '\n';
     const sep = ',';
 
     final buf = StringBuffer();
@@ -104,7 +102,6 @@ class ExportService {
   /// Each row represents one exercise set (flat structure).
   Future<String> toWorkoutCsv(DateTime start, DateTime end) async {
     final workouts = await workoutRepo.queryByDateRange(start, end);
-    const eol = '\n';
     const sep = ',';
 
     final buf = StringBuffer();

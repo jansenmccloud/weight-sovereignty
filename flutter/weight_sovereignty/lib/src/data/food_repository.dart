@@ -40,9 +40,7 @@ class IsarFoodRepository implements FoodRepository {
     final endDate = toCalendarDay(end);
     return _foods
         .filter()
-        .dateGreaterThanEqualTo(startDate)
-        .and()
-        .dateLessThanOrEqualTo(endDate)
+        .dateBetween(startDate, endDate)
         .sortByDate()
         .findAll();
   }
