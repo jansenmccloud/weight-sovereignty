@@ -14,34 +14,28 @@ class ExportScreen extends ConsumerStatefulWidget {
   ConsumerState<ExportScreen> createState() => _ExportScreenState();
 }
 
-enum _ExportDataType { dailyLog, food, workout }
+enum ExportDataType { dailyLog, food, workout }
 
 class _ExportScreenState extends ConsumerState<ExportScreen> {
-  _ExportDataType _dataType = _ExportDataType.dailyLog;
+  ExportDataType _dataType = ExportDataType.dailyLog;
   DateTime? _startDate;
   DateTime? _endDate;
   String _statusMessage = 'Select data type and date range.';
   bool _exporting = false;
 
+  void _onDataTypeChanged(ExportDataType value) {
+    setState(() => _dataType = value);
+  }
+
   Future<void> _pickStartDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _startDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
+    final date = await showDatePicker(context: context, initialDate: _startDate ?? DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime.now());
     if (date != null) {
       setState(() => _startDate = date);
     }
   }
 
   Future<void> _pickEndDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _endDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
+    final date = await showDatePicker(context: context, initialDate: _endDate ?? DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime.now());
     if (date != null) {
       setState(() => _endDate = date);
     }
@@ -67,25 +61,19 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
       final foodRepo = ref.read(foodRepositoryProvider);
       final workoutRepo = ref.read(workoutRepositoryProvider);
 
-      final service = ExportService(
-        dailyLogRepo: dailyLogRepo,
-        foodRepo: foodRepo,
-        workoutRepo: workoutRepo,
-      );
+      final service = ExportService(dailyLogRepo: dailyLogRepo, foodRepo: foodRepo, workoutRepo: workoutRepo);
 
       final csvContent = switch (_dataType) {
-        _ExportDataType.dailyLog => await service.toDailyLogCsv(_startDate!, _endDate!),
-        _ExportDataType.food => await service.toFoodCsv(_startDate!, _endDate!),
-        _ExportDataType.workout => await service.toWorkoutCsv(_startDate!, _endDate!),
+        ExportDataType.dailyLog => await service.toDailyLogCsv(_startDate!, _endDate!),
+        ExportDataType.food => await service.toFoodCsv(_startDate!, _endDate!),
+        ExportDataType.workout => await service.toWorkoutCsv(_startDate!, _endDate!),
       };
 
-      final fileName = 'weight_sovereignty_${_dataType.name}'
+      final fileName =
+          'weight_sovereignty_${_dataType.name}'
           '_${_startDate!.toString().replaceAll('-', '')}_to_${_endDate!.toString().replaceAll('-', '')}.csv';
 
-      final result = await FilePicker.platform.saveFile(
-        fileName: fileName,
-        bytes: utf8.encode(csvContent),
-      );
+      final result = await FilePicker.platform.saveFile(fileName: fileName, bytes: utf8.encode(csvContent));
 
       if (result != null && mounted) {
         setState(() => _statusMessage = 'Exported successfully.');
@@ -118,7 +106,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
             // Data type selector
             _sectionLabel('Data type'),
             const SizedBox(height: 8),
-            SegmentedList(),
+            SegmentedList(value: _dataType, onChanged: _onDataTypeChanged),
             const SizedBox(height: 24),
 
             // Date range
@@ -126,13 +114,9 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Expanded(
-                  child: _dateButton(_startDate ?? DateTime.now(), 'Start', _pickStartDate),
-                ),
+                Expanded(child: _dateButton(_startDate ?? DateTime.now(), 'Start', _pickStartDate)),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: _dateButton(_endDate ?? DateTime.now(), 'End', _pickEndDate),
-                ),
+                Expanded(child: _dateButton(_endDate ?? DateTime.now(), 'End', _pickEndDate)),
               ],
             ),
             const SizedBox(height: 32),
@@ -140,26 +124,14 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
             // Export button
             FilledButton.icon(
               onPressed: _exporting ? null : _handleExport,
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                textStyle: const TextStyle(fontSize: 16),
-              ),
-              icon: _exporting
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.file_download_outlined),
+              style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), textStyle: const TextStyle(fontSize: 16)),
+              icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_download_outlined),
               label: Text(_exporting ? 'Exporting…' : 'Export & Save'),
             ),
             const Spacer(),
 
             // Status message
-            SelectableText(
-              _statusMessage,
-              style: TextStyle(
-                color: _statusMessage.contains('error') || _statusMessage.contains('failed')
-                    ? AppTheme.red
-                    : AppTheme.grey,
-              ),
-            ),
+            SelectableText(_statusMessage, style: TextStyle(color: _statusMessage.contains('error') || _statusMessage.contains('failed') ? AppTheme.red : AppTheme.grey)),
           ],
         ),
       ),
@@ -178,15 +150,9 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: const TextStyle(color: AppTheme.grey, fontSize: 12),
-              ),
+              Text(label, style: const TextStyle(color: AppTheme.grey, fontSize: 12)),
               const SizedBox(height: 4),
-              Text(
-                '${date.day}/${date.month}/${date.year}',
-                style: const TextStyle(color: AppTheme.white, fontSize: 16),
-              ),
+              Text('${date.day}/${date.month}/${date.year}', style: const TextStyle(color: AppTheme.white, fontSize: 16)),
             ],
           ),
         ),
@@ -203,17 +169,13 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 }
 
 /// Small segmented list for data type selection.
-class SegmentedList extends StatefulWidget {
-  const SegmentedList({super.key});
+class SegmentedList extends StatelessWidget {
+  const SegmentedList({super.key, required this.value, required this.onChanged});
 
-  @override
-  State<SegmentedList> createState() => _SegmentedListState();
-}
+  final ExportDataType value;
+  final ValueChanged<ExportDataType> onChanged;
 
-class _SegmentedListState extends State<SegmentedList> {
-  int _selected = 0;
-  final List<String> _items = ['DailyLog', 'Food', 'Workout'];
-  final List<_ExportDataType> _types = [_ExportDataType.dailyLog, _ExportDataType.food, _ExportDataType.workout];
+  static const _items = [(ExportDataType.dailyLog, 'DailyLog'), (ExportDataType.food, 'Food'), (ExportDataType.workout, 'Workout')];
 
   @override
   Widget build(BuildContext context) {
@@ -224,21 +186,20 @@ class _SegmentedListState extends State<SegmentedList> {
         itemCount: _items.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final isSelected = index == _selected;
+          final pair = _items[index];
+          final dataType = pair.$1;
+          final isSelected = dataType == value;
           return Material(
             color: isSelected ? AppTheme.accent : AppTheme.surface,
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () => setState(() => _selected = index),
+              onTap: () => onChanged(dataType),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(
-                  _items[index],
-                  style: TextStyle(
-                    color: isSelected ? AppTheme.white : AppTheme.grey,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
+                  pair.$2,
+                  style: TextStyle(color: isSelected ? AppTheme.white : AppTheme.grey, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                 ),
               ),
             ),
