@@ -13,10 +13,10 @@ class ExportService {
   final FoodRepository foodRepo;
   final WorkoutRepository workoutRepo;
 
-  /// Export [DailyLog] entries within the given date range as CSV.
+  /// Export [DailyLog] entries within the given date range as CSV (semicolon-separated for Excel compatibility).
   Future<String> toDailyLogCsv(DateTime start, DateTime end) async {
     final logs = await dailyLogRepo.queryByDateRange(start, end);
-    const sep = ',';
+    const sep = ';';
 
     final buf = StringBuffer();
     // UTF-8 BOM for Excel compatibility
@@ -64,10 +64,10 @@ class ExportService {
     return buf.toString();
   }
 
-  /// Export [Food] entries within the given date range as CSV.
+  /// Export [Food] entries within the given date range as CSV (semicolon-separated for Excel compatibility).
   Future<String> toFoodCsv(DateTime start, DateTime end) async {
     final foods = await foodRepo.queryByDateRange(start, end);
-    const sep = ',';
+    const sep = ';';
 
     final buf = StringBuffer();
     buf.write('\uFEFF');
@@ -82,11 +82,11 @@ class ExportService {
     return buf.toString();
   }
 
-  /// Export [Workout] entries within the given date range as CSV.
+  /// Export [Workout] entries within the given date range as CSV (semicolon-separated for Excel compatibility).
   /// Each row represents one exercise set (flat structure).
   Future<String> toWorkoutCsv(DateTime start, DateTime end) async {
     final workouts = await workoutRepo.queryByDateRange(start, end);
-    const sep = ',';
+    const sep = ';';
 
     final buf = StringBuffer();
     buf.write('\uFEFF');
@@ -157,9 +157,9 @@ class ExportService {
     return value.toString();
   }
 
-  /// Quote the value if it contains commas or quotes to keep CSV valid.
+  /// Quote the value if it contains semicolons or double quotes to keep CSV valid.
   String _csvSafe(String value) {
-    if (value.contains(',') || value.contains('"')) {
+    if (value.contains(';') || value.contains('"')) {
       return '"${value.replaceAll('"', '""')}"';
     }
     return value;
