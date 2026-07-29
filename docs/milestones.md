@@ -65,7 +65,7 @@
 
 # Milestone 4 - Import, Export and default presets
  - ✅ export DailyLog, Food and Workout
- - export configs
+ - ✅ export configs
  - import configs
  - default presets
 

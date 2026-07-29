@@ -168,14 +168,14 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
             _sectionLabel('Export type'),
             const SizedBox(height: 8),
             _exportTypeSegmented(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
             // Time series section
             if (_exportType == ExportType.timeSeries) ...[
               _sectionLabel('Data type'),
               const SizedBox(height: 8),
               SegmentedList(value: _dataType, onChanged: _onDataTypeChanged),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
 
               // Date range
               _sectionLabel('Date range'),
@@ -196,9 +196,8 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                 icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_download_outlined),
                 label: Text(_exporting ? 'Exporting…' : 'Export & Save'),
               ),
+              
             ] else ...[
-              const Spacer(),
-
               // Export button (config presets)
               FilledButton.icon(
                 onPressed: _exporting ? null : _handleExport,
