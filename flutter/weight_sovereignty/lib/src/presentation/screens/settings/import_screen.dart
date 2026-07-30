@@ -193,9 +193,9 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
       children: [
         OutlinedButton.icon(
           onPressed: _busy ? null : _pickFile,
-          icon: const Icon(Icons.file_upload_outlined),
-          label: Text(_fileName != null ? 'Selected: $_fileName (tap to change)' : 'Select config file (.json)'),
-          style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 20)),
+          icon: const Icon(Icons.file_download_outlined),
+          label: Text(_fileName != null ? 'Selected: $_fileName (tap to change)' : 'Select JSON file'),
+          style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 10)),
         ),
         const SizedBox(height: 16),
         FilledButton.icon(

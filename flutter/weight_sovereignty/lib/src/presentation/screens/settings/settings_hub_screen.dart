@@ -42,13 +42,13 @@ class SettingsHubScreen extends StatelessWidget {
             onTap: () => _open(context, const DailyLogConfigListScreen()),
           ),
           ListTile(
-            leading: const Icon(Icons.file_download_outlined, color: AppTheme.white),
+            leading: const Icon(Icons.file_upload_outlined, color: AppTheme.white),
             title: const Text('Data export', style: TextStyle(color: AppTheme.white)),
             subtitle: const Text('Export DailyLog, Food, Workout as CSV', style: TextStyle(color: AppTheme.grey)),
             onTap: () => _open(context, const ExportScreen()),
           ),
           ListTile(
-            leading: const Icon(Icons.file_upload_outlined, color: AppTheme.white),
+            leading: const Icon(Icons.file_download_outlined, color: AppTheme.white),
             title: const Text('Import config presets', style: TextStyle(color: AppTheme.white)),
             subtitle: const Text('Import presets from JSON backup', style: TextStyle(color: AppTheme.grey)),
             onTap: () => _open(context, const ImportScreen()),
