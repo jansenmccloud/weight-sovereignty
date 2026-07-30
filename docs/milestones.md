@@ -66,8 +66,7 @@
 # Milestone 4 - Import, Export and default presets
  - ✅ export DailyLog, Food and Workout
  - ✅ export configs
- - import configs
- - default presets
+ - ✅ import configs or default presets
 
 # Milestone 5 - stats & extras
  - add diagrams (weight, calories, exercise PBs)

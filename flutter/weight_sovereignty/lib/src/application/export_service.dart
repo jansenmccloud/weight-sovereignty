@@ -125,6 +125,92 @@ class ExportService {
     return const JsonEncoder.withIndent('  ').convert(map);
   }
 
+  /// Import config presets from a JSON string (opposite of toConfigJson).
+  /// Overwrites entries with the same name, creates new entries for unique names.
+  /// Returns a summary map with counts per type.
+  Future<Map<String, dynamic>> fromConfigJson(String json) async {
+    if (json.isEmpty) throw FormatException('Empty JSON input');
+
+    final Map<String, dynamic> data;
+    try {
+      data = jsonDecode(json);
+    } catch (e) {
+      throw FormatException('Invalid JSON: $e');
+    }
+
+    // Validate format and version
+    if (data['exportFormat'] != 'weight_sovereignty_config') {
+      throw FormatException('Invalid export format: expected weight_sovereignty_config');
+    }
+
+    int total = 0;
+
+    // Food configs
+    final foodList = List<dynamic>.from(data['foodConfigs'] ?? []);
+    for (final item in foodList) {
+      final entity = FoodConfig()
+        ..name = item['name'] as String?
+        ..intakeCaloriesKcal = item['intakeCaloriesKcal'] as int?
+        ..intakeProteinG = item['intakeProteinG'] as int?
+        ..intakeCarbsG = item['intakeCarbsG'] as int?
+        ..intakeFatG = item['intakeFatG'] as int?
+        ..amountG = item['amountG'] as int?
+        ..favorite = item['favorite'] as bool?;
+      await foodConfigRepo.save(entity);
+      total++;
+    }
+
+    // Exercise configs
+    final exerciseList = List<dynamic>.from(data['exerciseConfigs'] ?? []);
+    for (final item in exerciseList) {
+      final entity = ExerciseConfig()
+        ..name = item['name'] as String?
+        ..categoryName = item['categoryName'] as String?
+        ..typeName = item['typeName'] as String?
+        ..intensityLevelName = item['intensityLevelName'] as String?
+        ..weightKg = item['weightKg'] as int?
+        ..reps = item['reps'] as int?
+        ..sets = item['sets'] as int?
+        ..distanceKm = item['distanceKm'] as double?
+        ..durationMin = item['durationMin'] as int?
+        ..burnedCaloriesKcal = item['burnedCaloriesKcal'] as int?;
+      await exerciseConfigRepo.save(entity);
+      total++;
+    }
+
+    // Workout configs
+    final workoutList = List<dynamic>.from(data['workoutConfigs'] ?? []);
+    for (final item in workoutList) {
+      final entity = WorkoutConfig()
+        ..name = item['name'] as String?
+        ..exercisePresetNames = List<String?>.from(item['exercisePresetNames'] as List<dynamic>? ?? []);
+      await workoutConfigRepo.save(entity);
+      total++;
+    }
+
+    // Daily log configs
+    final dailyLogList = List<dynamic>.from(data['dailyLogConfigs'] ?? []);
+    for (final item in dailyLogList) {
+      final entity = DailyLogConfig()
+        ..name = item['name'] as String?
+        ..bmrCaloriesKcal = item['bmrCaloriesKcal'] as int?
+        ..plannedDeficitKcal = item['plannedDeficitKcal'] as int?
+        ..plannedProteinG = item['plannedProteinG'] as int?
+        ..plannedFatG = item['plannedFatG'] as int?
+        ..plannedCarbsG = item['plannedCarbsG'] as int?;
+      await dailyLogConfigRepo.save(entity);
+      total++;
+    }
+
+    return {
+      'food': foodList.length,
+      'exercise': exerciseList.length,
+      'workout': workoutList.length,
+      'dailyLog': dailyLogList.length,
+      'total': total,
+    };
+  }
+
   /// Convert an Isar model to a plain JSON map (all fields except `@ignore` getters become properties).
   Map<String, dynamic> _toJson(dynamic entity) {
     if (entity == null) return <String, dynamic>{};

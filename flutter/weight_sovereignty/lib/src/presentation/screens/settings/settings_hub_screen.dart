@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/dailylog_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/debug_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/export_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/settings/import_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/exercise_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/workout_config_list_screen.dart';
@@ -45,6 +46,12 @@ class SettingsHubScreen extends StatelessWidget {
             title: const Text('Data export', style: TextStyle(color: AppTheme.white)),
             subtitle: const Text('Export DailyLog, Food, Workout as CSV', style: TextStyle(color: AppTheme.grey)),
             onTap: () => _open(context, const ExportScreen()),
+          ),
+          ListTile(
+            leading: const Icon(Icons.file_upload_outlined, color: AppTheme.white),
+            title: const Text('Import config presets', style: TextStyle(color: AppTheme.white)),
+            subtitle: const Text('Import presets from JSON backup', style: TextStyle(color: AppTheme.grey)),
+            onTap: () => _open(context, const ImportScreen()),
           ),
           ListTile(
             leading: const Icon(Icons.construction_outlined, color: AppTheme.white),
