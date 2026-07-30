@@ -54,6 +54,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     await _loadCurrentDailyLog(_selectedDate);
   }
 
+  /// Returns true if [date] falls on the current calendar day.
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Trigger load when _selectedDate changes (date navigation or navigate-back refresh).
@@ -137,7 +143,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Expanded(
                   child: Text(
                     '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.white),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: _isToday(_selectedDate) ? AppTheme.white : AppTheme.grey),
                     textAlign: TextAlign.center,
                   ),
                 ),
