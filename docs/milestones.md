@@ -67,7 +67,7 @@
  - ✅ export DailyLog, Food and Workout
  - ✅ export configs
  - ✅ import configs or default presets
- - debug and fix import view
+ - ✅ debug and fix import view
 
 # Milestone 5 - stats & extras
  - add diagrams (weight, calories, exercise PBs)
