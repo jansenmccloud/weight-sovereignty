@@ -193,7 +193,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
               FilledButton.icon(
                 onPressed: _exporting ? null : _handleExport,
                 style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), textStyle: const TextStyle(fontSize: 16)),
-                icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_download_outlined),
+                icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_upload_outlined),
                 label: Text(_exporting ? 'Exporting…' : 'Export & Save'),
               ),
               
@@ -202,7 +202,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
               FilledButton.icon(
                 onPressed: _exporting ? null : _handleExport,
                 style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), textStyle: const TextStyle(fontSize: 16)),
-                icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_download_outlined),
+                icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_upload_outlined),
                 label: Text(_exporting ? 'Exporting…' : 'Export config data'),
               ),
               const Spacer(),

@@ -41,10 +41,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-      );
+      final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
       if (result != null && result.files.isNotEmpty && mounted) {
         final file = result.files.first;
         setState(() {
@@ -115,6 +112,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
       );
 
       final summary = await service.fromConfigJson(jsonStr);
+      _refreshProviders(summary);
 
       if (mounted) {
         setState(() {
@@ -132,6 +130,17 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
         });
       }
     }
+  }
+
+  void _refreshProviders(Map<String, dynamic> summary) {
+    final foodCount = List<dynamic>.from(summary['foodConfigs'] ?? []).length;
+    final exerciseCount = List<dynamic>.from(summary['exerciseConfigs'] ?? []).length;
+    final workoutCount = List<dynamic>.from(summary['workoutConfigs'] ?? []).length;
+    final dailyLogConfigCount = List<dynamic>.from(summary['dailyLogConfigs'] ?? []).length;
+    if (foodCount > 0) ref.refresh(foodConfigRepositoryProvider);
+    if (exerciseCount > 0) ref.refresh(exerciseConfigRepositoryProvider);
+    if (workoutCount > 0) ref.refresh(workoutConfigRepositoryProvider);
+    if (dailyLogConfigCount > 0) ref.refresh(dailyLogConfigRepositoryProvider);
   }
 
   @override
@@ -153,14 +162,10 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
               _Step.preview => _previewStep(),
               _Step.result => _resultStep(),
             },
-
-            const Spacer(),
-
+            const SizedBox(height: 12),
+            
             // Status message
-            if (_statusMessage != null) ...[
-              SelectableText(_statusMessage!, style: TextStyle(color: AppTheme.red)),
-              const SizedBox(height: 16),
-            ],
+            if (_statusMessage != null) ...[SelectableText(_statusMessage!, style: TextStyle(color: AppTheme.red)), const SizedBox(height: 16)],
 
             // Back button (not on first step)
             if (_step != _Step.pick)
@@ -198,14 +203,9 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
             CircleAvatar(
               radius: 12,
               backgroundColor: isActive ? AppTheme.accent : (isDone ? AppTheme.grey : AppTheme.surface),
-              child: Text(
-                '${i + 1}',
-                style: TextStyle(fontSize: 10, color: isActive || isDone ? AppTheme.white : AppTheme.grey),
-              ),
+              child: Text('${i + 1}', style: TextStyle(fontSize: 10, color: isActive || isDone ? AppTheme.white : AppTheme.grey)),
             ),
-            if (i < labels.length - 1) ...[
-              Container(width: 40, height: 2, color: i < currentIdx ? AppTheme.accent : AppTheme.surface),
-            ],
+            if (i < labels.length - 1) ...[Container(width: 40, height: 2, color: i < currentIdx ? AppTheme.accent : AppTheme.surface)],
           ],
         );
       }),
@@ -215,18 +215,14 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
   Widget _pickStep() {
     return Column(
       children: [
-        OutlinedButton.icon(
+        FilledButton.icon(
           onPressed: _busy ? null : _pickFile,
           icon: const Icon(Icons.file_download_outlined),
-          label: Text(_fileName != null ? 'Selected: $_fileName (tap to change)' : 'Select JSON file'),
-          style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 10)),
+          label: Text(_fileName != null ? 'JSON Selected' : 'Select JSON file'),
+          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
         ),
         const SizedBox(height: 16),
-        FilledButton.icon(
-          onPressed: _fileName == null || _busy ? null : _previewImport,
-          icon: const Icon(Icons.arrow_forward),
-          label: const Text('Preview'),
-        ),
+        FilledButton.icon(onPressed: _fileName == null || _busy ? null : _previewImport, icon: const Icon(Icons.arrow_forward), label: const Text('Preview')),
       ],
     );
   }
@@ -257,12 +253,11 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
           style: TextStyle(color: AppTheme.grey, fontSize: 12),
           textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 12),
         const Spacer(),
         FilledButton.icon(
           onPressed: _busy ? null : _doImport,
-          icon: _busy
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.cloud_upload_outlined),
+          icon: _busy ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.cloud_upload_outlined),
           label: Text(_busy ? 'Importing…' : 'Import all'),
         ),
       ],
@@ -292,7 +287,10 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: AppTheme.white)),
-          Text('$count', style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
+          Text(
+            '$count',
+            style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
