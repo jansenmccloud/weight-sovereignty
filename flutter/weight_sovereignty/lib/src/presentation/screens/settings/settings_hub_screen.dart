@@ -61,9 +61,9 @@ class SettingsHubScreen extends StatelessWidget {
             onTap: () => _open(context, const StatsScreen()),
           ),
           ListTile(
-            leading: const Icon(Icons.construction_outlined, color: AppTheme.surface),
-            title: const Text('Debug menu', style: TextStyle(color: AppTheme.surface)),
-            subtitle: const Text('Options for investigation', style: TextStyle(color: AppTheme.surface)),
+            leading: const Icon(Icons.construction_outlined, color: AppTheme.background),
+            title: const Text('Debug menu', style: TextStyle(color: AppTheme.background)),
+            subtitle: const Text('Options for investigation', style: TextStyle(color: AppTheme.background)),
             onTap: () => _open(context, const DebugScreen()),
           ),
         ],
