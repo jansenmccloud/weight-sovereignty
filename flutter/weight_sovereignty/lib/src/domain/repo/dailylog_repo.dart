@@ -8,4 +8,7 @@ abstract class DailyLogRepository implements CrudRepository<DailyLog> {
   /// If an entry already exists for that day, updates it in place.
   /// Otherwise creates a new entry. Returns the resulting DailyLog.
   Future<DailyLog> upsertByCalendarDay(DateTime day, DailyLog log);
+
+  /// Query all DailyLog entries within the given date range (inclusive).
+  Future<List<DailyLog>> queryByDateRange(DateTime start, DateTime end);
 }

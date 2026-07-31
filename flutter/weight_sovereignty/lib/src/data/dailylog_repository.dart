@@ -38,4 +38,15 @@ class IsarDailyLogRepository implements DailyLogRepository {
     await _crud.put(log);
     return (await getByCalendarDay(calendarDay))!;
   }
+
+  @override
+  Future<List<DailyLog>> queryByDateRange(DateTime start, DateTime end) {
+    final startDate = toCalendarDay(start);
+    final endDate = toCalendarDay(end);
+    return _dailyLogs
+        .filter()
+        .dateBetween(startDate, endDate)
+        .sortByDate()
+        .findAll();
+  }
 }

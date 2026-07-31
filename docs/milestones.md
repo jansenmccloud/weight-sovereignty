@@ -64,9 +64,10 @@
  - ✅ enhance debug menu (domain model adjustments to toString) - show more data in debug menu
 
 # Milestone 4 - Import, Export and default presets
- - export
- - import
- - default presets
+ - ✅ export DailyLog, Food and Workout
+ - ✅ export configs
+ - ✅ import configs or default presets
+ - ✅ debug and fix import view
 
 # Milestone 5 - stats & extras
  - add diagrams (weight, calories, exercise PBs)

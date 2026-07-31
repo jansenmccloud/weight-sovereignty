@@ -33,4 +33,15 @@ class IsarFoodRepository implements FoodRepository {
     final items = await _foods.getAll(ids);
     return items.whereType<Food>().toList();
   }
+
+  @override
+  Future<List<Food>> queryByDateRange(DateTime start, DateTime end) {
+    final startDate = toCalendarDay(start);
+    final endDate = toCalendarDay(end);
+    return _foods
+        .filter()
+        .dateBetween(startDate, endDate)
+        .sortByDate()
+        .findAll();
+  }
 }
