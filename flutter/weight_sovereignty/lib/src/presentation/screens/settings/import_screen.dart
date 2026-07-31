@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' as io;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,20 @@ enum _Step { pick, preview, result }
 class _ImportScreenState extends ConsumerState<ImportScreen> {
   _Step _step = _Step.pick;
   String? _fileName;
+  String? _filePath;
   List<int>? _fileBytes;
   Map<String, dynamic>? _preview;
   String? _statusMessage;
   bool _busy = false;
+
+  /// Helper to get file content as bytes — from memory or by reading the file.
+  Future<List<int>?> _readFileBytes() async {
+    if (_fileBytes != null) return _fileBytes!;
+    if (_filePath != null) {
+      return io.File(_filePath!).readAsBytes();
+    }
+    return null;
+  }
 
   /// Pick a JSON config file.
   Future<void> _pickFile() async {
@@ -34,10 +45,12 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
         type: FileType.custom,
         allowedExtensions: ['json'],
       );
-      if (result != null && result.files.single.bytes != null && mounted) {
+      if (result != null && result.files.isNotEmpty && mounted) {
+        final file = result.files.first;
         setState(() {
-          _fileName = result.files.first.name;
-          _fileBytes = result.files.first.bytes;
+          _fileName = file.name;
+          _filePath = file.path;
+          _fileBytes = file.bytes;
         });
       }
     } finally {
@@ -47,22 +60,26 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
 
   /// Parse the picked file and preview counts.
   Future<void> _previewImport() async {
-    if (_fileBytes == null || _busy) return;
+    if (_fileName == null || _busy) return;
+
+    final data = await _readFileBytes();
+    if (data == null || _busy) return;
+
     setState(() => _busy = true);
 
     try {
-      final jsonStr = utf8.decode(_fileBytes!);
-      final data = jsonDecode(jsonStr) as Map<String, dynamic>;
+      final jsonStr = utf8.decode(data);
+      final parsedData = jsonDecode(jsonStr) as Map<String, dynamic>;
 
-      if (data['exportFormat'] != 'weight_sovereignty_config') {
+      if (parsedData['exportFormat'] != 'weight_sovereignty_config') {
         throw FormatException('Invalid export format: expected weight_sovereignty_config');
       }
 
       _preview = {
-        'food': List<dynamic>.from(data['foodConfigs'] ?? []).length,
-        'exercise': List<dynamic>.from(data['exerciseConfigs'] ?? []).length,
-        'workout': List<dynamic>.from(data['workoutConfigs'] ?? []).length,
-        'dailyLog': List<dynamic>.from(data['dailyLogConfigs'] ?? []).length,
+        'food': List<dynamic>.from(parsedData['foodConfigs'] ?? []).length,
+        'exercise': List<dynamic>.from(parsedData['exerciseConfigs'] ?? []).length,
+        'workout': List<dynamic>.from(parsedData['workoutConfigs'] ?? []).length,
+        'dailyLog': List<dynamic>.from(parsedData['dailyLogConfigs'] ?? []).length,
       };
 
       if (mounted) setState(() => _step = _Step.preview);
@@ -77,11 +94,15 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
 
   /// Execute the actual import.
   Future<void> _doImport() async {
-    if (_fileBytes == null || _busy) return;
+    if (_fileName == null || _busy) return;
+
+    final data = await _readFileBytes();
+    if (data == null || _busy) return;
+
     setState(() => _busy = true);
 
     try {
-      final jsonStr = utf8.decode(_fileBytes!);
+      final jsonStr = utf8.decode(data);
 
       final service = ExportService(
         dailyLogRepo: ref.read(dailyLogRepositoryProvider),
@@ -149,6 +170,9 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
                     _step = _Step.pick;
                     _preview = null;
                     _statusMessage = null;
+                    _fileName = null;
+                    _filePath = null;
+                    _fileBytes = null;
                   });
                 },
                 icon: const Icon(Icons.arrow_back),
@@ -199,7 +223,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
         ),
         const SizedBox(height: 16),
         FilledButton.icon(
-          onPressed: _fileBytes == null || _busy ? null : _previewImport,
+          onPressed: _fileName == null || _busy ? null : _previewImport,
           icon: const Icon(Icons.arrow_forward),
           label: const Text('Preview'),
         ),
