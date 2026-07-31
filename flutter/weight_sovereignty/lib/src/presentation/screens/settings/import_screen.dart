@@ -163,7 +163,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
               _Step.result => _resultStep(),
             },
             const SizedBox(height: 12),
-            
+
             // Status message
             if (_statusMessage != null) ...[SelectableText(_statusMessage!, style: TextStyle(color: AppTheme.red)), const SizedBox(height: 16)],
 
@@ -214,6 +214,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
 
   Widget _pickStep() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FilledButton.icon(
           onPressed: _busy ? null : _pickFile,
@@ -230,6 +231,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
   Widget _previewStep() {
     final p = _preview ?? {};
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Card(
           color: AppTheme.surface,
@@ -270,10 +272,9 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Icon(Icons.check_circle_outline, size: 48, color: AppTheme.green),
-            const SizedBox(height: 16),
-            Text(_statusMessage ?? 'Import complete', style: const TextStyle(color: AppTheme.white, fontSize: 16)),
           ],
         ),
       ),
