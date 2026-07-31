@@ -5,6 +5,7 @@ import 'package:weight_sovereignty/src/presentation/screens/settings/export_scre
 import 'package:weight_sovereignty/src/presentation/screens/settings/import_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/exercise_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/food_config_list_screen.dart';
+import 'package:weight_sovereignty/src/presentation/screens/settings/stats_screen.dart';
 import 'package:weight_sovereignty/src/presentation/screens/settings/workout_config_list_screen.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
@@ -54,9 +55,15 @@ class SettingsHubScreen extends StatelessWidget {
             onTap: () => _open(context, const ImportScreen()),
           ),
           ListTile(
-            leading: const Icon(Icons.construction_outlined, color: AppTheme.white),
-            title: const Text('Debug menu', style: TextStyle(color: AppTheme.white)),
-            subtitle: const Text('Options for investigation', style: TextStyle(color: AppTheme.grey)),
+            leading: const Icon(Icons.stacked_bar_chart_sharp, color: AppTheme.white),
+            title: const Text('Stats', style: TextStyle(color: AppTheme.white)),
+            subtitle: const Text('Statistics about daily logs', style: TextStyle(color: AppTheme.grey)),
+            onTap: () => _open(context, const StatsScreen()),
+          ),
+          ListTile(
+            leading: const Icon(Icons.construction_outlined, color: AppTheme.surface),
+            title: const Text('Debug menu', style: TextStyle(color: AppTheme.surface)),
+            subtitle: const Text('Options for investigation', style: TextStyle(color: AppTheme.surface)),
             onTap: () => _open(context, const DebugScreen()),
           ),
         ],

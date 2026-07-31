@@ -349,9 +349,9 @@ class _EntityFormatter {
           final calories = eb.burnedCaloriesKcal ?? 0;
           final setDetails = (eb.sets ?? []).where((s) => s != null).map((s) {
             final es = s as ExerciseSet;
-            return '    weightKg=${es.weightKg}, reps=${es.reps}, finished=${es.finished}';
+            return '\n    weightKg=${es.weightKg}, reps=${es.reps}, finished=${es.finished}';
           }).join(', ');
-          return '  - $name ($category/$type, level=$level)\n    sets($sets): [$setDetails] calories=$calories';
+          return '  - $name ($category/$type, level=$level)\n    sets($sets): [$setDetails]\n    calories=$calories';
         })
         .join('\n');
     return 'Workout(id=${e.id}, date=${e.date?.toLocal()}\n'
