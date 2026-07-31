@@ -4,8 +4,12 @@ import 'dart:io' as io;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:weight_sovereignty/src/application/dailylog_config/dailylog_config_list_notifier.dart';
+import 'package:weight_sovereignty/src/application/exercise_config/exercise_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/application/export_service.dart';
+import 'package:weight_sovereignty/src/application/food_config/food_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
+import 'package:weight_sovereignty/src/application/workout_config/workout_config_list_notifier.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Import screen — 3-step vertical flow: pick file → preview → confirm import.
@@ -132,15 +136,17 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
     }
   }
 
+  /// Invalidate list providers so screens refetch from Isar after import.
   void _refreshProviders(Map<String, dynamic> summary) {
     final foodCount = List<dynamic>.from(summary['foodConfigs'] ?? []).length;
     final exerciseCount = List<dynamic>.from(summary['exerciseConfigs'] ?? []).length;
     final workoutCount = List<dynamic>.from(summary['workoutConfigs'] ?? []).length;
     final dailyLogConfigCount = List<dynamic>.from(summary['dailyLogConfigs'] ?? []).length;
-    if (foodCount > 0) ref.refresh(foodConfigRepositoryProvider);
-    if (exerciseCount > 0) ref.refresh(exerciseConfigRepositoryProvider);
-    if (workoutCount > 0) ref.refresh(workoutConfigRepositoryProvider);
-    if (dailyLogConfigCount > 0) ref.refresh(dailyLogConfigRepositoryProvider);
+
+    if (foodCount > 0) ref.invalidate(foodConfigListProvider);
+    if (exerciseCount > 0) ref.invalidate(exerciseConfigListProvider);
+    if (workoutCount > 0) ref.invalidate(workoutConfigListProvider);
+    if (dailyLogConfigCount > 0) ref.invalidate(dailyLogConfigListProvider);
   }
 
   @override
@@ -288,10 +294,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: AppTheme.white)),
-          Text(
-            '$count',
-            style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold),
-          ),
+          Text('$count', style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
         ],
       ),
     );
