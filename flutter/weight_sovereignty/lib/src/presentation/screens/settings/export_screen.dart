@@ -187,21 +187,22 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                   Expanded(child: _dateButton(_endDate ?? DateTime.now(), 'End', _pickEndDate)),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Export button (time series)
               FilledButton.icon(
                 onPressed: _exporting ? null : _handleExport,
-                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), textStyle: const TextStyle(fontSize: 16)),
+                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12), textStyle: const TextStyle(fontSize: 16)),
                 icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_upload_outlined),
                 label: Text(_exporting ? 'Exporting…' : 'Export & Save'),
               ),
               
             ] else ...[
               // Export button (config presets)
+              const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: _exporting ? null : _handleExport,
-                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), textStyle: const TextStyle(fontSize: 16)),
+                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12), textStyle: const TextStyle(fontSize: 16)),
                 icon: _exporting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.file_upload_outlined),
                 label: Text(_exporting ? 'Exporting…' : 'Export config data'),
               ),

@@ -226,9 +226,9 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
           onPressed: _busy ? null : _pickFile,
           icon: const Icon(Icons.file_download_outlined),
           label: Text(_fileName != null ? 'JSON Selected' : 'Select JSON file'),
-          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         FilledButton.icon(onPressed: _fileName == null || _busy ? null : _previewImport, icon: const Icon(Icons.arrow_forward), label: const Text('Preview')),
       ],
     );
