@@ -371,7 +371,7 @@ class _CaloriesChartPainter extends CustomPainter {
 
       final yellowPaint = Paint()
         ..shader = LinearGradient(
-          colors: [AppTheme.yellow.withAlpha(5), AppTheme.yellow.withAlpha(60)],
+          colors: [AppTheme.yellow.withAlpha(5), AppTheme.yellow.withAlpha(100)],
           stops: const [0.3, 1.0],
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
 
