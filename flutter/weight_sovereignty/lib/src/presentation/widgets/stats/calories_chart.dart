@@ -11,14 +11,7 @@ class CaloriesChartDataPoint {
   final double? plannedDeficit;
   final double? actualDeficit;
 
-  const CaloriesChartDataPoint({
-    required this.date,
-    this.intake,
-    this.bmr,
-    this.burned,
-    this.plannedDeficit,
-    this.actualDeficit,
-  });
+  const CaloriesChartDataPoint({required this.date, this.intake, this.bmr, this.burned, this.plannedDeficit, this.actualDeficit});
 
   /// Factory from a DailyLog (for daily resolution)
   factory CaloriesChartDataPoint.fromDailyLog(log) {
@@ -62,16 +55,28 @@ class CaloriesChartDataPoint {
 
     for (final log in logs) {
       final intakeVal = log.calculation?.totalIntakeCaloriesKcal?.toDouble();
-      if (intakeVal != null && intakeVal > 0) { sumIntake += intakeVal; countIntake++; }
+      if (intakeVal != null && intakeVal > 0) {
+        sumIntake += intakeVal;
+        countIntake++;
+      }
 
       final bmrVal = log.dailyLogBase?.bmrCaloriesKcal?.toDouble();
-      if (bmrVal != null && bmrVal > 0) { sumBmr += bmrVal; countBmr++; }
+      if (bmrVal != null && bmrVal > 0) {
+        sumBmr += bmrVal;
+        countBmr++;
+      }
 
       final burnedVal = log.calculation?.totalBurnedCaloriesKcal?.toDouble();
-      if (burnedVal != null && burnedVal > 0) { sumBurned += burnedVal; countBurned++; }
+      if (burnedVal != null && burnedVal > 0) {
+        sumBurned += burnedVal;
+        countBurned++;
+      }
 
       final plannedVal = log.dailyLogBase?.plannedDeficitKcal?.toDouble();
-      if (plannedVal != null && plannedVal > 0) { sumPlannedDeficit += plannedVal; countPlannedDeficit++; }
+      if (plannedVal != null && plannedVal > 0) {
+        sumPlannedDeficit += plannedVal;
+        countPlannedDeficit++;
+      }
     }
 
     final avgIntake = countIntake > 0 ? sumIntake / countIntake : null;
@@ -102,11 +107,7 @@ class CaloriesChart extends StatefulWidget {
   final List<CaloriesChartDataPoint> dataPoints;
   final double height;
 
-  const CaloriesChart({
-    super.key,
-    required this.dataPoints,
-    this.height = 240.0,
-  });
+  const CaloriesChart({super.key, required this.dataPoints, this.height = 240.0});
 
   @override
   State<CaloriesChart> createState() => _CaloriesChartState();
@@ -165,11 +166,7 @@ class _CaloriesChartState extends State<CaloriesChart> {
             width: double.infinity,
             child: CustomPaint(
               size: Size(constraints.maxWidth, widget.height),
-              painter: _CaloriesChartPainter(
-                dataPoints: sorted,
-                hoveredPoint: _findNearestPoint(sorted),
-                accentColor: accent,
-              ),
+              painter: _CaloriesChartPainter(dataPoints: sorted, hoveredPoint: _findNearestPoint(sorted), accentColor: accent),
             ),
           ),
         );
@@ -207,11 +204,7 @@ class _CaloriesChartPainter extends CustomPainter {
   final CaloriesChartDataPoint? hoveredPoint;
   final Color accentColor;
 
-  _CaloriesChartPainter({
-    required this.dataPoints,
-    required this.hoveredPoint,
-    required this.accentColor,
-  });
+  _CaloriesChartPainter({required this.dataPoints, required this.hoveredPoint, required this.accentColor});
 
   // Y-axis range for scaling (only non-null intake values)
   double _maxValue() {
@@ -274,7 +267,9 @@ class _CaloriesChartPainter extends CustomPainter {
     canvas.drawLine(
       Offset(padding.left, zeroY),
       Offset(size.width - padding.right, zeroY),
-      gridPaint..color = AppTheme.white.withAlpha(50)..strokeWidth = 1.0,
+      gridPaint
+        ..color = AppTheme.white.withAlpha(50)
+        ..strokeWidth = 1.0,
     );
 
     // Grid lines (Y-axis)
@@ -287,7 +282,10 @@ class _CaloriesChartPainter extends CustomPainter {
       // Y-axis labels
       final label = value.round().toString();
       final textPainter = TextPainter(
-        text: TextSpan(text: label, style: TextStyle(color: AppTheme.white, fontSize: 9)),
+        text: TextSpan(
+          text: label,
+          style: TextStyle(color: AppTheme.white, fontSize: 9),
+        ),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -295,6 +293,7 @@ class _CaloriesChartPainter extends CustomPainter {
     }
 
     // X-axis labels (dates)
+    // TODO following code needs simplification
     final dateSteps = dataPoints.length > 7 ? (dataPoints.length > 31 ? 6 : 5) : dataPoints.length;
     final step = (dataPoints.length - 1) / (dateSteps < 2 ? 1 : dateSteps);
 
@@ -307,17 +306,13 @@ class _CaloriesChartPainter extends CustomPainter {
       canvas.drawLine(Offset(x, padding.top), Offset(x, padding.top + 4), gridPaint..strokeWidth = 0.5);
 
       // Label
-      String label;
-      if (dataPoints.length <= 31) {
-        label = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
-      } else if (dataPoints.length <= 92) {
-        label = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
-      } else {
-        label = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
-      }
+      String label = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
 
       final textPainter = TextPainter(
-        text: TextSpan(text: label, style: TextStyle(color: AppTheme.white, fontSize: 8)),
+        text: TextSpan(
+          text: label,
+          style: TextStyle(color: AppTheme.white, fontSize: 8),
+        ),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -374,7 +369,8 @@ class _CaloriesChartPainter extends CustomPainter {
         }
       }
 
-      final yellowPaint = Paint()..shader = LinearGradient(
+      final yellowPaint = Paint()
+        ..shader = LinearGradient(
           colors: [AppTheme.yellow.withAlpha(5), AppTheme.yellow.withAlpha(60)],
           stops: const [0.3, 1.0],
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
@@ -396,7 +392,8 @@ class _CaloriesChartPainter extends CustomPainter {
         }
       }
 
-      final redPaint = Paint()..shader = LinearGradient(
+      final redPaint = Paint()
+        ..shader = LinearGradient(
           colors: [AppTheme.red.withAlpha(0), AppTheme.red.withAlpha(60)],
           stops: const [0.3, 1.0],
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
@@ -482,9 +479,13 @@ class _CaloriesChartPainter extends CustomPainter {
         final hoverY = actualDeficit != null ? yForValue(actualDeficit) : zeroY;
 
         // Vertical line
-        canvas.drawLine(Offset(x, padding.top), Offset(x, size.height - padding.bottom), Paint()
-          ..color = accentColor.withAlpha(100)
-          ..strokeWidth = 1.0);
+        canvas.drawLine(
+          Offset(x, padding.top),
+          Offset(x, size.height - padding.bottom),
+          Paint()
+            ..color = accentColor.withAlpha(100)
+            ..strokeWidth = 1.0,
+        );
 
         // Highlight hovered point on actual deficit curve
         if (actualDeficit != null) {
@@ -499,7 +500,12 @@ class _CaloriesChartPainter extends CustomPainter {
         if (hoveredPoint!.burned != null) lines.add(TextSpan(text: 'Burned: ${hoveredPoint!.burned!.round()} kcal  '));
         if (hoveredPoint!.actualDeficit != null) {
           final color = hoveredPoint!.actualDeficit! >= 0 ? AppTheme.green : AppTheme.red;
-          lines.add(TextSpan(text: '${hoveredPoint!.actualDeficit!.round()} kcal\n', style: TextStyle(color: color)));
+          lines.add(
+            TextSpan(
+              text: '${hoveredPoint!.actualDeficit!.round()} kcal\n',
+              style: TextStyle(color: color),
+            ),
+          );
         }
 
         // Build label text
@@ -524,10 +530,7 @@ class _CaloriesChartPainter extends CustomPainter {
         textPainter.layout();
 
         final labelOffset = Offset(x - textPainter.width / 2 - 6, hoverY - textPainter.height - 14);
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(labelOffset & Size(textPainter.width + 12, textPainter.height + 8), const Radius.circular(6)),
-          Paint()..color = AppTheme.background,
-        );
+        canvas.drawRRect(RRect.fromRectAndRadius(labelOffset & Size(textPainter.width + 12, textPainter.height + 8), const Radius.circular(6)), Paint()..color = AppTheme.background);
         textPainter.paint(canvas, labelOffset + const Offset(6, 4));
       }
     }
@@ -548,11 +551,7 @@ class ResolutionPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final options = [
-      ChartResolution.daily,
-      ChartResolution.weekly,
-      ChartResolution.monthly,
-    ];
+    final options = [ChartResolution.daily, ChartResolution.weekly, ChartResolution.monthly];
 
     return SizedBox(
       height: 36,
@@ -576,11 +575,7 @@ class ResolutionPicker extends StatelessWidget {
                 ),
                 child: Text(
                   opt.label,
-                  style: TextStyle(
-                    color: selected ? AppTheme.white : AppTheme.white.withAlpha(150),
-                    fontSize: 12,
-                    fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-                  ),
+                  style: TextStyle(color: selected ? AppTheme.white : AppTheme.white.withAlpha(150), fontSize: 12, fontWeight: selected ? FontWeight.bold : FontWeight.normal),
                 ),
               ),
             ),
@@ -594,9 +589,12 @@ class ResolutionPicker extends StatelessWidget {
 extension on ChartResolution {
   String get label {
     switch (this) {
-      case ChartResolution.daily: return 'Daily';
-      case ChartResolution.weekly: return 'Weekly';
-      case ChartResolution.monthly: return 'Monthly';
+      case ChartResolution.daily:
+        return 'Daily';
+      case ChartResolution.weekly:
+        return 'Weekly';
+      case ChartResolution.monthly:
+        return 'Monthly';
     }
   }
 }
