@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
+import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/weight_chart.dart';
 
@@ -148,7 +149,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     final today = DateTime(now.year, now.month, now.day);
 
     // Helper to filter logs within N days
-    List<dynamic> logsInLastDays(int days) {
+    List<DailyLog> logsInLastDays(int days) {
       final cutoff = today.subtract(Duration(days: days));
       return logs.where((l) {
         final logDate = DateTime(l.date!.year, l.date!.month, l.date!.day);
@@ -157,23 +158,23 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     }
 
     // Compute average weight from a list of logs
-    double? avgWeight(List<dynamic> logList) {
-      final valid = logList.where((l) => (l.weight ?? 0) > 0).toList();
+    double? avgWeight(List<DailyLog> logList) {
+      final valid = logList.where((l) => (l.bodyWeight ?? 0.0) > 0.0).toList();
       if (valid.isEmpty) return null;
-      return valid.fold<double>(0, (s, l) => s + (l.weight?.toDouble() ?? 0)) / valid.length;
+      return valid.fold<double>(0, (s, l) => s + (l.bodyWeight?.toDouble() ?? 0)) / valid.length;
     }
 
     // Weight data points for chart (all available data)
     final allWeightPoints = <WeightDataPoint>[];
-    final sortedLogs = List<dynamic>.from(logs)
-      ..sort((a, b) => a.date.compareTo(b.date));
+    final sortedLogs = List<DailyLog>.from(logs)
+      ..sort((a, b) => a.date!.compareTo(b.date!));
 
     for (final log in sortedLogs) {
-      if ((log.weight ?? 0) > 0) {
+      if ((log.bodyWeight ?? 0.0) > 0.0) {
         allWeightPoints.add(
           WeightDataPoint(
-            date: DateTime(log.date.year, log.date.month, log.date.day),
-            weight: log.weight!.toDouble(),
+            date: DateTime(log.date!.year, log.date!.month, log.date!.day),
+            weight: log.bodyWeight!.toDouble(),
           ),
         );
       }

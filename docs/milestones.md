@@ -75,9 +75,9 @@
     - calories: intake , defizit, burned
     - exercise PBs
  - weight week avg, 30-day avg
- - show number of day logs 
- - info dialog with used formula and MET mapping
-    - calorie formula cardio and lifting
+ - ✅ show number of day logs 
+ - ✅ info dialog with used formula and MET mapping
+    - ✅ calorie formula cardio and lifting
 
 # Bonus
  - refactor: move calc logic to service layer

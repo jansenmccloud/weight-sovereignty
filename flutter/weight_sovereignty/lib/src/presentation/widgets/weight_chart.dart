@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 
 /// Data point for the weight chart
 class WeightDataPoint {
@@ -37,11 +38,7 @@ class WeightChart extends StatefulWidget {
   final List<WeightDataPoint> dataPoints;
   final double height;
 
-  const WeightChart({
-    super.key,
-    required this.dataPoints,
-    this.height = 200.0,
-  });
+  const WeightChart({super.key, required this.dataPoints, this.height = 200.0});
 
   @override
   State<WeightChart> createState() => _WeightChartState();
@@ -66,8 +63,7 @@ class _WeightChartState extends State<WeightChart> {
 
   @override
   Widget build(BuildContext context) {
-    final sorted = List<WeightDataPoint>.from(widget.dataPoints)
-      ..sort((a, b) => a.date.compareTo(b.date));
+    final sorted = List<WeightDataPoint>.from(widget.dataPoints)..sort((a, b) => a.date.compareTo(b.date));
 
     if (sorted.isEmpty) {
       return SizedBox(
@@ -101,11 +97,7 @@ class _WeightChartState extends State<WeightChart> {
             width: double.infinity,
             child: CustomPaint(
               size: Size(constraints.maxWidth, widget.height),
-              painter: _WeightChartPainter(
-                dataPoints: sorted,
-                hoveredPoint: _findNearestPoint(sorted),
-                accentColor: accent,
-              ),
+              painter: _WeightChartPainter(dataPoints: sorted, hoveredPoint: _findNearestPoint(sorted), accentColor: accent),
             ),
           ),
         );
@@ -126,8 +118,6 @@ class _WeightChartPainter extends CustomPainter {
     if (dataPoints.isEmpty) return;
 
     final sorted = dataPoints;
-    final firstDate = sorted.first.date;
-    final lastDate = sorted.last.date;
     final minWeight = sorted.map((e) => e.weight).reduce((a, b) => a < b ? a : b);
     final maxWeight = sorted.map((e) => e.weight).reduce((a, b) => a > b ? a : b);
 
@@ -146,47 +136,39 @@ class _WeightChartPainter extends CustomPainter {
 
     // Paints
     final gridPaint = Paint()
-      ..color = Colors.white.withOpacity(0.08)
+      ..color = AppTheme.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
 
     final linePaint = Paint()
-      ..color = Colors.white.withOpacity(0.7)
+      ..color = AppTheme.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 
     final areaPaint = Paint()
-      ..shader = LinearGradient(
-        colors: [
-          Colors.white.withOpacity(0.15),
-          Colors.white.withOpacity(0.0),
-        ],
-        stops: const [0.8, 1.0],
-      ).createShader(Rect.fromLTWH(0, padding.top, chartWidth, chartHeight));
+      ..shader = LinearGradient(colors: [AppTheme.white.withAlpha(100), AppTheme.white], stops: const [0.8, 1.0]).createShader(Rect.fromLTWH(0, padding.top, chartWidth, chartHeight));
 
     final dotPaint = Paint()..color = Colors.white;
     final hoverLinePaint = Paint()
-      ..color = accentColor.withOpacity(0.5)
+      ..color = accentColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
-      //..strokeDash = [4.0, 4.0];
 
     // Grid lines (Y-axis)
     final gridSteps = 4;
     for (int i = 0; i <= gridSteps; i++) {
       final weight = minWeight + (weightRange * 1.1) * (i / gridSteps) - weightRange * 0.05;
       final y = yForWeight(weight);
-      canvas.drawLine(
-        Offset(padding.left, y),
-        Offset(size.width - padding.right, y),
-        gridPaint,
-      );
+      canvas.drawLine(Offset(padding.left, y), Offset(size.width - padding.right, y), gridPaint);
 
       // Y-axis labels
       final label = weight.toStringAsFixed(1);
       final textPainter = TextPainter(
-        text: TextSpan(text: label, style: TextStyle(color: Colors.white54, fontSize: 9)),
+        text: TextSpan(
+          text: label,
+          style: TextStyle(color: Colors.white54, fontSize: 9),
+        ),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -202,16 +184,15 @@ class _WeightChartPainter extends CustomPainter {
       final date = sorted[idx].date;
 
       // Tick mark
-      canvas.drawLine(
-        Offset(x, padding.top),
-        Offset(x, padding.top + 4),
-        gridPaint..strokeWidth = 0.5,
-      );
+      canvas.drawLine(Offset(x, padding.top), Offset(x, padding.top + 4), gridPaint..strokeWidth = 0.5);
 
       // Label
       final label = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
       final textPainter = TextPainter(
-        text: TextSpan(text: label, style: TextStyle(color: Colors.white54, fontSize: 9)),
+        text: TextSpan(
+          text: label,
+          style: TextStyle(color: Colors.white54, fontSize: 9),
+        ),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -220,11 +201,7 @@ class _WeightChartPainter extends CustomPainter {
 
     // Area fill
     if (sorted.length > 1) {
-      final path = Path()
-        ..addPolygon(
-          List.generate(sorted.length, (i) => Offset(xForIndex(i), yForWeight(sorted[i].weight))),
-          false,
-        );
+      final path = Path()..addPolygon(List.generate(sorted.length, (i) => Offset(xForIndex(i), yForWeight(sorted[i].weight))), false);
       final areaPath = Path();
       areaPath.addRect(Rect.fromLTWH(padding.left, padding.top, chartWidth, chartHeight));
       canvas.drawPath(path, areaPaint);
@@ -243,11 +220,7 @@ class _WeightChartPainter extends CustomPainter {
     for (int i = 0; i < sorted.length; i++) {
       final isHovered = hoveredPoint == sorted[i];
       final r = isHovered ? 5.0 : 3.0;
-      canvas.drawCircle(
-        Offset(xForIndex(i), yForWeight(sorted[i].weight)),
-        r,
-        dotPaint..color = isHovered ? accentColor : Colors.white.withOpacity(0.8),
-      );
+      canvas.drawCircle(Offset(xForIndex(i), yForWeight(sorted[i].weight)), r, dotPaint..color = isHovered ? accentColor : AppTheme.white);
     }
 
     // Hover indicator
@@ -257,11 +230,7 @@ class _WeightChartPainter extends CustomPainter {
         final x = xForIndex(idx);
         final y = yForWeight(hoveredPoint!.weight);
 
-        canvas.drawLine(
-          Offset(x, padding.top),
-          Offset(x, size.height - padding.bottom),
-          hoverLinePaint,
-        );
+        canvas.drawLine(Offset(x, padding.top), Offset(x, size.height - padding.bottom), hoverLinePaint);
 
         // Label
         final label = '${hoveredPoint!.weight.toStringAsFixed(1)} kg';
@@ -274,13 +243,7 @@ class _WeightChartPainter extends CustomPainter {
         );
         textPainter.layout();
         final labelOffset = Offset(x - textPainter.width / 2, y - textPainter.height - 8);
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            labelOffset & Size(textPainter.width + 8, textPainter.height + 4),
-            const Radius.circular(4),
-          ),
-          Paint()..color = Colors.black87,
-        );
+        canvas.drawRRect(RRect.fromRectAndRadius(labelOffset & Size(textPainter.width + 8, textPainter.height + 4), const Radius.circular(4)), Paint()..color = Colors.black87);
         textPainter.paint(canvas, labelOffset + const Offset(4, 2));
       }
     }
