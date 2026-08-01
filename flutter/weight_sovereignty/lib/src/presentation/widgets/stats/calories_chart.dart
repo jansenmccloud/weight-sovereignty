@@ -419,9 +419,7 @@ class _CaloriesChartPainter extends CustomPainter {
 
       // Dashed effect via draw points with gaps is hard; use a simpler approach: draw small circles instead
       for (int i = 0; i < bmrPoints.length; i++) {
-        if (i % 3 == 0) {
           canvas.drawCircle(bmrPoints[i], 2.5, bmrPaint..style = PaintingStyle.fill);
-        }
       }
     }
 
