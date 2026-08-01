@@ -254,6 +254,26 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
 
     return [
       CaloriesChartSection(dataPoints: dataPoints),
+      ListTile(
+        title: Text('Intake Calories', style: TextStyle(color: AppTheme.white.withAlpha(200))),
+        leading: Icon(Icons.line_axis, color: AppTheme.white.withAlpha(200)),
+      ),
+      ListTile(
+        title: Text('Burned Calories (BMR + Workout)', style: TextStyle(color: AppTheme.purple.withAlpha(180))),
+        leading: Icon(Icons.line_axis, color: AppTheme.purple.withAlpha(180)),
+      ),
+      ListTile(
+        title: Text('BMR', style: TextStyle(color: AppTheme.white.withAlpha(100))),
+        leading: Icon(Icons.linear_scale, color: AppTheme.white.withAlpha(100)),
+      ),
+      ListTile(
+        title: Text('Actual Deficit', style: TextStyle(color: AppTheme.green.withAlpha(222))),
+        leading: Icon(Icons.area_chart, color: AppTheme.green.withAlpha(222)),
+      ),
+      ListTile(
+        title: Text('Planned Deficit', style: TextStyle(color: AppTheme.green.withAlpha(180))),
+        leading: Icon(Icons.linear_scale_rounded, color: AppTheme.green.withAlpha(180)),
+      ),
     ];
   }
 

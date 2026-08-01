@@ -97,26 +97,6 @@ class CaloriesChartDataPoint {
 /// Resolution mode for the calories chart
 enum ChartResolution { daily, weekly, monthly }
 
-/// Data point for aggregation computations
-class _AggregatedPoint {
-  final DateTime anchorDate;
-  final List<CaloriesChartDataPoint> sourcePoints;
-
-  const _AggregatedPoint(this.anchorDate, this.sourcePoints);
-
-  double? get avgIntake => _avg(sourcePoints.map((p) => p.intake));
-  double? get avgBmr => _avg(sourcePoints.map((p) => p.bmr));
-  double? get avgBurned => _avg(sourcePoints.map((p) => p.burned));
-  double? get avgPlannedDeficit => _avg(sourcePoints.map((p) => p.plannedDeficit));
-  double? get avgActualDeficit => _avg(sourcePoints.map((p) => p.actualDeficit));
-
-  static double? _avg(Iterable<double?> values) {
-    final nonNull = values.whereType<double>().toList();
-    if (nonNull.isEmpty) return null;
-    return nonNull.reduce((a, b) => a + b) / nonNull.length;
-  }
-}
-
 /// Custom paint chart showing multiple calorie-related curves.
 class CaloriesChart extends StatefulWidget {
   final List<CaloriesChartDataPoint> dataPoints;
@@ -157,7 +137,7 @@ class _CaloriesChartState extends State<CaloriesChart> {
       return SizedBox(
         height: widget.height,
         child: Center(
-          child: Text('No calorie data available', style: TextStyle(color: Colors.white54)),
+          child: Text('No calorie data available', style: TextStyle(color: AppTheme.white)),
         ),
       );
     }
@@ -284,12 +264,10 @@ class _CaloriesChartPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final deficitLinePaint = Paint()
-      ..color = Colors.greenAccent.withAlpha(180)
+      ..color = AppTheme.green.withAlpha(180)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
-
-    final dotPaint = Paint()..color = AppTheme.white;
 
     // Zero line (break-even reference)
     final zeroY = yForValue(0);
@@ -309,7 +287,7 @@ class _CaloriesChartPainter extends CustomPainter {
       // Y-axis labels
       final label = value.round().toString();
       final textPainter = TextPainter(
-        text: TextSpan(text: label, style: TextStyle(color: Colors.white54, fontSize: 9)),
+        text: TextSpan(text: label, style: TextStyle(color: AppTheme.white, fontSize: 9)),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -339,7 +317,7 @@ class _CaloriesChartPainter extends CustomPainter {
       }
 
       final textPainter = TextPainter(
-        text: TextSpan(text: label, style: TextStyle(color: Colors.white54, fontSize: 8)),
+        text: TextSpan(text: label, style: TextStyle(color: AppTheme.white, fontSize: 8)),
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -397,7 +375,7 @@ class _CaloriesChartPainter extends CustomPainter {
       }
 
       final greenPaint = Paint()..shader = LinearGradient(
-          colors: [Colors.green.withAlpha(0), Colors.green.withAlpha(60)],
+          colors: [AppTheme.green.withAlpha(5), AppTheme.green.withAlpha(60)],
           stops: const [0.3, 1.0],
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
 
@@ -419,7 +397,7 @@ class _CaloriesChartPainter extends CustomPainter {
       }
 
       final redPaint = Paint()..shader = LinearGradient(
-          colors: [Colors.red.withAlpha(0), Colors.red.withAlpha(60)],
+          colors: [AppTheme.red.withAlpha(0), AppTheme.red.withAlpha(60)],
           stops: const [0.3, 1.0],
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
 
@@ -510,7 +488,7 @@ class _CaloriesChartPainter extends CustomPainter {
 
         // Highlight hovered point on actual deficit curve
         if (actualDeficit != null) {
-          canvas.drawCircle(Offset(x, hoverY), 5.0, Paint()..color = Colors.greenAccent);
+          canvas.drawCircle(Offset(x, hoverY), 5.0, Paint()..color = AppTheme.green);
         }
 
         // Label with all values
@@ -520,8 +498,8 @@ class _CaloriesChartPainter extends CustomPainter {
         if (hoveredPoint!.bmr != null) lines.add(TextSpan(text: 'BMR: ${hoveredPoint!.bmr!.round()} kcal  '));
         if (hoveredPoint!.burned != null) lines.add(TextSpan(text: 'Burned: ${hoveredPoint!.burned!.round()} kcal  '));
         if (hoveredPoint!.actualDeficit != null) {
-          final color = hoveredPoint!.actualDeficit! >= 0 ? Colors.green : Colors.red;
-          lines.add(TextSpan(text: '${hoveredPoint!.actualDeficit!.round()} kcal\n'));
+          final color = hoveredPoint!.actualDeficit! >= 0 ? AppTheme.green : AppTheme.red;
+          lines.add(TextSpan(text: '${hoveredPoint!.actualDeficit!.round()} kcal\n', style: TextStyle(color: color)));
         }
 
         // Build label text
@@ -548,7 +526,7 @@ class _CaloriesChartPainter extends CustomPainter {
         final labelOffset = Offset(x - textPainter.width / 2 - 6, hoverY - textPainter.height - 14);
         canvas.drawRRect(
           RRect.fromRectAndRadius(labelOffset & Size(textPainter.width + 12, textPainter.height + 8), const Radius.circular(6)),
-          Paint()..color = Colors.black87,
+          Paint()..color = AppTheme.background,
         );
         textPainter.paint(canvas, labelOffset + const Offset(6, 4));
       }
@@ -592,7 +570,7 @@ class ResolutionPicker extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
-                  color: selected ? AppTheme.white.withAlpha(40) : Colors.transparent,
+                  color: selected ? AppTheme.white.withAlpha(40) : AppTheme.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: selected ? AppTheme.white.withAlpha(120) : AppTheme.white.withAlpha(30)),
                 ),

@@ -72,14 +72,14 @@
 # Milestone 5 - stats & extras
  - ✅ add diagrams
     - ✅ weight
-    - calories: intake , defizit, burned
+    - ✅ calories: intake , defizit, burned
     - exercise PBs
  - ✅ weight week avg, 30-day avg
  - ✅ show number of day logs 
  - ✅ info dialog with used formula and MET mapping
     - ✅ calorie formula cardio and lifting
 
-# Bonus
+# Milestone 6 - Bonus & cleanup
  - refactor: move calc logic to service layer
  - handle open code TODOS
  - add height, age, gender and calculate BMR by mifflin st jeor formula => add new info to stats and new curve to calorie chart
