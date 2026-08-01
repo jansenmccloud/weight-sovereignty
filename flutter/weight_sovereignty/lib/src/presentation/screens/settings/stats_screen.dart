@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/weight_chart.dart';
 
 class StatsScreen extends ConsumerStatefulWidget {
   const StatsScreen({super.key});
@@ -31,7 +32,15 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
             },
           ),
           // Weight Progression
-          _expandableTileWrapper("Weight Progression", _weightWidgets()),
+          FutureBuilder<List<Widget>>(
+            future: _weightWidgets(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return _expandableTileWrapper("Weight Progression", snapshot.data!);
+            },
+          ),
           // Calories
           _expandableTileWrapper("Calories", _caloriesWidgets()),
           // Workouts
@@ -128,12 +137,82 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     ];
   }
 
-  List<Widget> _weightWidgets() {
+  Future<List<Widget>> _weightWidgets() async {
+    final logs = await ref.read(dailyLogRepositoryProvider).getAll();
+
+    if (logs.isEmpty) {
+      return [ListTile(title: Text('No weight data available', style: TextStyle(color: AppTheme.white)))];
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Helper to filter logs within N days
+    List<dynamic> logsInLastDays(int days) {
+      final cutoff = today.subtract(Duration(days: days));
+      return logs.where((l) {
+        final logDate = DateTime(l.date!.year, l.date!.month, l.date!.day);
+        return logDate.isAfter(cutoff.subtract(const Duration(days: 1))) && logDate.isBefore(today.add(const Duration(days: 1)));
+      }).toList();
+    }
+
+    // Compute average weight from a list of logs
+    double? avgWeight(List<dynamic> logList) {
+      final valid = logList.where((l) => (l.weight ?? 0) > 0).toList();
+      if (valid.isEmpty) return null;
+      return valid.fold<double>(0, (s, l) => s + (l.weight?.toDouble() ?? 0)) / valid.length;
+    }
+
+    // Weight data points for chart (all available data)
+    final allWeightPoints = <WeightDataPoint>[];
+    final sortedLogs = List<dynamic>.from(logs)
+      ..sort((a, b) => a.date.compareTo(b.date));
+
+    for (final log in sortedLogs) {
+      if ((log.weight ?? 0) > 0) {
+        allWeightPoints.add(
+          WeightDataPoint(
+            date: DateTime(log.date.year, log.date.month, log.date.day),
+            weight: log.weight!.toDouble(),
+          ),
+        );
+      }
+    }
+
+    // Rolling averages
+    final logs7d = logsInLastDays(7);
+    final logs14d = logsInLastDays(14);
+    final logs30d = logsInLastDays(30);
+
+    final avg7 = avgWeight(logs7d);
+    final avg14 = avgWeight(logs14d);
+    final avg30 = avgWeight(logs30d);
+
     return [
-      // TODO last 30 day weight average
-      // TODO last 14 day weight average
-      // TODO last 7 day weight average
-      // TODO diagramm showing daily weight measurements
+      // Weight chart
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: WeightChart(
+          dataPoints: allWeightPoints,
+          height: 180.0,
+        ),
+      ),
+      // Rolling averages
+      ListTile(
+        title: Text('7-Day Avg: ${avg7 != null ? '${avg7.toStringAsFixed(1)} kg' : '—'}', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.calendar_today, color: AppTheme.white),
+        subtitle: Text('${logs7d.length} day(s) with weight data', style: TextStyle(color: AppTheme.white)),
+      ),
+      ListTile(
+        title: Text('14-Day Avg: ${avg14 != null ? '${avg14.toStringAsFixed(1)} kg' : '—'}', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.calendar_today, color: AppTheme.white),
+        subtitle: Text('${logs14d.length} day(s) with weight data', style: TextStyle(color: AppTheme.white)),
+      ),
+      ListTile(
+        title: Text('30-Day Avg: ${avg30 != null ? '${avg30.toStringAsFixed(1)} kg' : '—'}', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.calendar_today, color: AppTheme.white),
+        subtitle: Text('${logs30d.length} day(s) with weight data', style: TextStyle(color: AppTheme.white)),
+      ),
     ];
   }
 
