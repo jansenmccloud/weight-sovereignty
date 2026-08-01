@@ -19,9 +19,11 @@ class DebugScreen extends ConsumerStatefulWidget {
 }
 
 class _DebugScreenState extends ConsumerState<DebugScreen> {
+  final bool _deleteAllDisabled = true;
   String? _selectedEntity;
   String _entriesText = '';
   bool _loading = false;
+  DateTime? _selectedDate;
 
   final List<String> _entityTypes = const ['DailyLog', 'Food', 'Workout', 'DailyLogConfig', 'FoodConfig', 'WorkoutConfig', 'ExerciseConfig'];
 
@@ -59,34 +61,51 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                if (_selectedEntity == 'DailyLog') ...[
-                  const SizedBox(width: 16, height: 36, child: VerticalDivider(color: AppTheme.grey, thickness: 1)),
-                  TextButton.icon(
-                    onPressed: _loading ? null : _deleteAllDailyLogs,
-                    icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
-                    label: const Text('Delete All DailyLogs', style: TextStyle(color: AppTheme.red)),
+                Expanded(
+                  child: InkWell(
+                    onTap: _pickDate,
+                    child: Container(
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppTheme.grey,
+                        border: Border.all(color: AppTheme.surface),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _selectedDate != null
+                              ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
+                              : 'Select Date',
+                          style: const TextStyle(color: AppTheme.white),
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-                if (_selectedEntity == 'Food') ...[
-                  const SizedBox(width: 16, height: 36, child: VerticalDivider(color: AppTheme.grey, thickness: 1)),
+                ),
+                if (_selectedEntity != null && _entitySupportsDate(_selectedEntity!)) ...[
+                  const SizedBox(width: 8),
                   TextButton.icon(
-                    onPressed: _loading ? null : _deleteAllFoods,
-                    icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
-                    label: const Text('Delete All Foods', style: TextStyle(color: AppTheme.red)),
-                  ),
-                ],
-                if (_selectedEntity == 'Workout') ...[
-                  const SizedBox(width: 16, height: 36, child: VerticalDivider(color: AppTheme.grey, thickness: 1)),
-                  TextButton.icon(
-                    onPressed: _loading ? null : _deleteAllWorkouts,
-                    icon: const Icon(Icons.delete_sweep_outlined, color: AppTheme.red, size: 18),
-                    label: const Text('Delete All Workouts', style: TextStyle(color: AppTheme.red)),
+                    onPressed: _loading || _selectedDate == null ? null : () => _deleteByDate(_selectedEntity!),
+                    icon: const Icon(Icons.delete_outline, color: AppTheme.yellow, size: 18),
+                    label: const Text('Delete by Date', style: TextStyle(color: AppTheme.yellow)),
                   ),
                 ],
                 if (_loading) const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.white)),
               ],
             ),
-            const SizedBox(height: 16),
+            if (_selectedEntity != null && _entitySupportsDate(_selectedEntity!)) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Text('Also delete all (disabled): ', style: TextStyle(color: AppTheme.grey, fontSize: 12)),
+                  TextButton(
+                    onPressed: _loading || _deleteAllDisabled ? null : () => _deleteAll(_selectedEntity!),
+                    style: TextButton.styleFrom(foregroundColor: AppTheme.red),
+                    child: const Text('all entries', style: TextStyle(color: AppTheme.red, fontSize: 12)),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 8),
 
             Expanded(
               child: Container(
@@ -168,92 +187,98 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     }
   }
 
-  Future<void> _deleteAllWorkouts() async {
-    if (!mounted) return;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete all Workout entries?'),
-        content: const Text('This will permanently remove all workout entries. This action cannot be undone.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppTheme.red),
-            child: const Text('Delete All'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    final isarAsync = ref.read(isarProvider);
-    if (!isarAsync.hasValue) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
-      }
-      return;
-    }
-
-    final isar = isarAsync.value!;
-    await isar.writeTxn(() => isar.collection<Workout>().clear());
-
-    if (!mounted) return;
-    setState(() {
-      _entriesText = '(all Workout entries deleted)';
-    });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All Workout entries cleared')));
+  bool _entitySupportsDate(String entityName) {
+    return entityName == 'DailyLog' || entityName == 'Food' || entityName == 'Workout';
   }
 
-  Future<void> _deleteAllFoods() async {
-    if (!mounted) return;
-
-    final confirmed = await showDialog<bool>(
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete all Food entries?'),
-        content: const Text('This will permanently remove all food entries. This action cannot be undone.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppTheme.red),
-            child: const Text('Delete All'),
-          ),
-        ],
-      ),
+      initialDate: _selectedDate ?? now,
+      firstDate: DateTime(now.year - 2),
+      lastDate: now.add(const Duration(days: 365)),
     );
-
-    if (confirmed != true) return;
-
-    final isarAsync = ref.read(isarProvider);
-    if (!isarAsync.hasValue) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
-      }
-      return;
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
     }
-
-    final isar = isarAsync.value!;
-    await isar.writeTxn(() => isar.collection<Food>().clear());
-
-    if (!mounted) return;
-    setState(() {
-      _entriesText = '(all Food entries deleted)';
-    });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All Food entries cleared')));
   }
 
-  Future<void> _deleteAllDailyLogs() async {
+  Future<void> _deleteByDate(String entityName) async {
+    final isarAsync = ref.read(isarProvider);
+    if (_selectedDate == null || !isarAsync.hasValue) return;
+
+    final date = _selectedDate!;
+    final start = DateTime(date.year, date.month, date.day);
+    final end = DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Delete $entityName on ${date.toString().split(' ')[0]}?'),
+        content: Text('This will permanently remove all $entityName entries for the selected date. This action cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    if (!isarAsync.hasValue) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
+      }
+      return;
+    }
+
+    final isar = isarAsync.value!;
+    int deletedCount = 0;
+
+    try {
+      await isar.writeTxn(() async {
+        if (entityName == 'DailyLog') {
+          final entries = await isar.collection<DailyLog>().filter().dateBetween(start, end).findAll();
+          deletedCount = entries.length;
+          await isar.collection<DailyLog>().deleteAll(entries.map((e) => e.id).toList());
+        } else if (entityName == 'Food') {
+          final entries = await isar.collection<Food>().filter().dateBetween(start, end).findAll();
+          deletedCount = entries.length;
+          await isar.collection<Food>().deleteAll(entries.map((e) => e.id).toList());
+        } else if (entityName == 'Workout') {
+          final entries = await isar.collection<Workout>().filter().dateBetween(start, end).findAll();
+          deletedCount = entries.length;
+          await isar.collection<Workout>().deleteAll(entries.map((e) => e.id).toList());
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _entriesText = '($deletedCount $entityName entries deleted)';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$deletedCount $entityName entries cleared')));
+  }
+
+  Future<void> _deleteAll(String entityName) async {
+    final isarAsync = ref.read(isarProvider);
     if (!mounted) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete all DailyLogs?'),
-        content: const Text('This will permanently remove all daily log entries. This action cannot be undone.'),
+        title: Text('Delete all $entityName?'),
+        content: Text('This will permanently remove all $entityName entries. This action cannot be undone.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
@@ -267,7 +292,6 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
 
     if (confirmed != true) return;
 
-    final isarAsync = ref.read(isarProvider);
     if (!isarAsync.hasValue) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Database not ready')));
@@ -276,13 +300,29 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     }
 
     final isar = isarAsync.value!;
-    await isar.writeTxn(() => isar.collection<DailyLog>().clear());
+
+    try {
+      await isar.writeTxn(() async {
+        if (entityName == 'DailyLog') {
+          await isar.collection<DailyLog>().clear();
+        } else if (entityName == 'Food') {
+          await isar.collection<Food>().clear();
+        } else if (entityName == 'Workout') {
+          await isar.collection<Workout>().clear();
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+      return;
+    }
 
     if (!mounted) return;
     setState(() {
-      _entriesText = '(all DailyLogs deleted)';
+      _entriesText = '(all $entityName deleted)';
     });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All DailyLogs cleared')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('All $entityName cleared')));
   }
 }
 
