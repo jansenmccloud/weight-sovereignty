@@ -18,7 +18,9 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          // Formulas
           _expandableTileWrapper("Formulas", _formulasWidgets()),
+          // DailyLogs
           FutureBuilder<List<Widget>>(
             future: _dailyLogsWidgets(),
             builder: (context, snapshot) {
@@ -28,8 +30,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
               return _expandableTileWrapper("Daily Logs", snapshot.data!);
             },
           ),
+          // Weight Progression
           _expandableTileWrapper("Weight Progression", _weightWidgets()),
+          // Calories
           _expandableTileWrapper("Calories", _caloriesWidgets()),
+          // Workouts
           _expandableTileWrapper("Workouts", _workoutsWidgets()),
           ]),
       ),
