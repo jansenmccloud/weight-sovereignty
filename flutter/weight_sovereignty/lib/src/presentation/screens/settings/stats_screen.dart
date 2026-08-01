@@ -154,7 +154,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       final cutoff = today.subtract(Duration(days: days));
       return logs.where((l) {
         final logDate = DateTime(l.date!.year, l.date!.month, l.date!.day);
-        return logDate.isAfter(cutoff.subtract(const Duration(days: 1))) && logDate.isBefore(today.add(const Duration(days: 1)));
+        return logDate.isAfter(cutoff) && logDate.isBefore(today.add(const Duration(days: 1)));
       }).toList();
     }
 
@@ -202,18 +202,15 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       // Rolling averages
       ListTile(
         title: Text('7-Day Avg: ${avg7 != null ? '${avg7.toStringAsFixed(1)} kg' : '—'}', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.calendar_today, color: AppTheme.white),
-        subtitle: Text('${logs7d.length} day(s) with weight data', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.filter_7_outlined, color: AppTheme.white),
       ),
       ListTile(
         title: Text('14-Day Avg: ${avg14 != null ? '${avg14.toStringAsFixed(1)} kg' : '—'}', style: TextStyle(color: AppTheme.white)),
         leading: Icon(Icons.calendar_today, color: AppTheme.white),
-        subtitle: Text('${logs14d.length} day(s) with weight data', style: TextStyle(color: AppTheme.white)),
       ),
       ListTile(
         title: Text('30-Day Avg: ${avg30 != null ? '${avg30.toStringAsFixed(1)} kg' : '—'}', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.calendar_today, color: AppTheme.white),
-        subtitle: Text('${logs30d.length} day(s) with weight data', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.calendar_month_outlined, color: AppTheme.white),
       ),
     ];
   }
