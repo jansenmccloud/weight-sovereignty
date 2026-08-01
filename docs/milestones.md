@@ -78,6 +78,7 @@
  - ✅ show number of day logs 
  - ✅ info dialog with used formula and MET mapping
     - ✅ calorie formula cardio and lifting
+ - bugfixing: missing curves in weekly, missing daily labels each % 3 days
 
 # Milestone 6 - Bonus & cleanup
  - refactor: move calc logic to service layer
