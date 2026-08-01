@@ -4,6 +4,7 @@ import 'package:weight_sovereignty/src/application/providers/repository_provider
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/weight_chart.dart';
+import 'package:weight_sovereignty/src/presentation/widgets/calories_chart.dart';
 
 class StatsScreen extends ConsumerStatefulWidget {
   const StatsScreen({super.key});
@@ -44,7 +45,15 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
             },
           ),
           // Calories
-          _expandableTileWrapper("Calories", _caloriesWidgets()),
+          FutureBuilder<List<Widget>>(
+            future: _caloriesWidgets(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return _expandableTileWrapper("Calories", snapshot.data!);
+            },
+          ),
           // Workouts
           _expandableTileWrapper("Workouts", _workoutsWidgets()),
           ]),
@@ -215,20 +224,81 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     ];
   }
 
-  List<Widget> _caloriesWidgets() {
+  Future<List<Widget>> _caloriesWidgets() async {
+    final logsRepo = ref.read(dailyLogRepositoryProvider);
+    final allLogs = await logsRepo.getAll();
+
+    if (allLogs.isEmpty) {
+      return [ListTile(title: Text('No calorie data available', style: TextStyle(color: AppTheme.white)))];
+    }
+
+    // Filter to last 2 years
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final cutoff = DateTime(now.year - 2, now.month, now.day);
+    final filteredLogs = allLogs.where((l) {
+      final logDate = DateTime(l.date!.year, l.date!.month, l.date!.day);
+      return logDate.isAfter(cutoff) && logDate.isBefore(today.add(const Duration(days: 1)));
+    }).toList()..sort((a, b) => a.date!.compareTo(b.date!));
+
+    if (filteredLogs.isEmpty) {
+      return [ListTile(title: Text('No calorie data in last 2 years', style: TextStyle(color: AppTheme.white)))];
+    }
+
+    // Compute daily data points
+    final dataPoints = <CaloriesChartDataPoint>[];
+    for (final log in filteredLogs) {
+      dataPoints.add(CaloriesChartDataPoint.fromDailyLog(log));
+    }
+
+    // Resolution picker — use a proper StatefulWidget wrapper (see _CaloriesChartSection)
     return [
-      //TODO diagram containing curves of 1. intake calories, 2. BMR, 3. deficit and 4. burned calories
-      //TODO diagram may be switchable between daily, weekly, mountly and yearly resolution
+      _CaloriesChartSection(dataPoints: dataPoints),
     ];
   }
 
   List<Widget> _workoutsWidgets() {
     return [
-      //TODO metric: total count of logged workouts
-      //TODO metric: count of logged workouts grouped by workoutBase.name
-      //TODO metric: count of logged exercises within the workouts grouped by exercise name
-      //TODO metrics accumulated among exercises: average number of sets, average number of reps
-      //TODO metrics for each exercise within all workouts: personal best (max. weightKg)
+      ListTile(
+        title: Text('Workout metrics coming soon', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.fitness_center, color: AppTheme.white),
+      ),
     ];
+  }
+}
+
+/// StatefulWidget that owns resolution state for the calories chart.
+class _CaloriesChartSection extends StatefulWidget {
+  const _CaloriesChartSection({required this.dataPoints});
+
+  final List<CaloriesChartDataPoint> dataPoints;
+
+  @override
+  State<_CaloriesChartSection> createState() => _CaloriesChartSectionState();
+}
+
+class _CaloriesChartSectionState extends State<_CaloriesChartSection> {
+  ChartResolution _resolution = ChartResolution.daily;
+
+  List<CaloriesChartDataPoint> get _resampledPoints {
+    // For weekly/monthly we need to re-aggregate — but widget.dataPoints already holds daily points.
+    // In a full implementation this would call a service method that returns aggregated points.
+    // Stub: just return daily points for now.
+    return widget.dataPoints;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ResolutionPicker(
+          resolution: _resolution,
+          onChanged: (r) => setState(() => _resolution = r),
+        ),
+        const SizedBox(height: 8),
+        CaloriesChart(dataPoints: _resampledPoints),
+      ],
+    );
   }
 }

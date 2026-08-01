@@ -223,3 +223,31 @@ switch resolution:
 ---
 
 Ready to implement. Toggle to **Act mode** when you approve this plan.
+
+# Context was full - checkpoint to continue:
+
+I created the calories_chart.dart file, but the context window is at 84% with more work remaining. Let me continue by updating stats_screen.dart to use this new widget and implement _caloriesWidgets(). However, I need to be careful about context consumption. Let me proceed efficiently.
+
+## what was completed:
+
+Created `flutter/weight_sovereignty/lib/src/presentation/widgets/calories_chart.dart` with:
+
+1. **`CaloriesChartDataPoint`** — data model with intake, BMR, burned, plannedDeficit, actualDeficit fields
+2. **`ChartResolution`** enum — daily, weekly, monthly (placeholder for aggregation logic)
+3. **`CaloriesChart`** widget — multi-curve CustomPaint chart matching the weight_chart pattern:
+   - Hover interception with MouseRegion → vertical cursor line on hover
+   - Dark background (`#0A0A0A`) matching workout session styling
+   - 4 curves: intake calories (white), BMR (muted), burned+BMR total (accent), planned deficit (dotted)
+   - Green shaded area above intake when burned > 0, red below when burned < 0
+   - Tooltip labels with all values for the hovered date
+4. **`ResolutionPicker`** — pill-style horizontal row for daily/weekly/monthly toggle
+
+**Remaining work in stats_screen.dart:**
+- Add import for `calories_chart.dart`
+- Replace `_caloriesWidgets()` placeholder with a Future method that:
+  - Fetches today's `DailyLog` and historical logs via `dailyLogRepositoryProvider`
+  - Reads BMR preset from `dailyBmrPresetConfigRepo`
+  - Applies resolution selection (currently stubbed — passes through raw data)
+  - Returns `[CaloriesChart, ResolutionPicker]` wrapped in ExpansionTile
+
+To complete: toggle to Act mode and I'll wire up stats_screen.dart with the service call and provider integration.
