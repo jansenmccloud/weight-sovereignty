@@ -217,7 +217,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
 
   List<Widget> _caloriesWidgets() {
     return [
-      //TODO diagram containing curves of intake calories, BMR, deficit and burned calories
+      //TODO diagram containing curves of 1. intake calories, 2. BMR, 3. deficit and 4. burned calories
       //TODO diagram may be switchable between daily, weekly, mountly and yearly resolution
     ];
   }

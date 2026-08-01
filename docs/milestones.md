@@ -82,3 +82,4 @@
 # Bonus
  - refactor: move calc logic to service layer
  - handle open code TODOS
+ - add height, age, gender and calculate BMR by mifflin st jeor formula => add new info to stats and new curve to calorie chart
