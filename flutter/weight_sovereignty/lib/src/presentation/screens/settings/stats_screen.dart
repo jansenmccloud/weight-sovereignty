@@ -17,11 +17,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          _expandableTileWrapper("Formulas", _infoWidgets()),
-          _expandableTileWrapper("Daily Logs", _infoWidgets()),
-          _expandableTileWrapper("Weight Progression", _infoWidgets()),
-          _expandableTileWrapper("Calories", _infoWidgets()),
-          _expandableTileWrapper("Workouts", _infoWidgets()),
+          _expandableTileWrapper("Formulas", _formulasWidgets()),
+          _expandableTileWrapper("Daily Logs", _dailyLogsWidgets()),
+          _expandableTileWrapper("Weight Progression", _weightWidgets()),
+          _expandableTileWrapper("Calories", _caloriesWidgets()),
+          _expandableTileWrapper("Workouts", _workoutsWidgets()),
           ]),
       ),
     );
@@ -34,7 +34,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     );
   }
 
-  List<Widget> _infoWidgets() {
+  List<Widget> _formulasWidgets() {
     return [
       ListTile(
         title: Text('Kcal = Kcal/[m] x Duration[m]', style: TextStyle(color: AppTheme.white)),
@@ -49,8 +49,41 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       ListTile(
         title: Text('Metabolic Equivalent of Task', style: TextStyle(color: AppTheme.white)),
         leading: Icon(Icons.multiple_stop_sharp, color: AppTheme.white,),
-        subtitle: Text('Cardio: light=2.9, moderate=3.3, intense=5.3\nLifting: light=3.5, moderate=4.5, intense=6.0', style: TextStyle(color: AppTheme.white)),
+        subtitle: Text('Cardio: light=2.9, moderate=3.3, intense=5.3\nLifting: light=3.5, moderate=4.5, intense=6.0\n ', style: TextStyle(color: AppTheme.white)),
       ),
+    ];
+  }
+
+  List<Widget> _dailyLogsWidgets() {
+    return [
+      // TODO total count of dailyLogs
+      // TODO averages of: intake protein, intake fat, intake carbs, intake 
+    ];
+  }
+
+  List<Widget> _weightWidgets() {
+    return [
+      // TODO last 30 day weight average
+      // TODO last 14 day weight average
+      // TODO last 7 day weight average
+      // TODO diagramm showing daily weight measurements
+    ];
+  }
+
+  List<Widget> _caloriesWidgets() {
+    return [
+      //TODO diagram containing curves of intake calories, BMR, deficit and burned calories
+      //TODO diagram may be switchable between daily, weekly, mountly and yearly resolution
+    ];
+  }
+
+  List<Widget> _workoutsWidgets() {
+    return [
+      //TODO metric: total count of logged workouts
+      //TODO metric: count of logged workouts grouped by workoutBase.name
+      //TODO metric: count of logged exercises within the workouts grouped by exercise name
+      //TODO metrics accumulated among exercises: average number of sets, average number of reps
+      //TODO metrics for each exercise within all workouts: personal best (max. weightKg)
     ];
   }
 }
