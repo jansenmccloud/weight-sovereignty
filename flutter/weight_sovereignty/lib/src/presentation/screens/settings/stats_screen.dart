@@ -259,10 +259,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
 
   List<Widget> _workoutsWidgets() {
     return [
-      ListTile(
-        title: Text('Workout metrics coming soon', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.fitness_center, color: AppTheme.white),
-      ),
+      //TODO metric: total count of logged workouts
+      //TODO metric: count of logged workouts grouped by workoutBase.name
+      //TODO metric: count of logged exercises within the workouts grouped by exercise name
+      //TODO metrics accumulated among exercises: average number of sets, average number of reps
+      //TODO metrics for each exercise within all workouts: personal best (max. weightKg)
     ];
   }
 }
