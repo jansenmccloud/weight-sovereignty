@@ -17,9 +17,10 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Statistics')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           // Formulas
           _expandableTileWrapper("Formulas", _formulasWidgets()),
           // DailyLogs

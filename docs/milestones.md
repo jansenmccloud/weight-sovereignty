@@ -70,11 +70,11 @@
  - ✅ debug and fix import view
 
 # Milestone 5 - stats & extras
- - add diagrams
-    - weight
+ - ✅ add diagrams
+    - ✅ weight
     - calories: intake , defizit, burned
     - exercise PBs
- - weight week avg, 30-day avg
+ - ✅ weight week avg, 30-day avg
  - ✅ show number of day logs 
  - ✅ info dialog with used formula and MET mapping
     - ✅ calorie formula cardio and lifting
