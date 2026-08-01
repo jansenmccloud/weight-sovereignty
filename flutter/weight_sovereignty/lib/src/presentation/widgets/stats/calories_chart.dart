@@ -374,8 +374,8 @@ class _CaloriesChartPainter extends CustomPainter {
         }
       }
 
-      final greenPaint = Paint()..shader = LinearGradient(
-          colors: [AppTheme.green.withAlpha(5), AppTheme.green.withAlpha(60)],
+      final yellowPaint = Paint()..shader = LinearGradient(
+          colors: [AppTheme.yellow.withAlpha(5), AppTheme.yellow.withAlpha(60)],
           stops: const [0.3, 1.0],
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
 
@@ -402,7 +402,7 @@ class _CaloriesChartPainter extends CustomPainter {
         ).createShader(Rect.fromLTWH(padding.left, padding.top, chartHeight, chartHeight));
 
       canvas.drawPath(surplusPath, redPaint);
-      canvas.drawPath(deficitPath, greenPaint);
+      canvas.drawPath(deficitPath, yellowPaint);
     }
 
     // BMR line (dashed)

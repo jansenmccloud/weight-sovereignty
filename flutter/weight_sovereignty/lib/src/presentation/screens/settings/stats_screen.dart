@@ -267,8 +267,8 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
         leading: Icon(Icons.linear_scale, color: AppTheme.white.withAlpha(100)),
       ),
       ListTile(
-        title: Text('Actual Deficit', style: TextStyle(color: AppTheme.green.withAlpha(222))),
-        leading: Icon(Icons.area_chart, color: AppTheme.green.withAlpha(222)),
+        title: Text('Actual Deficit', style: TextStyle(color: AppTheme.yellow.withAlpha(60))),
+        leading: Icon(Icons.area_chart, color: AppTheme.yellow.withAlpha(60)),
       ),
       ListTile(
         title: Text('Planned Deficit', style: TextStyle(color: AppTheme.green.withAlpha(180))),
