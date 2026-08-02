@@ -268,10 +268,15 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
   Future<List<Widget>> _workoutsWidgets() {
     return Future(() => [
       //TODO metric: total count of logged workouts
+      //TODO metrics accumulated among all exercises: total number of sets, total number of reps
+
       //TODO metric: count of logged workouts grouped by workoutBase.name
       //TODO metric: count of logged exercises within the workouts grouped by exercise name
-      //TODO metrics accumulated among exercises: average number of sets, average number of reps
-      //TODO metrics for each exercise within all workouts: personal best (max. weightKg)
+
+      //TODO metrics personal best for each exercise (grouped by name) within all workouts: 
+      // A) for each workout of type lifting : personal best: 1. entry with max weightKg, 2. entry with max reps
+      // B) for each workout of type cardio : personal best: 1. entry with max duration, 2. entry with max distance
+
     ]);
   }
 }
