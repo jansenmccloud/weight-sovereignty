@@ -31,6 +31,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
             _expandableTileWrapper("Weight Progression", _weightWidgets),
             _expandableTileWrapper("Calories", _caloriesWidgets),
             _expandableTileWrapper("Workouts", _workoutsWidgets),
+            SizedBox(height: 48.0),
           ],
         ),
       ),
@@ -53,23 +54,25 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
   }
 
   Future<List<Widget>> _formulasWidgets() {
-    return Future(() => [
-      ListTile(
-        title: Text('Kcal = Kcal/[m] x Duration[m]', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.calculate_outlined, color: AppTheme.white),
-        subtitle: Text('Kcal/[m] = (MET x 3.5 x Weight[kg]) / 200', style: TextStyle(color: AppTheme.white)),
-      ),
-      ListTile(
-        title: Text('Duration[m] = Lifting Duration[s] / 60', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white),
-        subtitle: Text('Lifting Duration[s] = Repetitions x 6[s]', style: TextStyle(color: AppTheme.white)),
-      ),
-      ListTile(
-        title: Text('Metabolic Equivalent of Task', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.multiple_stop_sharp, color: AppTheme.white),
-        subtitle: Text('Cardio: light=2.9, moderate=3.3, intense=5.3\nLifting: light=3.5, moderate=4.5, intense=6.0\n ', style: TextStyle(color: AppTheme.white)),
-      ),
-    ]);
+    return Future(
+      () => [
+        ListTile(
+          title: Text('Kcal = Kcal/[m] x Duration[m]', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.calculate_outlined, color: AppTheme.white),
+          subtitle: Text('Kcal/[m] = (MET x 3.5 x Weight[kg]) / 200', style: TextStyle(color: AppTheme.white)),
+        ),
+        ListTile(
+          title: Text('Duration[m] = Lifting Duration[s] / 60', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white),
+          subtitle: Text('Lifting Duration[s] = Repetitions x 6[s]', style: TextStyle(color: AppTheme.white)),
+        ),
+        ListTile(
+          title: Text('Metabolic Equivalent of Task', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.multiple_stop_sharp, color: AppTheme.white),
+          subtitle: Text('Cardio: light=2.9, moderate=3.3, intense=5.3\nLifting: light=3.5, moderate=4.5, intense=6.0\n ', style: TextStyle(color: AppTheme.white)),
+        ),
+      ],
+    );
   }
 
   Future<List<Widget>> _dailyLogsWidgets() async {
@@ -329,7 +332,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     }
 
     // Compute lifting PRs: per exercise name, find max weight set and max reps set
-    final liftingPRs = <(String, String, String)>[]; // (exerciseName, title, dateStr)
+    final liftingPRs = <(String, String, String)>[]; // (exerciseName, subTitle1, subTitle2)
     for (final entry in liftingPrMap.entries) {
       final exName = entry.key;
       final pairs = entry.value;
@@ -364,22 +367,25 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
         }
       }
 
+      String liftSub1 = '';
       if (bestWeightEntry != null && bestWeightVal != null) {
         final dateStr = bestWeightEntry.$1.date != null
             ? '${bestWeightEntry.$1.date!.year}-${bestWeightEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestWeightEntry.$1.date!.day.toString().padLeft(2, '0')}'
             : '';
-        liftingPRs.add((exName, '$bestWeightVal kg | $bestWeightReps Reps ($dateStr)', 'weight'));
+        liftSub1 = '$dateStr — Max Weight — $bestWeightVal kg × $bestWeightReps Reps';
       }
+      String liftSub2 = '';
       if (bestRepsEntry != null && bestRepsVal != null) {
         final dateStr = bestRepsEntry.$1.date != null
             ? '${bestRepsEntry.$1.date!.year}-${bestRepsEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestRepsEntry.$1.date!.day.toString().padLeft(2, '0')}'
             : '';
-        liftingPRs.add((exName, '$bestRepsWeight kg | $bestRepsVal Reps ($dateStr)', 'reps'));
+        liftSub2 = '$dateStr — Max Reps — $bestRepsWeight kg × $bestRepsVal Reps';
       }
+      liftingPRs.add((exName, liftSub1, liftSub2));
     }
 
     // Compute cardio PRs: per exercise name, find entry with max distance and entry with max duration
-    final cardioPRs = <(String, String)>[]; // (exerciseName, title)
+    final cardioPRs = <(String, String, String)>[]; // (exerciseName, subtitle1, subtitle2)
     for (final entry in cardioPrMap.entries) {
       final exName = entry.key;
       final pairs = entry.value;
@@ -404,80 +410,93 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
         }
       }
 
+      String cardioSub1 = '';
       if (bestDistEntry != null && bestDistVal != null) {
         final dateStr = bestDistEntry.$1.date != null
             ? '${bestDistEntry.$1.date!.year}-${bestDistEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestDistEntry.$1.date!.day.toString().padLeft(2, '0')}'
             : '';
         final distStr = bestDistVal >= 1.0 ? '${bestDistVal.round()} km' : '${bestDistVal.toStringAsFixed(1)} km';
         final durStr = (bestDistEntry.$2.durationMin ?? 0) > 0 ? '${bestDistEntry.$2.durationMin} min' : '—';
-        cardioPRs.add((exName, '$distStr | $durStr ($dateStr)'));
+        cardioSub1 = '$dateStr — Max Distance — $distStr in $durStr';
       }
+      String cardioSub2 = '';
       if (bestDurEntry != null && bestDurVal != null) {
         final dateStr = bestDurEntry.$1.date != null
             ? '${bestDurEntry.$1.date!.year}-${bestDurEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestDurEntry.$1.date!.day.toString().padLeft(2, '0')}'
             : '';
         final distStr = (bestDurEntry.$2.distanceKm ?? 0.0) >= 1.0 ? '${bestDurEntry.$2.distanceKm!.round()} km' : '${bestDurEntry.$2.distanceKm!.toStringAsFixed(1)} km';
-        cardioPRs.add((exName, '$distStr | $bestDurVal min ($dateStr)'));
+        cardioSub2 = '$dateStr — Max Duration — $distStr in $bestDurVal min';
       }
+      cardioPRs.add((exName, cardioSub1, cardioSub2));
     }
 
     // === Build widgets ===
     final result = <Widget>[
       // Global totals
       ListTile(
-        title: Text('Total Workouts: ${workouts.length}', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white),
-      ),
-      ListTile(
-        title: Text('Total Sets: $totalSets', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.layers, color: AppTheme.white),
-      ),
-      ListTile(
-        title: Text('Total Reps: $totalReps', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.repeat, color: AppTheme.white),
+        title: Text('Total Records', style: TextStyle(color: AppTheme.purple)),
+        subtitle: Text('${workouts.length} Workouts — $totalSets Sets — $totalReps Reps', style: TextStyle(color: AppTheme.purple)),
+        leading: Icon(Icons.workspace_premium, color: AppTheme.purple),
       ),
     ];
 
     // Per-template (flat)
-    result.add(Divider(height: 1, color: AppTheme.white.withAlpha(50)));
     for (final templateName in templateMap.keys) {
       final count = templateMap[templateName]!.length;
-      final exerciseCount = allExerciseNamesInTemplate[templateName]?.length ?? 0;
-      result.add(ListTile(
-        title: Text('$templateName — $count workout${count > 1 ? 's' : ''}, $exerciseCount exercis${exerciseCount == 1 ? 'e' : 'es'}', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.workspace_premium, color: AppTheme.white.withAlpha(200)),
-      ));
-    }
-
-    // Lifting PRs (flat)
-    if (liftingPRs.isNotEmpty) {
-      result.add(Divider(height: 1, color: AppTheme.white.withAlpha(50)));
-      result.add(ListTile(
-        title: Text('Lifting PRs', style: TextStyle(color: AppTheme.yellow.withAlpha(180))),
-        leading: Icon(Icons.emoji_events, color: AppTheme.yellow.withAlpha(180)),
-      ));
-      for (final pr in liftingPRs) {
-        result.add(ListTile(
-          title: Text('${pr.$1}: ${pr.$2}', style: TextStyle(color: AppTheme.white)),
-          leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white.withAlpha(150)),
-        ));
-      }
+      final exerciseCount = (allExerciseNamesInTemplate[templateName]?.length ?? 0) * count;
+      result.add(
+        ListTile(
+          title: Text(templateName, style: TextStyle(color: AppTheme.white)),
+          subtitle: Text('$count workout${count > 1 ? 's' : ''} — $exerciseCount exercis${exerciseCount == 1 ? 'e' : 'es'}', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.space_bar, color: AppTheme.background),
+        ),
+      );
     }
 
     // Cardio PRs (flat)
     if (cardioPRs.isNotEmpty) {
-      result.add(Divider(height: 1, color: AppTheme.white.withAlpha(50)));
-      result.add(ListTile(
-        title: Text('Cardio PRs', style: TextStyle(color: AppTheme.green.withAlpha(200))),
-        leading: Icon(Icons.emoji_events, color: AppTheme.green.withAlpha(200)),
-      ));
+      result.add(
+        ListTile(
+          title: Text('Cardio PRs', style: TextStyle(color: AppTheme.green.withAlpha(200))),
+          leading: Icon(Icons.emoji_events, color: AppTheme.green.withAlpha(200)),
+        ),
+      );
       for (final pr in cardioPRs) {
-        result.add(ListTile(
-          title: Text('${pr.$1}: ${pr.$2}', style: TextStyle(color: AppTheme.white)),
-          leading: Icon(Icons.directions_run, color: AppTheme.white.withAlpha(150)),
-        ));
+        result.add(
+          ListTile(
+            title: Text(pr.$1, style: TextStyle(color: AppTheme.white)),
+            subtitle: Text('${pr.$2}\n${pr.$3}\n', style: TextStyle(color: AppTheme.white)),
+            leading: Icon(Icons.space_bar, color: AppTheme.background),
+          ),
+        );
       }
     }
+
+    // Lifting PRs (flat)
+    if (liftingPRs.isNotEmpty) {
+      result.add(
+        ListTile(
+          title: Text('Lifting PRs', style: TextStyle(color: AppTheme.yellow.withAlpha(180))),
+          leading: Icon(Icons.emoji_events, color: AppTheme.yellow.withAlpha(180)),
+        ),
+      );
+      for (final pr in liftingPRs) {
+        result.add(
+          ListTile(
+            title: Text(pr.$1, style: TextStyle(color: AppTheme.white)),
+            subtitle: Text('${pr.$2}\n${pr.$3}', style: TextStyle(color: AppTheme.white)),
+            leading: Icon(Icons.space_bar, color: AppTheme.background),
+          ),
+        );
+      }
+    }
+
+    // additional empty item create more space to lower screen border
+    result.add(
+      ListTile(
+        title: Text(' ', style: TextStyle(color: AppTheme.white)),
+      ),
+    );
 
     return result;
   }

@@ -75,11 +75,13 @@
  - ✅ weight week avg, 30-day avg
  - ✅ show number of day logs 
  - ✅ info dialog with used formula and MET mapping: calorie formula cardio and lifting
- - debug: missing daily labels each 3. days
- - add more screenshots
+ - ✅ debug: missing daily labels each 3. days
+ - ✅ add more screenshots
+ - ✅ improve workout PR view => make more compact
 
 # Milestone 6 - Bonus & cleanup
  - refactor: move calc logic to service layer
- - handle open code TODOS
+ - ✅ handle open code TODOS
  - add height, age, gender and calculate BMR by mifflin st jeor formula => add new info to stats and new curve to calorie chart
+ - exclude formula constants as config to profile (METs, time per rep)
  - experiment with flutter materialcolor to create a metal material for card widgets
