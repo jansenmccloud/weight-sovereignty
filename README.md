@@ -32,6 +32,7 @@ No gamification. No manipulation. No external validation.
 | ![](./docs/screens/preview/00.png) | ![](./docs/screens/preview/01.png) | ![](./docs/screens/preview/02.png) |
 |----------------------------|----------------------------|----------------------------|
 | ![](./docs/screens/preview/03.png) | ![](./docs/screens/preview/04.png) | ![](./docs/screens/preview/05.png) |
+| ![](./docs/screens/preview/06.png) | ![](./docs/screens/preview/07.png) | ![](./docs/screens/preview/08.png) |
 
 ## Core Principles
 
