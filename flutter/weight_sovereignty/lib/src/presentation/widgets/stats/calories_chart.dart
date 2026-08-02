@@ -297,7 +297,7 @@ class _CaloriesChartPainter extends CustomPainter {
     final dateSteps = dataPoints.length > 7 ? (dataPoints.length > 31 ? 6 : 5) : dataPoints.length;
     final step = (dataPoints.length - 1) / (dateSteps < 2 ? 1 : dateSteps);
 
-    for (int i = 0; i <= dateSteps && i * step < dataPoints.length; i++) {
+    for (int i = 0; i <= dataPoints.length; i++) {
       final idx = (i * step).toInt().clamp(0, dataPoints.length - 1);
       final x = xForIndex(idx);
       final date = dataPoints[idx].date;

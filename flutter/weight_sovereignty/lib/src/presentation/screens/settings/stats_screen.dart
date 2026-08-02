@@ -22,78 +22,63 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          // Formulas
-          _expandableTileWrapper("Formulas", _formulasWidgets()),
-          // DailyLogs
-          FutureBuilder<List<Widget>>(
-            future: _dailyLogsWidgets(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return _expandableTileWrapper("Daily Logs", snapshot.data!);
-            },
-          ),
-          // Weight Progression
-          FutureBuilder<List<Widget>>(
-            future: _weightWidgets(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return _expandableTileWrapper("Weight Progression", snapshot.data!);
-            },
-          ),
-          // Calories
-          FutureBuilder<List<Widget>>(
-            future: _caloriesWidgets(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return _expandableTileWrapper("Calories", snapshot.data!);
-            },
-          ),
-          // Workouts
-          _expandableTileWrapper("Workouts", _workoutsWidgets()),
-          ]),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _expandableTileWrapper("Formulas", _formulasWidgets),
+            _expandableTileWrapper("Daily Logs", _dailyLogsWidgets),
+            _expandableTileWrapper("Weight Progression", _weightWidgets),
+            _expandableTileWrapper("Calories", _caloriesWidgets),
+            _expandableTileWrapper("Workouts", _workoutsWidgets),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _expandableTileWrapper(String title, List<Widget> children) {
-    return ExpansionTile(
-      title: Text(title, style: TextStyle(color: AppTheme.white)),
-      children: children,
+  Widget _expandableTileWrapper(String title, Future<List<Widget>> Function() func) {
+    return FutureBuilder<List<Widget>>(
+      future: func(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return ExpansionTile(
+          title: Text(title, style: TextStyle(color: AppTheme.white)),
+          children: snapshot.data!,
+        );
+      },
     );
   }
 
-  List<Widget> _formulasWidgets() {
-    return [
+  Future<List<Widget>> _formulasWidgets() {
+    return Future(() => [
       ListTile(
         title: Text('Kcal = Kcal/[m] x Duration[m]', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.calculate_outlined, color: AppTheme.white,),
+        leading: Icon(Icons.calculate_outlined, color: AppTheme.white),
         subtitle: Text('Kcal/[m] = (MET x 3.5 x Weight[kg]) / 200', style: TextStyle(color: AppTheme.white)),
       ),
       ListTile(
         title: Text('Duration[m] = Lifting Duration[s] / 60', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white,),
+        leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white),
         subtitle: Text('Lifting Duration[s] = Repetitions x 6[s]', style: TextStyle(color: AppTheme.white)),
       ),
       ListTile(
         title: Text('Metabolic Equivalent of Task', style: TextStyle(color: AppTheme.white)),
-        leading: Icon(Icons.multiple_stop_sharp, color: AppTheme.white,),
+        leading: Icon(Icons.multiple_stop_sharp, color: AppTheme.white),
         subtitle: Text('Cardio: light=2.9, moderate=3.3, intense=5.3\nLifting: light=3.5, moderate=4.5, intense=6.0\n ', style: TextStyle(color: AppTheme.white)),
       ),
-    ];
+    ]);
   }
 
   Future<List<Widget>> _dailyLogsWidgets() async {
     final logs = await ref.read(dailyLogRepositoryProvider).getAll();
 
     if (logs.isEmpty) {
-      return [ListTile(title: Text('No daily logs yet', style: TextStyle(color: AppTheme.white)))];
+      return [
+        ListTile(
+          title: Text('No daily logs yet', style: TextStyle(color: AppTheme.white)),
+        ),
+      ];
     }
 
     // Total count
@@ -153,7 +138,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     final logs = await ref.read(dailyLogRepositoryProvider).getAll();
 
     if (logs.isEmpty) {
-      return [ListTile(title: Text('No weight data available', style: TextStyle(color: AppTheme.white)))];
+      return [
+        ListTile(
+          title: Text('No weight data available', style: TextStyle(color: AppTheme.white)),
+        ),
+      ];
     }
 
     final now = DateTime.now();
@@ -177,17 +166,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
 
     // Weight data points for chart (all available data)
     final allWeightPoints = <WeightDataPoint>[];
-    final sortedLogs = List<DailyLog>.from(logs)
-      ..sort((a, b) => a.date!.compareTo(b.date!));
+    final sortedLogs = List<DailyLog>.from(logs)..sort((a, b) => a.date!.compareTo(b.date!));
 
     for (final log in sortedLogs) {
       if ((log.bodyWeight ?? 0.0) > 0.0) {
-        allWeightPoints.add(
-          WeightDataPoint(
-            date: DateTime(log.date!.year, log.date!.month, log.date!.day),
-            weight: log.bodyWeight!.toDouble(),
-          ),
-        );
+        allWeightPoints.add(WeightDataPoint(date: DateTime(log.date!.year, log.date!.month, log.date!.day), weight: log.bodyWeight!.toDouble()));
       }
     }
 
@@ -204,10 +187,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       // Weight chart
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: WeightChart(
-          dataPoints: allWeightPoints,
-          height: 180.0,
-        ),
+        child: WeightChart(dataPoints: allWeightPoints, height: 180.0),
       ),
       // Rolling averages
       ListTile(
@@ -230,7 +210,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     final allLogs = await logsRepo.getAll();
 
     if (allLogs.isEmpty) {
-      return [ListTile(title: Text('No calorie data available', style: TextStyle(color: AppTheme.white)))];
+      return [
+        ListTile(
+          title: Text('No calorie data available', style: TextStyle(color: AppTheme.white)),
+        ),
+      ];
     }
 
     // Filter to last 2 years
@@ -243,7 +227,11 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     }).toList()..sort((a, b) => a.date!.compareTo(b.date!));
 
     if (filteredLogs.isEmpty) {
-      return [ListTile(title: Text('No calorie data in last 2 years', style: TextStyle(color: AppTheme.white)))];
+      return [
+        ListTile(
+          title: Text('No calorie data in last 2 years', style: TextStyle(color: AppTheme.white)),
+        ),
+      ];
     }
 
     // Compute daily data points
@@ -277,15 +265,13 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     ];
   }
 
-  List<Widget> _workoutsWidgets() {
-    return [
+  Future<List<Widget>> _workoutsWidgets() {
+    return Future(() => [
       //TODO metric: total count of logged workouts
       //TODO metric: count of logged workouts grouped by workoutBase.name
       //TODO metric: count of logged exercises within the workouts grouped by exercise name
       //TODO metrics accumulated among exercises: average number of sets, average number of reps
       //TODO metrics for each exercise within all workouts: personal best (max. weightKg)
-    ];
+    ]);
   }
 }
-
-
