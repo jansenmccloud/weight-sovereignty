@@ -5,6 +5,7 @@
 - [Project weight-sovereignty](#project-weight-sovereignty)
   - [**DISCLAIMER**](#disclaimer)
   - [Purpose](#purpose)
+  - [Preview](#preview)
   - [Core Principles](#core-principles)
   - [Non-Goals](#non-goals)
   - [Non-Negotiables](#non-negotiables)
