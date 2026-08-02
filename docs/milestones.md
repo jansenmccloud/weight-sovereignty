@@ -71,7 +71,7 @@
 
 # Milestone 5 - stats & extras
  - ✅ add diagrams: weight + calories: intake , defizit, burned
- - workout and exercise PBs
+ - ✅ workout and exercise PBs
  - ✅ weight week avg, 30-day avg
  - ✅ show number of day logs 
  - ✅ info dialog with used formula and MET mapping: calorie formula cardio and lifting

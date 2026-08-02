@@ -293,11 +293,10 @@ class _CaloriesChartPainter extends CustomPainter {
     }
 
     // X-axis labels (dates)
-    // TODO following code needs simplification
     final dateSteps = dataPoints.length > 7 ? (dataPoints.length > 31 ? 6 : 5) : dataPoints.length;
     final step = (dataPoints.length - 1) / (dateSteps < 2 ? 1 : dateSteps);
 
-    for (int i = 0; i <= dataPoints.length; i++) {
+    for (int i = 0; i <= dateSteps && i * step < dataPoints.length; i++) {
       final idx = (i * step).toInt().clamp(0, dataPoints.length - 1);
       final x = xForIndex(idx);
       final date = dataPoints[idx].date;
@@ -419,7 +418,7 @@ class _CaloriesChartPainter extends CustomPainter {
 
       // Dashed effect via draw points with gaps is hard; use a simpler approach: draw small circles instead
       for (int i = 0; i < bmrPoints.length; i++) {
-          canvas.drawCircle(bmrPoints[i], 2.5, bmrPaint..style = PaintingStyle.fill);
+        canvas.drawCircle(bmrPoints[i], 2.5, bmrPaint..style = PaintingStyle.fill);
       }
     }
 
