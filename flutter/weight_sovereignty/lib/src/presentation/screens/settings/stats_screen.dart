@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weight_sovereignty/src/application/providers/repository_providers.dart';
 import 'package:weight_sovereignty/src/domain/entity/dailylog.dart';
+import 'package:weight_sovereignty/src/domain/entity/workout.dart';
+import 'package:weight_sovereignty/src/domain/config/exercise_config.dart';
 import 'package:weight_sovereignty/src/presentation/theme/app_theme.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/stats/calories_chart_section.dart';
 import 'package:weight_sovereignty/src/presentation/widgets/stats/weight_chart.dart';
@@ -265,18 +267,218 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     ];
   }
 
-  Future<List<Widget>> _workoutsWidgets() {
-    return Future(() => [
-      //TODO metric: total count of logged workouts
-      //TODO metrics accumulated among all exercises: total number of sets, total number of reps
+  Future<List<Widget>> _workoutsWidgets() async {
+    final workouts = await ref.read(workoutRepositoryProvider).getAll();
 
-      //TODO metric: count of logged workouts grouped by workoutBase.name
-      //TODO metric: count of logged exercises within the workouts grouped by exercise name
+    if (workouts.isEmpty) {
+      return [
+        ListTile(
+          title: Text('No workouts logged yet', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white),
+        ),
+      ];
+    }
 
-      //TODO metrics personal best for each exercise (grouped by name) within all workouts: 
-      // A) for each workout of type lifting : personal best: 1. entry with max weightKg, 2. entry with max reps
-      // B) for each workout of type cardio : personal best: 1. entry with max duration, 2. entry with max distance
+    // === Global totals ===
+    int totalSets = 0;
+    int totalReps = 0;
+    for (final w in workouts) {
+      final exercises = w.exercises ?? [];
+      for (final ex in exercises) {
+        final sets = ex?.sets ?? [];
+        totalSets += sets.length;
+        for (final s in sets) {
+          totalReps += s?.reps ?? 0;
+        }
+      }
+    }
 
-    ]);
+    // === Per-template breakdown ===
+    final templateMap = <String, List<Workout>>{};
+    final allExerciseNamesInTemplate = <String, Set<String>>{};
+    for (final w in workouts) {
+      final name = w.workoutBase?.name ?? 'Unknown Workout';
+      templateMap.putIfAbsent(name, () => []);
+      templateMap[name]!.add(w);
+      allExerciseNamesInTemplate.putIfAbsent(name, () => {});
+      final exercises = w.exercises ?? [];
+      for (final ex in exercises) {
+        if (ex?.name != null) {
+          allExerciseNamesInTemplate[name]!.add(ex!.name!);
+        }
+      }
+    }
+
+    // === Personal Bests ===
+    // Group lifting exercises by name: Map<exerciseName, List<(Workout, ExerciseBase)>>
+    final liftingPrMap = <String, List<(Workout, ExerciseBase)>>{};
+    // Group cardio exercises by name: Map<exerciseName, List<(Workout, ExerciseBase)>>
+    final cardioPrMap = <String, List<(Workout, ExerciseBase)>>{};
+
+    for (final w in workouts) {
+      final exercises = w.exercises ?? [];
+      for (final ex in exercises) {
+        if (ex == null || ex.name == null || ex.typeName == null) continue;
+        final exType = ExerciseType.getTypeFromString(ex.typeName!);
+        if (exType == ExerciseType.lifting) {
+          liftingPrMap.putIfAbsent(ex.name!, () => []).add((w, ex));
+        } else if (exType == ExerciseType.cardio) {
+          cardioPrMap.putIfAbsent(ex.name!, () => []).add((w, ex));
+        }
+      }
+    }
+
+    // Compute lifting PRs: per exercise name, find max weight set and max reps set
+    final liftingPRs = <(String, String, String)>[]; // (exerciseName, title, dateStr)
+    for (final entry in liftingPrMap.entries) {
+      final exName = entry.key;
+      final pairs = entry.value;
+
+      // Max weight with max reps on same set
+      (Workout, ExerciseBase)? bestWeightEntry;
+      int? bestWeightVal;
+      int? bestWeightReps;
+      for (final pair in pairs) {
+        final sets = pair.$2.sets ?? [];
+        for (final s in sets) {
+          if ((s?.weightKg ?? 0) > (bestWeightVal ?? 0)) {
+            bestWeightVal = s?.weightKg;
+            bestWeightReps = s?.reps;
+            bestWeightEntry = pair;
+          }
+        }
+      }
+
+      // Max reps with weight on same set
+      (Workout, ExerciseBase)? bestRepsEntry;
+      int? bestRepsVal;
+      int? bestRepsWeight;
+      for (final pair in pairs) {
+        final sets = pair.$2.sets ?? [];
+        for (final s in sets) {
+          if ((s?.reps ?? 0) > (bestRepsVal ?? 0)) {
+            bestRepsVal = s?.reps;
+            bestRepsWeight = s?.weightKg;
+            bestRepsEntry = pair;
+          }
+        }
+      }
+
+      if (bestWeightEntry != null && bestWeightVal != null) {
+        final dateStr = bestWeightEntry.$1.date != null
+            ? '${bestWeightEntry.$1.date!.year}-${bestWeightEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestWeightEntry.$1.date!.day.toString().padLeft(2, '0')}'
+            : '';
+        liftingPRs.add((exName, '$bestWeightVal kg | $bestWeightReps Reps ($dateStr)', 'weight'));
+      }
+      if (bestRepsEntry != null && bestRepsVal != null) {
+        final dateStr = bestRepsEntry.$1.date != null
+            ? '${bestRepsEntry.$1.date!.year}-${bestRepsEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestRepsEntry.$1.date!.day.toString().padLeft(2, '0')}'
+            : '';
+        liftingPRs.add((exName, '$bestRepsWeight kg | $bestRepsVal Reps ($dateStr)', 'reps'));
+      }
+    }
+
+    // Compute cardio PRs: per exercise name, find entry with max distance and entry with max duration
+    final cardioPRs = <(String, String)>[]; // (exerciseName, title)
+    for (final entry in cardioPrMap.entries) {
+      final exName = entry.key;
+      final pairs = entry.value;
+
+      // Max distance: find the single entry with max distanceKm
+      (Workout, ExerciseBase)? bestDistEntry;
+      double? bestDistVal;
+      for (final pair in pairs) {
+        if ((pair.$2.distanceKm ?? 0.0) > (bestDistVal ?? 0.0)) {
+          bestDistVal = pair.$2.distanceKm;
+          bestDistEntry = pair;
+        }
+      }
+
+      // Max duration: find the single entry with max durationMin
+      (Workout, ExerciseBase)? bestDurEntry;
+      int? bestDurVal;
+      for (final pair in pairs) {
+        if ((pair.$2.durationMin ?? 0) > (bestDurVal ?? 0)) {
+          bestDurVal = pair.$2.durationMin;
+          bestDurEntry = pair;
+        }
+      }
+
+      if (bestDistEntry != null && bestDistVal != null) {
+        final dateStr = bestDistEntry.$1.date != null
+            ? '${bestDistEntry.$1.date!.year}-${bestDistEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestDistEntry.$1.date!.day.toString().padLeft(2, '0')}'
+            : '';
+        final distStr = bestDistVal >= 1.0 ? '${bestDistVal.round()} km' : '${bestDistVal.toStringAsFixed(1)} km';
+        final durStr = (bestDistEntry.$2.durationMin ?? 0) > 0 ? '${bestDistEntry.$2.durationMin} min' : '—';
+        cardioPRs.add((exName, '$distStr | $durStr ($dateStr)'));
+      }
+      if (bestDurEntry != null && bestDurVal != null) {
+        final dateStr = bestDurEntry.$1.date != null
+            ? '${bestDurEntry.$1.date!.year}-${bestDurEntry.$1.date!.month.toString().padLeft(2, '0')}-${bestDurEntry.$1.date!.day.toString().padLeft(2, '0')}'
+            : '';
+        final distStr = (bestDurEntry.$2.distanceKm ?? 0.0) >= 1.0 ? '${bestDurEntry.$2.distanceKm!.round()} km' : '${bestDurEntry.$2.distanceKm!.toStringAsFixed(1)} km';
+        cardioPRs.add((exName, '$distStr | $bestDurVal min ($dateStr)'));
+      }
+    }
+
+    // === Build widgets ===
+    final result = <Widget>[
+      // Global totals
+      ListTile(
+        title: Text('Total Workouts: ${workouts.length}', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white),
+      ),
+      ListTile(
+        title: Text('Total Sets: $totalSets', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.layers, color: AppTheme.white),
+      ),
+      ListTile(
+        title: Text('Total Reps: $totalReps', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.repeat, color: AppTheme.white),
+      ),
+    ];
+
+    // Per-template (flat)
+    result.add(Divider(height: 1, color: AppTheme.white.withAlpha(50)));
+    for (final templateName in templateMap.keys) {
+      final count = templateMap[templateName]!.length;
+      final exerciseCount = allExerciseNamesInTemplate[templateName]?.length ?? 0;
+      result.add(ListTile(
+        title: Text('$templateName — $count workout${count > 1 ? 's' : ''}, $exerciseCount exercis${exerciseCount == 1 ? 'e' : 'es'}', style: TextStyle(color: AppTheme.white)),
+        leading: Icon(Icons.workspace_premium, color: AppTheme.white.withAlpha(200)),
+      ));
+    }
+
+    // Lifting PRs (flat)
+    if (liftingPRs.isNotEmpty) {
+      result.add(Divider(height: 1, color: AppTheme.white.withAlpha(50)));
+      result.add(ListTile(
+        title: Text('Lifting PRs', style: TextStyle(color: AppTheme.yellow.withAlpha(180))),
+        leading: Icon(Icons.emoji_events, color: AppTheme.yellow.withAlpha(180)),
+      ));
+      for (final pr in liftingPRs) {
+        result.add(ListTile(
+          title: Text('${pr.$1}: ${pr.$2}', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.fitness_center_outlined, color: AppTheme.white.withAlpha(150)),
+        ));
+      }
+    }
+
+    // Cardio PRs (flat)
+    if (cardioPRs.isNotEmpty) {
+      result.add(Divider(height: 1, color: AppTheme.white.withAlpha(50)));
+      result.add(ListTile(
+        title: Text('Cardio PRs', style: TextStyle(color: AppTheme.green.withAlpha(200))),
+        leading: Icon(Icons.emoji_events, color: AppTheme.green.withAlpha(200)),
+      ));
+      for (final pr in cardioPRs) {
+        result.add(ListTile(
+          title: Text('${pr.$1}: ${pr.$2}', style: TextStyle(color: AppTheme.white)),
+          leading: Icon(Icons.directions_run, color: AppTheme.white.withAlpha(150)),
+        ));
+      }
+    }
+
+    return result;
   }
 }
