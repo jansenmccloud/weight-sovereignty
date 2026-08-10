@@ -86,8 +86,7 @@
  - exclude formula constants as config to profile (METs, time per rep)
  - experiment with flutter materialcolor to create a metal material for card widgets
 
-more ideas (mobile notes):
-ws: edit daily log (title improvement)
-ws: put stats to dashboard (performance?)
-ws: average cardio per day (distance, duration)
-ws: average count lifting sessions per week
+ - edit daily log (title improvement)
+ - put stats to dashboard (performance?)
+ - average cardio per day (distance, duration)
+ - average count lifting sessions per week
