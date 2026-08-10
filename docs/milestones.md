@@ -85,3 +85,9 @@
  - add height, age, gender and calculate BMR by mifflin st jeor formula => add new info to stats and new curve to calorie chart
  - exclude formula constants as config to profile (METs, time per rep)
  - experiment with flutter materialcolor to create a metal material for card widgets
+
+more ideas (mobile notes):
+ws: edit daily log (title improvement)
+ws: put stats to dashboard (performance?)
+ws: average cardio per day (distance, duration)
+ws: average count lifting sessions per week
