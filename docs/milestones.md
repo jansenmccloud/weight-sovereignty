@@ -90,3 +90,4 @@
  - put stats to dashboard (performance?)
  - average cardio per day (distance, duration)
  - average count lifting sessions per week
+ - improve PBs: only show max values if also second param is max (e.g. max 15kg => show entry with max reps)
